@@ -16,19 +16,17 @@
             padding-bottom: 80px;
         }
 
-        /* Halaman Menu */
         .page { display: none; padding: 20px 15px; }
         .page.active { display: block; }
         .page-title { font-size: 24px; font-weight: 900; margin-bottom: 20px; text-shadow: 0 2px 6px rgba(0,0,0,0.25); }
 
-        /* Header Halaman Utama */
         .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         .user-info { text-align: left; }
         .game-title { font-size: 22px; font-weight: 900; text-shadow: 0 2px 6px rgba(0,0,0,0.25); }
         .level { font-size: 13px; opacity: 0.9; margin-top: 2px; }
         .pi-badge { background: rgba(253,224,71,0.25); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #FDE047; }
+        .ref-notice { background: rgba(253,224,71,0.2); border: 1px solid #FDE047; border-radius: 10px; padding: 10px; margin: 10px 0; font-size: 13px; }
 
-        /* Poin & Energi */
         .score-container { margin: 20px 0; }
         .total-score { font-size: 56px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         .score-label { font-size: 15px; opacity: 0.9; margin-top: 3px; }
@@ -39,7 +37,6 @@
         .energy-bar { width: 100%; height: 16px; background: rgba(255,255,255,0.25); border-radius: 12px; overflow: hidden; }
         .energy-fill { height: 100%; background: linear-gradient(90deg, #FDE047, #FACC15); width: 100%; transition: width 0.15s ease; box-shadow: 0 0 10px rgba(253,224,71,0.5); }
 
-        /* Tombol Ketuk */
         .tap-main { margin: 30px auto; position: relative; width: 260px; height: 260px; }
         .tap-btn {
             width: 100%; height: 100%; border-radius: 50%; border: 7px solid #FDE047;
@@ -49,7 +46,6 @@
         }
         .tap-btn:active { transform: scale(0.9); box-shadow: 0 0 25px rgba(253,224,71,0.9); }
 
-        /* Efek Poin Terbang */
         .float-point {
             position: absolute; font-weight: bold; font-size: 24px; color: #FDE047;
             text-shadow: 0 2px 5px rgba(0,0,0,0.4); pointer-events: none;
@@ -60,7 +56,6 @@
             100% { opacity: 0; transform: translateY(-100px) scale(1.6); }
         }
 
-        /* Kartu Fitur */
         .cards { display: flex; justify-content: center; gap: 12px; padding: 0 15px; margin-top: 20px; flex-wrap: wrap; }
         .card {
             background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
@@ -69,7 +64,6 @@
         }
         .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.2); }
 
-        /* Isi Halaman Menu */
         .menu-content { margin-top: 15px; text-align: left; }
         .menu-item-box {
             background: rgba(255,255,255,0.12); border-radius: 12px; padding: 15px;
@@ -86,7 +80,6 @@
         }
         .btn-aksi:hover { transform: scale(1.02); }
 
-        /* Menu Bawah */
         .bottom-menu {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: rgba(0,0,0,0.3); backdrop-filter: blur(12px);
@@ -98,7 +91,6 @@
         .menu-nav.active { color: #FDE047; font-weight: bold; opacity: 1; }
         .menu-icon { font-size: 20px; display: block; margin-bottom: 3px; }
 
-        /* Notifikasi */
         .toast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(0,0,0,0.85); padding: 15px 25px; border-radius: 12px;
@@ -109,7 +101,6 @@
 </head>
 <body>
 
-    <!-- HALAMAN UTAMA / MAIN -->
     <div class="page active" id="halamanMain">
         <div class="header">
             <div class="user-info">
@@ -118,6 +109,8 @@
             </div>
             <div class="pi-badge">💜 Pi Komunitas</div>
         </div>
+
+        <div id="refPemberitahuan" class="ref-notice" style="display:none;"></div>
 
         <div class="score-container">
             <div class="total-score" id="totalScore">0</div>
@@ -146,7 +139,6 @@
         </div>
     </div>
 
-    <!-- HALAMAN REWARD -->
     <div class="page" id="halamanReward">
         <h2 class="page-title">🎁 Pusat Reward</h2>
         <div class="menu-content">
@@ -170,17 +162,20 @@
         <button class="btn-aksi" onclick="pindahMenu('halamanMain')">Kembali Main</button>
     </div>
 
-    <!-- HALAMAN TEMAN / REFERAL -->
     <div class="page" id="halamanTeman">
         <h2 class="page-title">👥 Undang Teman</h2>
         <div class="menu-content">
             <div class="menu-item-box">
                 <h4>📊 Teman Diundang: <span id="jumlahTeman">0</span> Orang</h4>
-                <p>Rp setiap teman yang bergabung: +50 Poin Pi</p>
+                <p>Setiap teman yang bergabung: Kamu +50 Poin, Temanmu +25 Poin 💜</p>
+            </div>
+            <div class="menu-item-box">
+                <h4>🔗 Link Referal Kamu:</h4>
+                <p id="linkReferal"></p>
             </div>
             <div class="menu-item-box" onclick="salinLink()">
-                <h4>🔗 Salin Link Undangan</h4>
-                <p>Bagikan ke temanmu & kumpulkan poin</p>
+                <h4>📋 Salin Link</h4>
+                <p>Siap dibagikan ke teman & grup</p>
             </div>
             <div class="menu-item-box" onclick="bukaLink('https://t.me/GrupKomunitasKamu')">
                 <h4>💬 Gabung Grup Komunitas</h4>
@@ -190,7 +185,6 @@
         <button class="btn-aksi" onclick="bagikanLink()">Bagikan Langsung ke Telegram</button>
     </div>
 
-    <!-- HALAMAN TOKO / UPGRADE -->
     <div class="page" id="halamanToko">
         <h2 class="page-title">🏪 Toko & Peningkatan</h2>
         <div class="menu-content">
@@ -213,7 +207,6 @@
         </div>
     </div>
 
-    <!-- HALAMAN PERINGKAT -->
     <div class="page" id="halamanPeringkat">
         <h2 class="page-title">🏆 Peringkat Pemain</h2>
         <div class="menu-content">
@@ -228,7 +221,6 @@
         </div>
     </div>
 
-    <!-- HALAMAN NFT -->
     <div class="page" id="halamanNFT">
         <h2 class="page-title">💎 Koleksi NFT</h2>
         <div class="menu-content">
@@ -247,7 +239,6 @@
         </div>
     </div>
 
-    <!-- MENU NAVIGASI BAWAH -->
     <div class="bottom-menu">
         <div class="menu-nav active" onclick="pindahMenu('halamanMain')">
             <span class="menu-icon">🎮</span>Main
@@ -269,20 +260,51 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // Hubungkan Telegram Web App Resmi
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
         tg.setHeaderColor('#7C3AED');
         tg.setBackgroundColor('#A855F7');
-        const userId = tg.initDataUnsafe?.user?.id || 'user_umum';
 
-        // Data Game Tersimpan Permanen
+        // ✅ PERBAIKAN SISTEM REFERAL
+        const userData = tg.initDataUnsafe || {};
+        const userId = userData.user?.id || `guest_${Date.now()}`;
+        const namaBot = userData.bot?.username || 'CapyTapPiBot';
+        let referalDari = null;
+
+        // Baca parameter referal dari Telegram
+        if(userData.startParam) {
+            referalDari = userData.startParam;
+            localStorage.setItem(`ref_${userId}`, referalDari);
+            tampilkanPemberitahuanReferal();
+        } else {
+            referalDari = localStorage.getItem(`ref_${userId}`) || null;
+        }
+
+        // Simpan data pemain & berikan bonus referal
         let data = JSON.parse(localStorage.getItem(`capyTap_${userId}`)) || {
-            poin: 0, energi: 100, energiMaks: 100, poinPerKetuk: 1,
+            poin: referalDari ? 25 : 0, // Bonus 25 poin untuk yang diundang
+            energi: 100, energiMaks: 100, poinPerKetuk: 1,
             level: 1, poinKeLevelBerikut: 100, klaimHarianTerakhir: null,
-            temanDiundang: 0, misiSelesai: []
+            temanDiundang: 0, daftarReferal: []
         };
+
+        // Berikan bonus ke pengundang jika baru pertama kali
+        if(referalDari && !data.dapatBonusReferal) {
+            const dataPengundang = JSON.parse(localStorage.getItem(`capyTap_${referalDari}`)) || null;
+            if(dataPengundang) {
+                dataPengundang.poin += 50;
+                dataPengundang.temanDiundang += 1;
+                dataPengundang.daftarReferal.push(userId);
+                localStorage.setItem(`capyTap_${referalDari}`, JSON.stringify(dataPengundang));
+            }
+            data.dapatBonusReferal = true;
+            tampilkanNotif('🎉 Kamu diundang teman! Dapat +25 Poin Pi selamat datang 💜');
+        }
+
+        // Tampilkan link referal yang benar
+        const linkReferal = `https://t.me/${namaBot}?start=${userId}`;
+        document.getElementById('linkReferal').innerText = linkReferal;
 
         // Elemen Tampilan
         const elSkor = document.getElementById('totalScore');
@@ -294,23 +316,21 @@
         const elNextLevel = document.getElementById('nextLevel');
         const elJumlahTeman = document.getElementById('jumlahTeman');
         const elNotif = document.getElementById('toast');
+        const elRefNotif = document.getElementById('refPemberitahuan');
 
         updateUI();
 
-        // Isi Ulang Energi Otomatis
         setInterval(() => {
             if (data.energi < data.energiMaks) {
                 data.energi++; updateUI(); simpanData();
             }
         }, 1500);
 
-        // Fungsi Ketuk Utama
         elAreaKetuk.addEventListener('click', (e) => {
             if (data.energi <= 0) { tampilkanNotif('⚠️ Energi habis! Tunggu isi ulang ya 💜'); return; }
             data.poin += data.poinPerKetuk; data.energi--;
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 
-            // Efek poin terbang
             const poinTerbang = document.createElement('div');
             poinTerbang.className = 'float-point';
             poinTerbang.innerText = `+${data.poinPerKetuk} 💜`;
@@ -322,18 +342,18 @@
             cekLevel(); updateUI(); simpanData();
         });
 
-        // ✅ FUNGSI NAVIGASI MENU (SUDAH TERHUBUNG)
         function pindahMenu(targetId) {
-            // Sembunyikan semua halaman
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Tampilkan halaman tujuan
             document.getElementById(targetId).classList.add('active');
-            // Tandai menu aktif
             document.querySelectorAll('.menu-nav').forEach(m => m.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
 
-        // ✅ FUNGSI HALAMAN REWARD
+        function tampilkanPemberitahuanReferal() {
+            elRefNotif.style.display = 'block';
+            elRefNotif.innerText = '🎉 Kamu bergabung lewat undangan teman! Dapat +25 Poin Pi bonus!';
+        }
+
         function klaimHarian() {
             const hariIni = new Date().toDateString();
             if (data.klaimHarianTerakhir === hariIni) { tampilkanNotif('✅ Sudah klaim hari ini! Coba besok ya 🐹'); return; }
@@ -352,21 +372,14 @@
             updateUI(); simpanData();
         }
 
-        // ✅ FUNGSI HALAMAN TEMAN / REFERAL
         function salinLink() {
-            const linkUndangan = `https://t.me/${tg.initDataUnsafe?.bot?.username || 'CapyTapPiBot'}?start=${userId}`;
-            navigator.clipboard.writeText(linkUndangan);
-            tampilkanNotif('✅ Link undangan sudah disalin!');
+            navigator.clipboard.writeText(linkReferal);
+            tampilkanNotif('✅ Link referal sudah disalin! Bagikan ke temanmu ya');
         }
         function bagikanLink() {
-            const linkUndangan = `https://t.me/${tg.initDataUnsafe?.bot?.username || 'CapyTapPiBot'}?start=${userId}`;
-            tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(linkUndangan)}&text=${encodeURIComponent('Ayo main CAPY TAP Pi Edition sama aku! Kumpulkan poin dan dapat hadiah eksklusif 💜🐹')}`);
-            data.poin += 50; data.temanDiundang++;
-            tampilkanNotif('👥 Link siap dibagikan! +50 Poin Pi 💜');
-            updateUI(); simpanData();
+            tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(linkReferal)}&text=${encodeURIComponent('Ayo main CAPY TAP Pi Edition sama aku! Kamu dapat +25 poin, aku juga dapat bonus 💜🐹')}`);
         }
 
-        // ✅ FUNGSI HALAMAN TOKO
         function beliUpgrade(jenis) {
             if(jenis === 'ketuk') {
                 if(data.poin >= 500) {
@@ -383,12 +396,8 @@
             updateUI(); simpanData();
         }
 
-        // Fungsi Buka Link Luar
-        function bukaLink(url) {
-            tg.openLink(url);
-        }
+        function bukaLink(url) { tg.openLink(url); }
 
-        // Fungsi Tambahan
         function cekLevel() {
             if (data.poin >= data.poinKeLevelBerikut) {
                 data.level++; data.poinKeLevelBerikut *= 2; data.energiMaks += 20; data.energi = data.energiMaks;
