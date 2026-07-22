@@ -1,2 +1,279 @@
-# capypi-game
-Test Game
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CAPY TAP Pi Edition</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body {
+            background: linear-gradient(180deg, #7C3AED 0%, #A855F7 45%, #FDE047 100%);
+            min-height: 100vh;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* Header & Profil */
+        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .user-info { text-align: left; }
+        .game-title { font-size: 22px; font-weight: 900; text-shadow: 0 2px 6px rgba(0,0,0,0.25); }
+        .level { font-size: 13px; opacity: 0.9; margin-top: 2px; }
+        .pi-badge { background: rgba(253,224,71,0.25); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #FDE047; }
+
+        /* Poin Utama */
+        .score-container { margin: 20px 0; }
+        .total-score { font-size: 56px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .score-label { font-size: 15px; opacity: 0.9; margin-top: 3px; }
+        .per-tap { font-size: 12px; margin-top: 5px; opacity: 0.8; }
+
+        /* Bar Energi */
+        .energy-wrapper { width: 88%; margin: 15px auto; }
+        .energy-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; opacity: 0.95; }
+        .energy-bar { width: 100%; height: 16px; background: rgba(255,255,255,0.25); border-radius: 12px; overflow: hidden; }
+        .energy-fill { height: 100%; background: linear-gradient(90deg, #FDE047, #FACC15); width: 100%; transition: width 0.15s ease; box-shadow: 0 0 10px rgba(253,224,71,0.5); }
+
+        /* Tombol Ketuk Utama */
+        .tap-main { margin: 30px auto; position: relative; width: 260px; height: 260px; }
+        .tap-btn {
+            width: 100%; height: 100%; border-radius: 50%; border: 7px solid #FDE047;
+            background: url('https://i.imgur.com/8ZbXQfL.png') center/cover no-repeat;
+            box-shadow: 0 0 50px rgba(124,58,237,0.6), inset 0 0 30px rgba(255,255,255,0.15);
+            cursor: pointer; transition: all 0.1s ease;
+        }
+        .tap-btn:active { transform: scale(0.9); box-shadow: 0 0 25px rgba(253,224,71,0.9); }
+
+        /* Efek Poin Terbang */
+        .float-point {
+            position: absolute; font-weight: bold; font-size: 24px; color: #FDE047;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.4); pointer-events: none;
+            animation: flyUp 1.2s ease-out forwards;
+        }
+        @keyframes flyUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.6); }
+        }
+
+        /* Kartu Fitur */
+        .cards { display: flex; justify-content: center; gap: 12px; padding: 0 15px; margin-top: 20px; flex-wrap: wrap; }
+        .card {
+            background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+            padding: 12px 18px; border-radius: 14px; font-size: 13px;
+            border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: 0.2s;
+        }
+        .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.2); }
+
+        /* Menu Bawah */
+        .bottom-menu {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(12px);
+            display: flex; justify-content: space-around; padding: 12px 0 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .menu-item { font-size: 12px; opacity: 0.8; cursor: pointer; text-align: center; }
+        .menu-item.active { color: #FDE047; font-weight: bold; opacity: 1; }
+        .menu-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+
+        /* Notifikasi */
+        .toast {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85); padding: 15px 25px; border-radius: 12px;
+            font-size: 15px; z-index: 999; display: none;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="user-info">
+            <div class="game-title">🐹 CAPY TAP 💜 Pi Edition</div>
+            <div class="level">Level <span id="userLevel">1</span> • <span id="nextLevel">0/100</span></div>
+        </div>
+        <div class="pi-badge">💜 Pi Komunitas</div>
+    </div>
+
+    <div class="score-container">
+        <div class="total-score" id="totalScore">0</div>
+        <div class="score-label">POIN PI</div>
+        <div class="per-tap">+<span id="pointPerTap">1</span> per ketukan</div>
+    </div>
+
+    <div class="energy-wrapper">
+        <div class="energy-header">
+            <span>Energi</span>
+            <span id="energyText">100 / 100</span>
+        </div>
+        <div class="energy-bar">
+            <div class="energy-fill" id="energyFill"></div>
+        </div>
+    </div>
+
+    <div class="tap-main" id="tapArea">
+        <button class="tap-btn" id="tapBtn"></button>
+    </div>
+
+    <div class="cards">
+        <div class="card" onclick="claimDaily()">🎁 Bonus Harian</div>
+        <div class="card" onclick="openInvite()">👥 Undang Teman (+50)</div>
+        <div class="card" onclick="upgradeTap()">⬆️ Naikkan Ketukan</div>
+    </div>
+
+    <div class="bottom-menu">
+        <div class="menu-item active">
+            <span class="menu-icon">🎮</span>Main
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">👥</span>Teman
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">🏪</span>Toko
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">🏆</span>Peringkat
+        </div>
+        <div class="menu-item">
+            <span class="menu-icon">💎</span>NFT
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Hubungkan Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        tg.setHeaderColor('#7C3AED');
+        tg.setBackgroundColor('#A855F7');
+
+        // Data Game Lengkap
+        let data = JSON.parse(localStorage.getItem('capyTapData')) || {
+            poin: 0,
+            energi: 100,
+            energiMaks: 100,
+            poinPerKetuk: 1,
+            level: 1,
+            poinKeLevelBerikut: 100,
+            klaimHarianTerakhir: null,
+            temanDiundang: 0
+        };
+
+        // Elemen Halaman
+        const elSkor = document.getElementById('totalScore');
+        const elEnergiText = document.getElementById('energyText');
+        const elEnergiIsi = document.getElementById('energyFill');
+        const elAreaKetuk = document.getElementById('tapArea');
+        const elPerKetuk = document.getElementById('pointPerTap');
+        const elLevel = document.getElementById('userLevel');
+        const elNextLevel = document.getElementById('nextLevel');
+        const elNotif = document.getElementById('toast');
+
+        // Tampilkan Data Awal
+        updateUI();
+
+        // Isi Ulang Energi Otomatis
+        setInterval(() => {
+            if (data.energi < data.energiMaks) {
+                data.energi++;
+                updateUI();
+                simpanData();
+            }
+        }, 1500);
+
+        // Fungsi Ketuk Utama
+        elAreaKetuk.addEventListener('click', (e) => {
+            if (data.energi <= 0) {
+                tampilkanNotif('⚠️ Energi habis! Tunggu isi ulang ya 💜');
+                return;
+            }
+
+            // Tambah poin & kurangi energi
+            data.poin += data.poinPerKetuk;
+            data.energi--;
+
+            // Efek getaran di HP
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
+            // Efek poin terbang
+            const poinTerbang = document.createElement('div');
+            poinTerbang.className = 'float-point';
+            poinTerbang.innerText = `+${data.poinPerKetuk} 💜`;
+            poinTerbang.style.left = e.offsetX + 'px';
+            poinTerbang.style.top = e.offsetY + 'px';
+            elAreaKetuk.appendChild(poinTerbang);
+            setTimeout(() => poinTerbang.remove(), 1200);
+
+            // Cek naik level
+            cekLevel();
+            updateUI();
+            simpanData();
+        });
+
+        // Fungsi Fitur Tambahan
+        function claimDaily() {
+            const hariIni = new Date().toDateString();
+            if (data.klaimHarianTerakhir === hariIni) {
+                tampilkanNotif('✅ Kamu sudah klaim hari ini! Coba lagi besok ya 🐹');
+                return;
+            }
+            data.poin += 200;
+            data.klaimHarianTerakhir = hariIni;
+            tampilkanNotif('🎁 Berhasil klaim! +200 Poin Pi 💜');
+            cekLevel();
+            updateUI();
+            simpanData();
+        }
+
+        function openInvite() {
+            data.poin += 50;
+            data.temanDiundang++;
+            tampilkanNotif('👥 Bonus undang teman! +50 Poin Pi 💜');
+            updateUI();
+            simpanData();
+        }
+
+        function upgradeTap() {
+            if (data.poin >= 500) {
+                data.poin -= 500;
+                data.poinPerKetuk++;
+                tampilkanNotif('⬆️ Kekuatan ketuk naik! Sekarang +' + data.poinPerKetuk + ' poin 🚀');
+                updateUI();
+                simpanData();
+            } else {
+                tampilkanNotif('💰 Butuh 500 poin untuk naikkan kekuatan ketuk!');
+            }
+        }
+
+        function cekLevel() {
+            if (data.poin >= data.poinKeLevelBerikut) {
+                data.level++;
+                data.poinKeLevelBerikut *= 2;
+                data.energiMaks += 20;
+                data.energi = data.energiMaks;
+                tampilkanNotif('🎉 SELAMAT! Naik ke Level ' + data.level + ' 🎊');
+            }
+        }
+
+        function updateUI() {
+            elSkor.innerText = data.poin.toLocaleString('id-ID');
+            elEnergiText.innerText = `${data.energi} / ${data.energiMaks}`;
+            elEnergiIsi.style.width = (data.energi / data.energiMaks * 100) + '%';
+            elPerKetuk.innerText = data.poinPerKetuk;
+            elLevel.innerText = data.level;
+            elNextLevel.innerText = `${data.poin} / ${data.poinKeLevelBerikut}`;
+        }
+
+        function simpanData() {
+            localStorage.setItem('capyTapData', JSON.stringify(data));
+        }
+
+        function tampilkanNotif(pesan) {
+            elNotif.innerText = pesan;
+            elNotif.style.display = 'block';
+            setTimeout(() => elNotif.style.display = 'none', 2500);
+        }
+    </script>
+</body>
+</html>
