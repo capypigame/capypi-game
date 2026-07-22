@@ -171,13 +171,13 @@
             </div>
             <div class="menu-item-box">
                 <h4>🔗 Link Referal Kamu:</h4>
-                <p id="linkReferal"></p>
+                <p id="linkReferal" style="word-break:break-all; font-size:12px; margin-top:5px;"></p>
             </div>
             <div class="menu-item-box" onclick="salinLink()">
                 <h4>📋 Salin Link</h4>
                 <p>Siap dibagikan ke teman & grup</p>
             </div>
-            <div class="menu-item-box" onclick="bukaLink('https://t.me/GrupKomunitasKamu')">
+            <div class="menu-item-box" onclick="bukaLink('https://t.me/+GrupKomunitasKamu')">
                 <h4>💬 Gabung Grup Komunitas</h4>
                 <p>Bergabung dengan ribuan pemain lain</p>
             </div>
@@ -266,13 +266,13 @@
         tg.setHeaderColor('#7C3AED');
         tg.setBackgroundColor('#A855F7');
 
-        // ✅ PERBAIKAN SISTEM REFERAL
+        // ✅ NAMA BOT SUDAH DISET KE @capytap_pibot
+        const NAMA_BOT = 'capytap_pibot';
         const userData = tg.initDataUnsafe || {};
         const userId = userData.user?.id || `guest_${Date.now()}`;
-        const namaBot = userData.bot?.username || 'capytap_pibot';
         let referalDari = null;
 
-        // Baca parameter referal dari Telegram
+        // Baca referal dari link ?start=ID
         if(userData.startParam) {
             referalDari = userData.startParam;
             localStorage.setItem(`ref_${userId}`, referalDari);
@@ -281,32 +281,31 @@
             referalDari = localStorage.getItem(`ref_${userId}`) || null;
         }
 
-        // Simpan data pemain & berikan bonus referal
+        // Data pemain
         let data = JSON.parse(localStorage.getItem(`capyTap_${userId}`)) || {
-            poin: referalDari ? 25 : 0, // Bonus 25 poin untuk yang diundang
+            poin: referalDari ? 25 : 0,
             energi: 100, energiMaks: 100, poinPerKetuk: 1,
             level: 1, poinKeLevelBerikut: 100, klaimHarianTerakhir: null,
-            temanDiundang: 0, daftarReferal: []
+            temanDiundang: 0, dapatBonusReferal: false
         };
 
-        // Berikan bonus ke pengundang jika baru pertama kali
+        // Berikan bonus ke pengundang
         if(referalDari && !data.dapatBonusReferal) {
             const dataPengundang = JSON.parse(localStorage.getItem(`capyTap_${referalDari}`)) || null;
             if(dataPengundang) {
                 dataPengundang.poin += 50;
                 dataPengundang.temanDiundang += 1;
-                dataPengundang.daftarReferal.push(userId);
                 localStorage.setItem(`capyTap_${referalDari}`, JSON.stringify(dataPengundang));
             }
             data.dapatBonusReferal = true;
             tampilkanNotif('🎉 Kamu diundang teman! Dapat +25 Poin Pi selamat datang 💜');
         }
 
-        // Tampilkan link referal yang benar
-        const linkReferal = `https://t.me/${namaBot}?start=${userId}`;
+        // ✅ LINK REFERAL OTOMATIS SESUAI BOT KAMU
+        const linkReferal = `https://t.me/${NAMA_BOT}?start=${userId}`;
         document.getElementById('linkReferal').innerText = linkReferal;
 
-        // Elemen Tampilan
+        // Elemen tampilan
         const elSkor = document.getElementById('totalScore');
         const elEnergiText = document.getElementById('energyText');
         const elEnergiIsi = document.getElementById('energyFill');
@@ -320,12 +319,14 @@
 
         updateUI();
 
+        // Isi ulang energi otomatis
         setInterval(() => {
             if (data.energi < data.energiMaks) {
                 data.energi++; updateUI(); simpanData();
             }
         }, 1500);
 
+        // Ketuk utama
         elAreaKetuk.addEventListener('click', (e) => {
             if (data.energi <= 0) { tampilkanNotif('⚠️ Energi habis! Tunggu isi ulang ya 💜'); return; }
             data.poin += data.poinPerKetuk; data.energi--;
@@ -342,6 +343,7 @@
             cekLevel(); updateUI(); simpanData();
         });
 
+        // Navigasi menu
         function pindahMenu(targetId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
@@ -354,6 +356,7 @@
             elRefNotif.innerText = '🎉 Kamu bergabung lewat undangan teman! Dapat +25 Poin Pi bonus!';
         }
 
+        // Fitur Reward
         function klaimHarian() {
             const hariIni = new Date().toDateString();
             if (data.klaimHarianTerakhir === hariIni) { tampilkanNotif('✅ Sudah klaim hari ini! Coba besok ya 🐹'); return; }
@@ -372,14 +375,16 @@
             updateUI(); simpanData();
         }
 
+        // Fitur Referal
         function salinLink() {
             navigator.clipboard.writeText(linkReferal);
-            tampilkanNotif('✅ Link referal sudah disalin! Bagikan ke temanmu ya');
+            tampilkanNotif('✅ Link referal sudah disalin: ' + linkReferal);
         }
         function bagikanLink() {
-            tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(linkReferal)}&text=${encodeURIComponent('Ayo main CAPY TAP Pi Edition sama aku! Kamu dapat +25 poin, aku juga dapat bonus 💜🐹')}`);
+            tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(linkReferal)}&text=${encodeURIComponent('Ayo main CAPY TAP Pi Edition sama aku! Kamu dapat +25 poin, aku juga dapat bonus 💜🐹 Main di @capytap_pibot')}`);
         }
 
+        // Fitur Toko
         function beliUpgrade(jenis) {
             if(jenis === 'ketuk') {
                 if(data.poin >= 500) {
@@ -397,7 +402,6 @@
         }
 
         function bukaLink(url) { tg.openLink(url); }
-
         function cekLevel() {
             if (data.poin >= data.poinKeLevelBerikut) {
                 data.level++; data.poinKeLevelBerikut *= 2; data.energiMaks += 20; data.energi = data.energiMaks;
@@ -416,7 +420,7 @@
         function simpanData() { localStorage.setItem(`capyTap_${userId}`, JSON.stringify(data)); }
         function tampilkanNotif(pesan) {
             elNotif.innerText = pesan; elNotif.style.display = 'block';
-            setTimeout(() => elNotif.style.display = 'none', 2800);
+            setTimeout(() => elNotif.style.display = 'none', 3000);
         }
     </script>
 </body>
