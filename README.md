@@ -16,36 +16,36 @@
             padding-bottom: 80px;
         }
 
-        /* Header & Profil */
+        .page { display: none; padding: 20px 15px; }
+        .page.active { display: block; }
+        .page-title { font-size: 24px; font-weight: 900; margin-bottom: 20px; text-shadow: 0 2px 6px rgba(0,0,0,0.25); }
+
         .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         .user-info { text-align: left; }
         .game-title { font-size: 22px; font-weight: 900; text-shadow: 0 2px 6px rgba(0,0,0,0.25); }
         .level { font-size: 13px; opacity: 0.9; margin-top: 2px; }
         .pi-badge { background: rgba(253,224,71,0.25); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #FDE047; }
+        .ref-notice { background: rgba(253,224,71,0.2); border: 1px solid #FDE047; border-radius: 10px; padding: 10px; margin: 10px 0; font-size: 13px; }
 
-        /* Poin Utama */
         .score-container { margin: 20px 0; }
         .total-score { font-size: 56px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         .score-label { font-size: 15px; opacity: 0.9; margin-top: 3px; }
         .per-tap { font-size: 12px; margin-top: 5px; opacity: 0.8; }
 
-        /* Bar Energi */
         .energy-wrapper { width: 88%; margin: 15px auto; }
         .energy-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; opacity: 0.95; }
         .energy-bar { width: 100%; height: 16px; background: rgba(255,255,255,0.25); border-radius: 12px; overflow: hidden; }
         .energy-fill { height: 100%; background: linear-gradient(90deg, #FDE047, #FACC15); width: 100%; transition: width 0.15s ease; box-shadow: 0 0 10px rgba(253,224,71,0.5); }
 
-        /* Tombol Ketuk Utama */
         .tap-main { margin: 30px auto; position: relative; width: 260px; height: 260px; }
         .tap-btn {
             width: 100%; height: 100%; border-radius: 50%; border: 7px solid #FDE047;
-            background: url('https://i.imgur.com/8ZbXQfL.png') center/cover no-repeat;
+            background: url('https://i.imgur.com/KzLqXfY.png') center/cover no-repeat;
             box-shadow: 0 0 50px rgba(124,58,237,0.6), inset 0 0 30px rgba(255,255,255,0.15);
             cursor: pointer; transition: all 0.1s ease;
         }
         .tap-btn:active { transform: scale(0.9); box-shadow: 0 0 25px rgba(253,224,71,0.9); }
 
-        /* Efek Poin Terbang */
         .float-point {
             position: absolute; font-weight: bold; font-size: 24px; color: #FDE047;
             text-shadow: 0 2px 5px rgba(0,0,0,0.4); pointer-events: none;
@@ -56,7 +56,6 @@
             100% { opacity: 0; transform: translateY(-100px) scale(1.6); }
         }
 
-        /* Kartu Fitur */
         .cards { display: flex; justify-content: center; gap: 12px; padding: 0 15px; margin-top: 20px; flex-wrap: wrap; }
         .card {
             background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
@@ -65,18 +64,33 @@
         }
         .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.2); }
 
-        /* Menu Bawah */
+        .menu-content { margin-top: 15px; text-align: left; }
+        .menu-item-box {
+            background: rgba(255,255,255,0.12); border-radius: 12px; padding: 15px;
+            margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.18);
+            cursor: pointer; transition: 0.2s;
+        }
+        .menu-item-box:hover { background: rgba(255,255,255,0.2); transform: translateX(3px); }
+        .menu-item-box h4 { margin-bottom: 5px; font-size: 15px; }
+        .menu-item-box p { font-size: 12px; opacity: 0.85; }
+        .btn-aksi {
+            width: 100%; padding: 12px; border: none; border-radius: 10px;
+            background: #FDE047; color: #7C3AED; font-weight: bold; font-size: 14px;
+            margin-top: 15px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-aksi:hover { transform: scale(1.02); }
+
         .bottom-menu {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: rgba(0,0,0,0.3); backdrop-filter: blur(12px);
             display: flex; justify-content: space-around; padding: 12px 0 25px;
             border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
         }
-        .menu-item { font-size: 12px; opacity: 0.8; cursor: pointer; text-align: center; }
-        .menu-item.active { color: #FDE047; font-weight: bold; opacity: 1; }
+        .menu-nav { font-size: 12px; opacity: 0.8; cursor: pointer; text-align: center; transition: 0.2s; }
+        .menu-nav.active { color: #FDE047; font-weight: bold; opacity: 1; }
         .menu-icon { font-size: 20px; display: block; margin-bottom: 3px; }
 
-        /* Notifikasi */
         .toast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(0,0,0,0.85); padding: 15px 25px; border-radius: 12px;
@@ -86,54 +100,159 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="user-info">
-            <div class="game-title">🐹 CAPY TAP 💜 Pi Edition</div>
-            <div class="level">Level <span id="userLevel">1</span> • <span id="nextLevel">0/100</span></div>
+
+    <div class="page active" id="halamanMain">
+        <div class="header">
+            <div class="user-info">
+                <div class="game-title">🐹 CAPY TAP 💜 Pi Edition</div>
+                <div class="level">Level <span id="userLevel">1</span> • <span id="nextLevel">0/100</span></div>
+            </div>
+            <div class="pi-badge">💜 Pi Komunitas</div>
         </div>
-        <div class="pi-badge">💜 Pi Komunitas</div>
-    </div>
 
-    <div class="score-container">
-        <div class="total-score" id="totalScore">0</div>
-        <div class="score-label">POIN PI</div>
-        <div class="per-tap">+<span id="pointPerTap">1</span> per ketukan</div>
-    </div>
+        <div id="refPemberitahuan" class="ref-notice" style="display:none;"></div>
 
-    <div class="energy-wrapper">
-        <div class="energy-header">
-            <span>Energi</span>
-            <span id="energyText">100 / 100</span>
+        <div class="score-container">
+            <div class="total-score" id="totalScore">0</div>
+            <div class="score-label">POIN PI</div>
+            <div class="per-tap">+<span id="pointPerTap">1</span> per ketukan</div>
         </div>
-        <div class="energy-bar">
-            <div class="energy-fill" id="energyFill"></div>
+
+        <div class="energy-wrapper">
+            <div class="energy-header">
+                <span>Energi</span>
+                <span id="energyText">100 / 100</span>
+            </div>
+            <div class="energy-bar">
+                <div class="energy-fill" id="energyFill"></div>
+            </div>
+        </div>
+
+        <div class="tap-main" id="tapArea">
+            <button class="tap-btn" id="tapBtn"></button>
+        </div>
+
+        <div class="cards">
+            <div class="card" onclick="pindahMenu('halamanReward')">🎁 Reward</div>
+            <div class="card" onclick="pindahMenu('halamanTeman')">👥 Teman</div>
+            <div class="card" onclick="pindahMenu('halamanToko')">🏪 Toko</div>
         </div>
     </div>
 
-    <div class="tap-main" id="tapArea">
-        <button class="tap-btn" id="tapBtn"></button>
+    <div class="page" id="halamanReward">
+        <h2 class="page-title">🎁 Pusat Reward</h2>
+        <div class="menu-content">
+            <div class="menu-item-box" onclick="klaimHarian()">
+                <h4>✅ Bonus Harian</h4>
+                <p>Klaim setiap hari dapat +200 Poin Pi</p>
+            </div>
+            <div class="menu-item-box" onclick="klaimPencapaian()">
+                <h4>🏅 Pencapaian</h4>
+                <p>Selesaikan misi dapat poin tambahan</p>
+            </div>
+            <div class="menu-item-box" onclick="bukaLink('https://linkAirdropKamu.com')">
+                <h4>💎 Airdrop Khusus</h4>
+                <p>Dapat token CAPY & NFT edisi terbatas</p>
+            </div>
+            <div class="menu-item-box" onclick="klaimBonusPi()">
+                <h4>💜 Bonus Komunitas Pi</h4>
+                <p>Hadiah khusus anggota Pi Network</p>
+            </div>
+        </div>
+        <button class="btn-aksi" onclick="pindahMenu('halamanMain')">Kembali Main</button>
     </div>
 
-    <div class="cards">
-        <div class="card" onclick="claimDaily()">🎁 Bonus Harian</div>
-        <div class="card" onclick="openInvite()">👥 Undang Teman (+50)</div>
-        <div class="card" onclick="upgradeTap()">⬆️ Naikkan Ketukan</div>
+    <div class="page" id="halamanTeman">
+        <h2 class="page-title">👥 Undang Teman</h2>
+        <div class="menu-content">
+            <div class="menu-item-box">
+                <h4>📊 Teman Diundang: <span id="jumlahTeman">0</span> Orang</h4>
+                <p>Setiap teman yang bergabung: Kamu +50 Poin, Temanmu +25 Poin 💜</p>
+            </div>
+            <div class="menu-item-box">
+                <h4>🔗 Link Referal Kamu:</h4>
+                <p id="linkReferal"></p>
+            </div>
+            <div class="menu-item-box" onclick="salinLink()">
+                <h4>📋 Salin Link</h4>
+                <p>Siap dibagikan ke teman & grup</p>
+            </div>
+            <div class="menu-item-box" onclick="bukaLink('https://t.me/GrupKomunitasKamu')">
+                <h4>💬 Gabung Grup Komunitas</h4>
+                <p>Bergabung dengan ribuan pemain lain</p>
+            </div>
+        </div>
+        <button class="btn-aksi" onclick="bagikanLink()">Bagikan Langsung ke Telegram</button>
+    </div>
+
+    <div class="page" id="halamanToko">
+        <h2 class="page-title">🏪 Toko & Peningkatan</h2>
+        <div class="menu-content">
+            <div class="menu-item-box" onclick="beliUpgrade('ketuk')">
+                <h4>⬆️ Naikkan Kekuatan Ketuk</h4>
+                <p>Biaya: 500 Poin Pi → +1 poin per ketuk</p>
+            </div>
+            <div class="menu-item-box" onclick="beliUpgrade('energi')">
+                <h4>🔋 Tambah Batas Energi</h4>
+                <p>Biaya: 300 Poin Pi → +20 energi maksimal</p>
+            </div>
+            <div class="menu-item-box" onclick="bukaLink('https://TokoNFTKamu.com')">
+                <h4>🐹 Koleksi NFT Capybara</h4>
+                <p>Tukar poin dengan NFT eksklusif</p>
+            </div>
+            <div class="menu-item-box" onclick="bukaLink('https://TukarTokenKamu.com')">
+                <h4>💜 Tukar ke Token</h4>
+                <p>Tukar poin Pi ke token CAPY asli</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="halamanPeringkat">
+        <h2 class="page-title">🏆 Peringkat Pemain</h2>
+        <div class="menu-content">
+            <div class="menu-item-box">
+                <h4>🏅 Peringkat Kamu: Belum masuk daftar</h4>
+                <p>Kumpulkan lebih banyak poin untuk naik peringkat!</p>
+            </div>
+            <div class="menu-item-box" onclick="bukaLink('https://PapanPeringkatKamu.com')">
+                <h4>🌍 Lihat Peringkat Global</h4>
+                <p>Siapa yang punya poin terbanyak?</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="halamanNFT">
+        <h2 class="page-title">💎 Koleksi NFT</h2>
+        <div class="menu-content">
+            <div class="menu-item-box" onclick="bukaLink('https://NFTMarketplaceKamu.com')">
+                <h4>🐹 NFT Capybara Biasa</h4>
+                <p>Tukar 1.000 Poin Pi</p>
+            </div>
+            <div class="menu-item-box" onclick="bukaLink('https://NFTMarketplaceKamu.com')">
+                <h4>💜 NFT Edisi Pi Network</h4>
+                <p>Tukar 5.000 Poin Pi (Terbatas!)</p>
+            </div>
+            <div class="menu-item-box" onclick="bukaLink('https://NFTMarketplaceKamu.com')">
+                <h4>👑 NFT Legendaris</h4>
+                <p>Tukar 10.000 Poin Pi</p>
+            </div>
+        </div>
     </div>
 
     <div class="bottom-menu">
-        <div class="menu-item active">
+        <div class="menu-nav active" onclick="pindahMenu('halamanMain')">
             <span class="menu-icon">🎮</span>Main
         </div>
-        <div class="menu-item">
+        <div class="menu-nav" onclick="pindahMenu('halamanTeman')">
             <span class="menu-icon">👥</span>Teman
         </div>
-        <div class="menu-item">
+        <div class="menu-nav" onclick="pindahMenu('halamanToko')">
             <span class="menu-icon">🏪</span>Toko
         </div>
-        <div class="menu-item">
+        <div class="menu-nav" onclick="pindahMenu('halamanPeringkat')">
             <span class="menu-icon">🏆</span>Peringkat
         </div>
-        <div class="menu-item">
+        <div class="menu-nav" onclick="pindahMenu('halamanNFT')">
             <span class="menu-icon">💎</span>NFT
         </div>
     </div>
@@ -141,26 +260,53 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // Hubungkan Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
         tg.setHeaderColor('#7C3AED');
         tg.setBackgroundColor('#A855F7');
 
-        // Data Game Lengkap
-        let data = JSON.parse(localStorage.getItem('capyTapData')) || {
-            poin: 0,
-            energi: 100,
-            energiMaks: 100,
-            poinPerKetuk: 1,
-            level: 1,
-            poinKeLevelBerikut: 100,
-            klaimHarianTerakhir: null,
-            temanDiundang: 0
+        // ✅ PERBAIKAN SISTEM REFERAL
+        const userData = tg.initDataUnsafe || {};
+        const userId = userData.user?.id || `guest_${Date.now()}`;
+        const namaBot = userData.bot?.username || 'CapyTapPiBot';
+        let referalDari = null;
+
+        // Baca parameter referal dari Telegram
+        if(userData.startParam) {
+            referalDari = userData.startParam;
+            localStorage.setItem(`ref_${userId}`, referalDari);
+            tampilkanPemberitahuanReferal();
+        } else {
+            referalDari = localStorage.getItem(`ref_${userId}`) || null;
+        }
+
+        // Simpan data pemain & berikan bonus referal
+        let data = JSON.parse(localStorage.getItem(`capyTap_${userId}`)) || {
+            poin: referalDari ? 25 : 0, // Bonus 25 poin untuk yang diundang
+            energi: 100, energiMaks: 100, poinPerKetuk: 1,
+            level: 1, poinKeLevelBerikut: 100, klaimHarianTerakhir: null,
+            temanDiundang: 0, daftarReferal: []
         };
 
-        // Elemen Halaman
+        // Berikan bonus ke pengundang jika baru pertama kali
+        if(referalDari && !data.dapatBonusReferal) {
+            const dataPengundang = JSON.parse(localStorage.getItem(`capyTap_${referalDari}`)) || null;
+            if(dataPengundang) {
+                dataPengundang.poin += 50;
+                dataPengundang.temanDiundang += 1;
+                dataPengundang.daftarReferal.push(userId);
+                localStorage.setItem(`capyTap_${referalDari}`, JSON.stringify(dataPengundang));
+            }
+            data.dapatBonusReferal = true;
+            tampilkanNotif('🎉 Kamu diundang teman! Dapat +25 Poin Pi selamat datang 💜');
+        }
+
+        // Tampilkan link referal yang benar
+        const linkReferal = `https://t.me/${namaBot}?start=${userId}`;
+        document.getElementById('linkReferal').innerText = linkReferal;
+
+        // Elemen Tampilan
         const elSkor = document.getElementById('totalScore');
         const elEnergiText = document.getElementById('energyText');
         const elEnergiIsi = document.getElementById('energyFill');
@@ -168,35 +314,23 @@
         const elPerKetuk = document.getElementById('pointPerTap');
         const elLevel = document.getElementById('userLevel');
         const elNextLevel = document.getElementById('nextLevel');
+        const elJumlahTeman = document.getElementById('jumlahTeman');
         const elNotif = document.getElementById('toast');
+        const elRefNotif = document.getElementById('refPemberitahuan');
 
-        // Tampilkan Data Awal
         updateUI();
 
-        // Isi Ulang Energi Otomatis
         setInterval(() => {
             if (data.energi < data.energiMaks) {
-                data.energi++;
-                updateUI();
-                simpanData();
+                data.energi++; updateUI(); simpanData();
             }
         }, 1500);
 
-        // Fungsi Ketuk Utama
         elAreaKetuk.addEventListener('click', (e) => {
-            if (data.energi <= 0) {
-                tampilkanNotif('⚠️ Energi habis! Tunggu isi ulang ya 💜');
-                return;
-            }
-
-            // Tambah poin & kurangi energi
-            data.poin += data.poinPerKetuk;
-            data.energi--;
-
-            // Efek getaran di HP
+            if (data.energi <= 0) { tampilkanNotif('⚠️ Energi habis! Tunggu isi ulang ya 💜'); return; }
+            data.poin += data.poinPerKetuk; data.energi--;
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 
-            // Efek poin terbang
             const poinTerbang = document.createElement('div');
             poinTerbang.className = 'float-point';
             poinTerbang.innerText = `+${data.poinPerKetuk} 💜`;
@@ -205,57 +339,71 @@
             elAreaKetuk.appendChild(poinTerbang);
             setTimeout(() => poinTerbang.remove(), 1200);
 
-            // Cek naik level
-            cekLevel();
-            updateUI();
-            simpanData();
+            cekLevel(); updateUI(); simpanData();
         });
 
-        // Fungsi Fitur Tambahan
-        function claimDaily() {
+        function pindahMenu(targetId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+            document.querySelectorAll('.menu-nav').forEach(m => m.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function tampilkanPemberitahuanReferal() {
+            elRefNotif.style.display = 'block';
+            elRefNotif.innerText = '🎉 Kamu bergabung lewat undangan teman! Dapat +25 Poin Pi bonus!';
+        }
+
+        function klaimHarian() {
             const hariIni = new Date().toDateString();
-            if (data.klaimHarianTerakhir === hariIni) {
-                tampilkanNotif('✅ Kamu sudah klaim hari ini! Coba lagi besok ya 🐹');
-                return;
-            }
-            data.poin += 200;
-            data.klaimHarianTerakhir = hariIni;
+            if (data.klaimHarianTerakhir === hariIni) { tampilkanNotif('✅ Sudah klaim hari ini! Coba besok ya 🐹'); return; }
+            data.poin += 200; data.klaimHarianTerakhir = hariIni;
             tampilkanNotif('🎁 Berhasil klaim! +200 Poin Pi 💜');
-            cekLevel();
-            updateUI();
-            simpanData();
+            cekLevel(); updateUI(); simpanData();
+        }
+        function klaimPencapaian() {
+            data.poin += 150;
+            tampilkanNotif('🏅 Misi selamat datang selesai! +150 Poin Pi');
+            updateUI(); simpanData();
+        }
+        function klaimBonusPi() {
+            data.poin += 100;
+            tampilkanNotif('💜 Bonus komunitas Pi diterima! +100 Poin');
+            updateUI(); simpanData();
         }
 
-        function openInvite() {
-            data.poin += 50;
-            data.temanDiundang++;
-            tampilkanNotif('👥 Bonus undang teman! +50 Poin Pi 💜');
-            updateUI();
-            simpanData();
+        function salinLink() {
+            navigator.clipboard.writeText(linkReferal);
+            tampilkanNotif('✅ Link referal sudah disalin! Bagikan ke temanmu ya');
+        }
+        function bagikanLink() {
+            tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(linkReferal)}&text=${encodeURIComponent('Ayo main CAPY TAP Pi Edition sama aku! Kamu dapat +25 poin, aku juga dapat bonus 💜🐹')}`);
         }
 
-        function upgradeTap() {
-            if (data.poin >= 500) {
-                data.poin -= 500;
-                data.poinPerKetuk++;
-                tampilkanNotif('⬆️ Kekuatan ketuk naik! Sekarang +' + data.poinPerKetuk + ' poin 🚀');
-                updateUI();
-                simpanData();
-            } else {
-                tampilkanNotif('💰 Butuh 500 poin untuk naikkan kekuatan ketuk!');
+        function beliUpgrade(jenis) {
+            if(jenis === 'ketuk') {
+                if(data.poin >= 500) {
+                    data.poin -= 500; data.poinPerKetuk++;
+                    tampilkanNotif('⬆️ Kekuatan ketuk naik! Sekarang +' + data.poinPerKetuk + ' poin 🚀');
+                } else { tampilkanNotif('💰 Butuh 500 poin untuk naikkan ketuk!'); }
             }
+            if(jenis === 'energi') {
+                if(data.poin >= 300) {
+                    data.poin -= 300; data.energiMaks += 20; data.energi += 20;
+                    tampilkanNotif('🔋 Batas energi bertambah! Maksimal sekarang ' + data.energiMaks);
+                } else { tampilkanNotif('💰 Butuh 300 poin untuk tambah energi!'); }
+            }
+            updateUI(); simpanData();
         }
+
+        function bukaLink(url) { tg.openLink(url); }
 
         function cekLevel() {
             if (data.poin >= data.poinKeLevelBerikut) {
-                data.level++;
-                data.poinKeLevelBerikut *= 2;
-                data.energiMaks += 20;
-                data.energi = data.energiMaks;
+                data.level++; data.poinKeLevelBerikut *= 2; data.energiMaks += 20; data.energi = data.energiMaks;
                 tampilkanNotif('🎉 SELAMAT! Naik ke Level ' + data.level + ' 🎊');
             }
         }
-
         function updateUI() {
             elSkor.innerText = data.poin.toLocaleString('id-ID');
             elEnergiText.innerText = `${data.energi} / ${data.energiMaks}`;
@@ -263,16 +411,12 @@
             elPerKetuk.innerText = data.poinPerKetuk;
             elLevel.innerText = data.level;
             elNextLevel.innerText = `${data.poin} / ${data.poinKeLevelBerikut}`;
+            elJumlahTeman.innerText = data.temanDiundang;
         }
-
-        function simpanData() {
-            localStorage.setItem('capyTapData', JSON.stringify(data));
-        }
-
+        function simpanData() { localStorage.setItem(`capyTap_${userId}`, JSON.stringify(data)); }
         function tampilkanNotif(pesan) {
-            elNotif.innerText = pesan;
-            elNotif.style.display = 'block';
-            setTimeout(() => elNotif.style.display = 'none', 2500);
+            elNotif.innerText = pesan; elNotif.style.display = 'block';
+            setTimeout(() => elNotif.style.display = 'none', 2800);
         }
     </script>
 </body>
