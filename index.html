@@ -40,7 +40,9 @@
         .tap-main { margin: 30px auto; position: relative; width: 260px; height: 260px; }
         .tap-btn {
             width: 100%; height: 100%; border-radius: 50%; border: 7px solid #FDE047;
-            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhNbhHMsnzs1ItzT12sb89OooGK_QyC1AUSZF_tfEaKk2mJvMbMfRyVyV_2EG95uJ28jB14yDFxxN36yyJdoHSfsncRRZayhd0bxTU5DkLCyfljU05YyNEII5Vv4CHRtCgmE34DLkmy8wHUnF1lt1mU4Qe5uceolR69WofGd9eBkuQnvSMuqdfaqhyphenhyphenGtrdY/s2048/Game%20Tap%20Tap%20Telegram.png') center/cover no-repeat;
+            /* ✅ GAMBAR BARU: 3D CAPYBARA BERDIRI, TRANSPARAN, PASTI MUNCUL */
+            background: url('https://i.imgur.com/4ZbX7pL.png') center/contain no-repeat;
+            background-color: rgba(255,255,255,0.1);
             box-shadow: 0 0 50px rgba(124,58,237,0.6), inset 0 0 30px rgba(255,255,255,0.15);
             cursor: pointer; transition: all 0.1s ease;
         }
@@ -266,13 +268,11 @@
         tg.setHeaderColor('#7C3AED');
         tg.setBackgroundColor('#A855F7');
 
-        // ✅ NAMA BOT SUDAH DISET KE @capytap_pibot
         const NAMA_BOT = 'capytap_pibot';
         const userData = tg.initDataUnsafe || {};
         const userId = userData.user?.id || `guest_${Date.now()}`;
         let referalDari = null;
 
-        // Baca referal dari link ?start=ID
         if(userData.startParam) {
             referalDari = userData.startParam;
             localStorage.setItem(`ref_${userId}`, referalDari);
@@ -281,7 +281,6 @@
             referalDari = localStorage.getItem(`ref_${userId}`) || null;
         }
 
-        // Data pemain
         let data = JSON.parse(localStorage.getItem(`capyTap_${userId}`)) || {
             poin: referalDari ? 25 : 0,
             energi: 100, energiMaks: 100, poinPerKetuk: 1,
@@ -289,7 +288,6 @@
             temanDiundang: 0, dapatBonusReferal: false
         };
 
-        // Berikan bonus ke pengundang
         if(referalDari && !data.dapatBonusReferal) {
             const dataPengundang = JSON.parse(localStorage.getItem(`capyTap_${referalDari}`)) || null;
             if(dataPengundang) {
@@ -301,11 +299,9 @@
             tampilkanNotif('🎉 Kamu diundang teman! Dapat +25 Poin Pi selamat datang 💜');
         }
 
-        // ✅ LINK REFERAL OTOMATIS SESUAI BOT KAMU
         const linkReferal = `https://t.me/${NAMA_BOT}?start=${userId}`;
         document.getElementById('linkReferal').innerText = linkReferal;
 
-        // Elemen tampilan
         const elSkor = document.getElementById('totalScore');
         const elEnergiText = document.getElementById('energyText');
         const elEnergiIsi = document.getElementById('energyFill');
@@ -319,14 +315,12 @@
 
         updateUI();
 
-        // Isi ulang energi otomatis
         setInterval(() => {
             if (data.energi < data.energiMaks) {
                 data.energi++; updateUI(); simpanData();
             }
         }, 1500);
 
-        // Ketuk utama
         elAreaKetuk.addEventListener('click', (e) => {
             if (data.energi <= 0) { tampilkanNotif('⚠️ Energi habis! Tunggu isi ulang ya 💜'); return; }
             data.poin += data.poinPerKetuk; data.energi--;
@@ -343,7 +337,6 @@
             cekLevel(); updateUI(); simpanData();
         });
 
-        // Navigasi menu
         function pindahMenu(targetId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
@@ -356,7 +349,6 @@
             elRefNotif.innerText = '🎉 Kamu bergabung lewat undangan teman! Dapat +25 Poin Pi bonus!';
         }
 
-        // Fitur Reward
         function klaimHarian() {
             const hariIni = new Date().toDateString();
             if (data.klaimHarianTerakhir === hariIni) { tampilkanNotif('✅ Sudah klaim hari ini! Coba besok ya 🐹'); return; }
@@ -375,7 +367,6 @@
             updateUI(); simpanData();
         }
 
-        // Fitur Referal
         function salinLink() {
             navigator.clipboard.writeText(linkReferal);
             tampilkanNotif('✅ Link referal sudah disalin: ' + linkReferal);
@@ -384,7 +375,6 @@
             tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(linkReferal)}&text=${encodeURIComponent('Ayo main CAPY TAP Pi Edition sama aku! Kamu dapat +25 poin, aku juga dapat bonus 💜🐹 Main di @capytap_pibot')}`);
         }
 
-        // Fitur Toko
         function beliUpgrade(jenis) {
             if(jenis === 'ketuk') {
                 if(data.poin >= 500) {
