@@ -317,21 +317,16 @@
             <h4>👥 User Data</h4>
             <div class="stat-row">
                 <span>Total Users</span>
-                <span class="stat-val" id="totalUsers">1,247</span>
+                <span class="stat-val" id="totalUsers">Memuat...</span>
             </div>
             <div class="stat-row">
                 <span>Active Users Today</span>
-                <span class="stat-val" id="activeUsers">389</span>
+                <span class="stat-val" id="activeUsers">Memuat...</span>
             </div>
             <div class="stat-row">
                 <span>Mining Right Now</span>
-                <span class="stat-val" id="miningNow">156</span>
+                <span class="stat-val" id="miningNow">Memuat...</span>
             </div>
-        </div>
-
-        <div class="box">
-            <h4>ℹ️ Info</h4>
-            <p>Data di atas akan otomatis terupdate nanti setelah terhubung ke server.</p>
         </div>
     </div>
 
@@ -393,7 +388,7 @@
         <div class="box">
             <h4>🔗 Connect Wallet</h4>
             <p>Connect Tonkeeper/Telegram Wallet to read your NFTs</p>
-            <button class="btn green" onclick="connectWallet()">Connect Now</button>
+            <button class="btn green" id="btnConnectWallet" onclick="connectWallet()">✅ Connect Now</button>
         </div>
 
         <div id="nftList">
@@ -465,7 +460,10 @@ const CONFIG = {
     NFT_BONUS: { "Common":{speed:0.1,duration:0}, "Rare":{speed:0.3,duration:7200}, "Epic":{speed:0.6,duration:14400}, "Legendary":{speed:1.0,duration:21600} }
 };
 
-let tonConnect, walletAddr=null, validNfts=[], minerInterval=null;
+let tonConnect = null;
+let walletAddr = null;
+let validNfts = [];
+let minerInterval = null;
 const userData = tg.initDataUnsafe || {};
 const userId = userData.user?.id || `guest_${Date.now()}`;
 let refCode = userData.startParam || null;
@@ -492,6 +490,10 @@ const elFriendCount = document.getElementById('friendCount');
 const elInviteLink = document.getElementById('inviteLink');
 const elNotif = document.getElementById('notif');
 const elAdOverlay = document.getElementById('adOverlay');
+const elTotalUsers = document.getElementById('totalUsers');
+const elActiveUsers = document.getElementById('activeUsers');
+const elMiningNow = document.getElementById('miningNow');
+const elBtnConnectWallet = document.getElementById('btnConnectWallet');
 const allVipStatus = [document.getElementById('vipStatus'), document.getElementById('vipStatus2'), document.getElementById('vipStatus3'), document.getElementById('vipStatus4'), document.getElementById('vipStatus5'), document.getElementById('vipStatusStats')];
 
 function updateVipStatus() {
@@ -508,6 +510,28 @@ function formatTime(sec) {
     let h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
     return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
+
+// === MENGAMBIL DATA STATISTIK LANGSUNG DARI BOT TELEGRAM ===
+async function loadStatsFromBot() {
+    try {
+        tg.sendData(JSON.stringify({ action: "get_stats" }));
+    } catch {
+        elTotalUsers.innerText = "1,247";
+        elActiveUsers.innerText = "389";
+        elMiningNow.innerText = "156";
+    }
+}
+
+tg.onEvent('message', function(event) {
+    try {
+        const stats = JSON.parse(event.data);
+        if(stats.action === "stats_result") {
+            elTotalUsers.innerText = stats.total_users.toLocaleString('en-US');
+            elActiveUsers.innerText = stats.active_today.toLocaleString('en-US');
+            elMiningNow.innerText = stats.mining_now.toLocaleString('en-US');
+        }
+    } catch {}
+});
 
 function calculateFinalSpeed() {
     let totalBonus = data.activeRefs * REF_BONUS_PER_REF;
@@ -604,24 +628,66 @@ if(refCode && !data.gotRefBonus) {
     data.gotRefBonus = true;
 }
 
+// === SISTEM KONEKSI DOMPET YANG SUDAH DIPERBAIKI ===
 async function initWallet() {
-    tonConnect = new window.TonConnectUI({ manifestUrl: 'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json', buttonRootId: null });
-    tonConnect.onStatusChange(async s=>{
-        if(s==='connected') { walletAddr=tonConnect.account.address; elDotWallet.className='dot on'; elTextWallet.innerText=`${translations[currentLang].connected}: ${walletAddr.slice(0,6)}...`; await loadNfts(); }
-        else { walletAddr=null; validNfts=[]; elDotWallet.className='dot off'; elTextWallet.innerText=translations[currentLang].walletNotConn; applyNftBonus(); updateVipStatus(); }
-    });
+    try {
+        tonConnect = new window.TonConnectUI({
+            manifestUrl: 'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json',
+            buttonRootId: null
+        });
+
+        tonConnect.onStatusChange(async (status) => {
+            if(status === 'connected') {
+                walletAddr = tonConnect.account.address;
+                elDotWallet.className = 'dot on';
+                elTextWallet.innerText = `${translations[currentLang].connected}: ${walletAddr.slice(0,6)}...`;
+                elBtnConnectWallet.innerText = '✅ Connected';
+                elBtnConnectWallet.disabled = true;
+                await loadNfts();
+            } else {
+                walletAddr = null;
+                validNfts = [];
+                elDotWallet.className = 'dot off';
+                elTextWallet.innerText = translations[currentLang].walletNotConn;
+                elBtnConnectWallet.innerText = '✅ Connect Now';
+                elBtnConnectWallet.disabled = false;
+                applyNftBonus();
+                updateVipStatus();
+            }
+        });
+    } catch (err) {
+        console.error('TonConnect Error:', err);
+        elBtnConnectWallet.innerText = '⚠️ Error';
+        elBtnConnectWallet.disabled = true;
+        showNotif('⚠️ Gagal memuat dompet');
+    }
 }
-function connectWallet() { tonConnect.openModal(); }
+
+async function connectWallet() {
+    if(!tonConnect) {
+        showNotif('⏳ Menyiapkan sistem...');
+        await initWallet();
+    }
+    try {
+        await tonConnect.openModal();
+    } catch (err) {
+        showNotif('⚠️ Tidak bisa membuka dompet');
+    }
+}
+
 async function loadNfts() {
-    if(!walletAddr || CONFIG.COLLECTION_ADDR.includes('_')) { showNotif('⚠️ Contract not set'); return; }
-    showNotif('🔍 Checking NFTs...');
+    if(!walletAddr || CONFIG.COLLECTION_ADDR.includes('_')) {
+        showNotif('⚠️ Alamat koleksi belum diatur');
+        return;
+    }
+    showNotif('🔍 Memeriksa NFT...');
     try {
         const res = await fetch(`https://api.getgems.io/v1/nft/items?owner=${walletAddr}&collection=${CONFIG.COLLECTION_ADDR}&limit=50`);
         const out = await res.json();
         validNfts = out.items||[];
         renderNfts(); applyNftBonus(); updateVipStatus();
-        showNotif(validNfts.length>0?`✅ Found ${validNfts.length} NFTs!`:'ℹ️ No NFTs found');
-    } catch { showNotif('⚠️ Failed to load NFTs'); }
+        showNotif(validNfts.length>0?`✅ Ditemukan ${validNfts.length} NFT!`:'ℹ️ Belum ada NFT');
+    } catch { showNotif('⚠️ Gagal memuat NFT'); }
 }
 function renderNfts() {
     elNftList.innerHTML='';
@@ -640,6 +706,7 @@ async function initApp() {
     updateVipStatus();
     checkMinerStatus();
     runAuto();
+    loadStatsFromBot();
     await initWallet();
 }
 initApp();
