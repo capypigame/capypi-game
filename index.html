@@ -5,1122 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CAPYBARA TITAN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body {
-            /* ? BACKGROUND DARK GOLD LUXURY */
-            background: linear-gradient(180deg, #1A1400 0%, #3D2F00 35%, #B8860B 100%);
-            min-height: 100vh;
-            text-align: center;
-            color: white;
-            overflow: hidden;
-            padding-bottom: 80px;
-        }
-
-        .page { display: none; padding: 20px 15px; }
-        .page.active { display: block; }
-        .page-title { font-size: 24px; font-weight: 900; margin-bottom: 20px; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
-
-        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .user-info { text-align: left; }
-        .game-title { font-size: 22px; font-weight: 900; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
-        .level { font-size: 13px; opacity: 0.9; margin-top: 2px; }
-        .pi-badge { background: rgba(255,215,0,0.25); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #FFD700; }
-        .ref-notice { background: rgba(255,215,0,0.2); border: 1px solid #FFD700; border-radius: 10px; padding: 10px; margin: 10px 0; font-size: 13px; }
-
-        .score-container { margin: 20px 0; }
-        .total-score { font-size: 56px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        .score-label { font-size: 15px; opacity: 0.9; margin-top: 3px; }
-        .per-tap { font-size: 12px; margin-top: 5px; opacity: 0.8; }
-
-        .energy-wrapper { width: 88%; margin: 15px auto; }
-        .energy-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; opacity: 0.95; }
-        .energy-bar { width: 100%; height: 16px; background: rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden; }
-        .energy-fill { height: 100%; background: linear-gradient(90deg, #FFD700, #FFA500); width: 100%; transition: width 0.15s ease; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
-
-        .tap-main { margin: 30px auto; position: relative; width: 260px; height: 260px; }
-        .tap-btn {
-            width: 100%; height: 100%; border-radius: 50%; border: 7px solid #FFD700;
-            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhbU9QO5n0OS2BzGsgLuGbNKzXptzwsqz_dvGYRpu6pX6FQMydFEZmL15eh3_AZ5Y5fyXMwFGv7oYrmr5DLtyJwPE3bKi72jtZzRWgQawwULlM1MNDjiXgf1xDApdrLb1xucU0qfm9v7ykfeyZMNGT7tj1WxOb-n7CcQbg1gUJ-vOYNkRnuzqukKJsZfw42/s320/Logo%20Capybara%20Titan.png') center/cover no-repeat;background-color: rgba(0,0,0,0.15);
-            box-shadow: 0 0 50px rgba(255,215,0,0.4), inset 0 0 30px rgba(255,215,0,0.1);
-            cursor: pointer; transition: all 0.1s ease;
-            overflow: hidden;
-        }
-        .tap-btn:active { transform: scale(0.9); box-shadow: 0 0 30px rgba(255,215,0,0.8); }
-
-        .float-point {
-            position: absolute; font-weight: bold; font-size: 24px; color: #FFD700;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5); pointer-events: none;
-            animation: flyUp 1.2s ease-out forwards;
-        }
-        @keyframes flyUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-100px) scale(1.6); }
-        }
-
-        .cards { display: flex; justify-content: center; gap: 12px; padding: 0 15px; margin-top: 20px; flex-wrap: wrap; }
-        .card {
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
-            padding: 12px 18px; border-radius: 14px; font-size: 13px;
-            border: 1px solid rgba(255,215,0,0.2); cursor: pointer; transition: 0.2s;
-        }
-        .card:hover { transform: translateY(-2px); background: rgba(255,215,0,0.15); }
-
-        .menu-content { margin-top: 15px; text-align: left; }
-        .menu-item-box {
-            background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px;
-            margin-bottom: 12px; border: 1px solid rgba(255,215,0,0.2);
-            cursor: pointer; transition: 0.2s;
-        }
-        .menu-item-box:hover { background: rgba(255,215,0,0.15); transform: translateX(3px); }
-        .menu-item-box h4 { margin-bottom: 5px; font-size: 15px; }
-        .menu-item-box p { font-size: 12px; opacity: 0.85; }
-        .btn-aksi {
-            width: 100%; padding: 12px; border: none; border-radius: 10px;
-            background: #FFD700; color: #1A1400; font-weight: bold; font-size: 14px;
-            margin-top: 15px; cursor: pointer; transition: 0.2s;
-        }
-        .btn-aksi:hover { transform: scale(1.02); }
-
-        .bottom-menu {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
-            display: flex; justify-content: space-around; padding: 12px 0 25px;
-            border-top: 1px solid rgba(255,215,0,0.15);
-            z-index: 100;
-        }
-        .menu-nav { font-size: 12px; opacity: 0.8; cursor: pointer; text-align: center; transition: 0.2s; }
-        .menu-nav.active { color: #FFD700; font-weight: bold; opacity: 1; }
-        .menu-icon { font-size: 20px; display: block; margin-bottom: 3px; }
-
-        .toast {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85); padding: 15px 25px; border-radius: 12px;
-            font-size: 15px; z-index: 999; display: none;
-            backdrop-filter: blur(5px);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="page active" id="halamanMain">
-        <div class="header">
-            <div class="user-info">
-                <div class="game-title">?? CAPYBARA TITAN</div>
-                <div class="level">Level <span id="userLevel">1</span> • <span id="nextLevel">0/100</span></div>
-            </div>
-            <div class="pi-badge">?? CAPY Community</div>
-        </div>
-
-        <div id="refPemberitahuan" class="ref-notice" style="display:none;"></div>
-
-        <div class="score-container">
-            <div class="total-score" id="totalScore">0</div>
-            <div class="score-label">CAPY POINTS</div>
-            <div class="per-tap">+<span id="pointPerTap">1</span> per tap</div>
-        </div>
-
-        <div class="energy-wrapper">
-            <div class="energy-header">
-                <span>Energy</span>
-                <span id="energyText">100 / 100</span>
-            </div>
-            <div class="energy-bar">
-                <div class="energy-fill" id="energyFill"></div>
-            </div>
-        </div>
-
-        <div class="tap-main" id="tapArea">
-            <button class="tap-btn" id="tapBtn"></button>
-        </div>
-
-        <div class="cards">
-            <div class="card" onclick="pindahMenu('halamanReward')">?? Rewards</div>
-            <div class="card" onclick="pindahMenu('halamanTeman')">?? Friends</div>
-            <div class="card" onclick="pindahMenu('halamanToko')">?? Shop</div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanReward">
-        <h2 class="page-title">?? Rewards Center</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" onclick="klaimHarian()">
-                <h4>? Daily Bonus</h4>
-                <p>Claim every day to get +200 Pi Points</p>
-            </div>
-            <div class="menu-item-box" onclick="klaimPencapaian()">
-                <h4>?? Achievements</h4>
-                <p>Complete missions for extra points</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://linkAirdropKamu.com')">
-                <h4>?? Exclusive Airdrop</h4>
-                <p>Get limited CAPY tokens & NFTs</p>
-            </div>
-            <div class="menu-item-box" onclick="klaimBonusPi()">
-                <h4>?? CAPY Community Bonus</h4>
-                <p>Special rewards for CAPY members</p>
-            </div>
-        </div>
-        <button class="btn-aksi" onclick="pindahMenu('halamanMain')">Back to Game</button>
-    </div>
-
-    <div class="page" id="halamanTeman">
-        <h2 class="page-title">?? Invite Friends</h2>
-        <div class="menu-content">
-            <div class="menu-item-box">
-                <h4>?? Invited: <span id="jumlahTeman">0</span> Friends</h4>
-                <p>Each friend joins: You +50 Points, They +25 Points ??</p>
-            </div>
-            <div class="menu-item-box">
-                <h4>?? Your Referral Link:</h4>
-                <p id="linkReferal" style="word-break:break-all; font-size:12px; margin-top:5px;"></p>
-            </div>
-            <div class="menu-item-box" onclick="salinLink()">
-                <h4>?? Copy Link</h4>
-                <p>Ready to share with friends & groups</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://t.me/+GrupKomunitasKamu')">
-                <h4>?? Join Community</h4>
-                <p>Connect with thousands of players</p>
-            </div>
-        </div>
-        <button class="btn-aksi" onclick="bagikanLink()">Share via Telegram</button>
-    </div>
-
-    <div class="page" id="halamanToko">
-        <h2 class="page-title">?? Shop & Upgrades</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" onclick="beliUpgrade('ketuk')">
-                <h4>?? Upgrade Tap Power</h4>
-                <p>Cost: 500 Pi Points ? +1 per tap</p>
-            </div>
-            <div class="menu-item-box" onclick="beliUpgrade('energi')">
-                <h4>?? Increase Energy Limit</h4>
-                <p>Cost: 300 Pi Points ? +20 Max Energy</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://TokoNFTKamu.com')">
-                <h4>?? Capybara NFT Collection</h4>
-                <p>Exchange points for exclusive NFTs</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://TukarTokenKamu.com')">
-                <h4>?? Convert to Token</h4>
-                <p>Swap Pi Points to CAPY tokens</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanPeringkat">
-        <h2 class="page-title">?? Leaderboard</h2>
-        <div class="menu-content">
-            <div class="menu-item-box">
-                <h4>?? Your Rank: Not listed yet</h4>
-                <p>Collect more points to climb up!</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://PapanPeringkatKamu.com')">
-                <h4>?? View Global Rankings</h4>
-                <p>See who has the most points!</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanNFT">
-        <h2 class="page-title">?? NFT Collection</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" onclick="bukaLink('https://NFTMarketplaceKamu.com')">
-                <h4>?? Common Capybara NFT</h4>
-                <p>Cost: 1,000 Pi Points</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://NFTMarketplaceKamu.com')">
-                <h4>?? Pi Network Edition NFT</h4>
-                <p>Cost: 5,000 Pi Points (Limited!)</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://NFTMarketplaceKamu.com')">
-                <h4>?? Legendary NFT</h4>
-                <p>Cost: 10,000 Pi Points</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="bottom-menu">
-        <div class="menu-nav active" onclick="pindahMenu('halamanMain')">
-            <span class="menu-icon">??</span>Play
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanTeman')">
-            <span class="menu-icon">??</span>Friends
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanToko')">
-            <span class="menu-icon">??</span>Shop
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanPeringkat')">
-            <span class="menu-icon">??</span>Ranks
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanNFT')">
-            <span class="menu-icon">??</span>NFT
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        tg.setHeaderColor('#3D2F00');
-        tg.setBackgroundColor('#1A1400');
-
-        const NAMA_BOT = 'capytap_pibot';
-        const userData = tg.initDataUnsafe || {};
-        const userId = userData.user?.id || `guest_${Date.now()}`;
-        let referalDari = null;
-
-        if(userData.startParam) {
-            referalDari = userData.startParam;
-            localStorage.setItem(`ref_${userId}`, referalDari);
-            tampilkanPemberitahuanReferal();
-        } else {
-            referalDari = localStorage.getItem(`ref_${userId}`) || null;
-        }
-
-        let data = JSON.parse(localStorage.getItem(`capyTap_${userId}`)) || {
-            poin: referalDari ? 25 : 0,
-            energi: 100, energiMaks: 100, poinPerKetuk: 1,
-            level: 1, poinKeLevelBerikut: 100, klaimHarianTerakhir: null,
-            temanDiundang: 0, dapatBonusReferal: false
-        };
-
-        if(referalDari && !data.dapatBonusReferal) {
-            const dataPengundang = JSON.parse(localStorage.getItem(`capyTap_${referalDari}`)) || null;
-            if(dataPengundang) {
-                dataPengundang.poin += 50;
-                dataPengundang.temanDiundang += 1;
-                localStorage.setItem(`capyTap_${referalDari}`, JSON.stringify(dataPengundang));
-            }
-            data.dapatBonusReferal = true;
-            tampilkanNotif('?? Joined via referral! +25 Welcome Pi Points ??');
-        }
-
-        const linkReferal = `https://t.me/${NAMA_BOT}?start=${userId}`;
-        document.getElementById('linkReferal').innerText = linkReferal;
-
-        const elSkor = document.getElementById('totalScore');
-        const elEnergiText = document.getElementById('energyText');
-        const elEnergiIsi = document.getElementById('energyFill');
-        const elAreaKetuk = document.getElementById('tapArea');
-        const elPerKetuk = document.getElementById('pointPerTap');
-        const elLevel = document.getElementById('userLevel');
-        const elNextLevel = document.getElementById('nextLevel');
-        const elJumlahTeman = document.getElementById('jumlahTeman');
-        const elNotif = document.getElementById('toast');
-        const elRefNotif = document.getElementById('refPemberitahuan');
-
-        updateUI();
-
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CAPYBARA TITAN</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- TAMBAH: Library TON Connect -->
-    <script src="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body {
-            background: linear-gradient(180deg, #1A1400 0%, #3D2F00 35%, #B8860B 100%);
-            min-height: 100vh;
-            text-align: center;
-            color: white;
-            overflow: hidden;
-            padding-bottom: 80px;
-        }
-
-        .page { display: none; padding: 20px 15px; }
-        .page.active { display: block; }
-        .page-title { font-size: 24px; font-weight: 900; margin-bottom: 20px; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
-
-        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .user-info { text-align: left; }
-        .game-title { font-size: 22px; font-weight: 900; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
-        .level { font-size: 13px; opacity: 0.9; margin-top: 2px; }
-        .pi-badge { background: rgba(255,215,0,0.25); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #FFD700; }
-        .ref-notice { background: rgba(255,215,0,0.2); border: 1px solid #FFD700; border-radius: 10px; padding: 10px; margin: 10px 0; font-size: 13px; }
-
-        /* BARU: Info Bonus & Dompet */
-        .bonus-info { background: rgba(0,255,128,0.15); border: 1px solid #00FF80; border-radius: 10px; padding: 8px; margin: 8px 0; font-size: 12px; }
-        .wallet-status { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 5px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dot.off { background: #ff4444; }
-        .dot.on { background: #00FF80; }
-
-        .score-container { margin: 15px 0; }
-        .total-score { font-size: 52px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        .score-label { font-size: 14px; opacity: 0.9; margin-top: 3px; }
-        .per-tap { font-size: 12px; margin-top: 3px; opacity: 0.8; }
-
-        .energy-wrapper { width: 90%; margin: 15px auto; }
-        .energy-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; opacity: 0.95; }
-        .energy-bar { width: 100%; height: 16px; background: rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden; }
-        .energy-fill { height: 100%; background: linear-gradient(90deg, #FFD700, #FFA500); width: 100%; transition: width 0.15s ease; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
-
-        .tap-main { margin: 25px auto; position: relative; width: 240px; height: 240px; }
-        .tap-btn {
-            width: 100%; height: 100%; border-radius: 50%; border: 6px solid #FFD700;
-            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhbU9QO5n0OS2BzGsgLuGbNKzXptzwsqz_dvGYRpu6pX6FQMydFEZmL15eh3_AZ5Y5fyXMwFGv7oYrmr5DLtyJwPE3bKi72jtZzRWgQawwULlM1MNDjiXgf1xDApdrLb1xucU0qfm9v7ykfeyZMNGT7tj1WxOb-n7CcQbg1gUJ-vOYNkRnuzqukKJsZfw42/s320/Logo%20Capybara%20Titan.png') center/cover no-repeat;
-            background-color: rgba(0,0,0,0.15);
-            box-shadow: 0 0 50px rgba(255,215,0,0.4), inset 0 0 30px rgba(255,215,0,0.1);
-            cursor: pointer; transition: all 0.1s ease;
-            overflow: hidden;
-        }
-        .tap-btn:active { transform: scale(0.9); box-shadow: 0 0 30px rgba(255,215,0,0.8); }
-
-        .float-point {
-            position: absolute; font-weight: bold; font-size: 22px; color: #FFD700;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5); pointer-events: none;
-            animation: flyUp 1.2s ease-out forwards;
-        }
-        @keyframes flyUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-100px) scale(1.6); }
-        }
-
-        .cards { display: flex; justify-content: center; gap: 10px; padding: 0 10px; margin-top: 15px; flex-wrap: wrap; }
-        .card {
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
-            padding: 10px 14px; border-radius: 12px; font-size: 12px;
-            border: 1px solid rgba(255,215,0,0.2); cursor: pointer; transition: 0.2s;
-        }
-        .card:hover { transform: translateY(-2px); background: rgba(255,215,0,0.15); }
-
-        .menu-content { margin-top: 15px; text-align: left; }
-        .menu-item-box {
-            background: rgba(255,255,255,0.1); border-radius: 12px; padding: 14px;
-            margin-bottom: 12px; border: 1px solid rgba(255,215,0,0.2);
-            cursor: pointer; transition: 0.2s;
-        }
-        .menu-item-box:hover { background: rgba(255,215,0,0.15); transform: translateX(3px); }
-        .menu-item-box h4 { margin-bottom: 5px; font-size: 15px; }
-        .menu-item-box p { font-size: 12px; opacity: 0.85; }
-        .btn-aksi {
-            width: 100%; padding: 12px; border: none; border-radius: 10px;
-            background: #FFD700; color: #1A1400; font-weight: bold; font-size: 14px;
-            margin-top: 15px; cursor: pointer; transition: 0.2s;
-        }
-        .btn-aksi:hover { transform: scale(1.02); }
-        .btn-kecil { padding: 8px 12px; font-size: 12px; margin-top: 8px; }
-
-        /* BARU: Tampilan Kartu NFT */
-        .nft-card { background: rgba(0,255,128,0.1); border: 1px solid #00FF80; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
-        .nft-card.inactive { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
-        .nft-name { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
-        .nft-effect { font-size: 12px; opacity: 0.9; }
-
-        .bottom-menu {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
-            display: flex; justify-content: space-around; padding: 12px 0 25px;
-            border-top: 1px solid rgba(255,215,0,0.15);
-            z-index: 100;
-        }
-        .menu-nav { font-size: 12px; opacity: 0.8; cursor: pointer; text-align: center; transition: 0.2s; }
-        .menu-nav.active { color: #FFD700; font-weight: bold; opacity: 1; }
-        .menu-icon { font-size: 20px; display: block; margin-bottom: 3px; }
-
-        .toast {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85); padding: 15px 25px; border-radius: 12px;
-            font-size: 15px; z-index: 999; display: none;
-            backdrop-filter: blur(5px);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="page active" id="halamanMain">
-        <div class="header">
-            <div class="user-info">
-                <div class="game-title">🦫 CAPYBARA TITAN</div>
-                <div class="level">Level <span id="userLevel">1</span> • <span id="nextLevel">0/100</span></div>
-                <!-- BARU: Status Dompet & Bonus -->
-                <div class="wallet-status">
-                    <span class="dot" id="dompetDot"></span>
-                    <span id="statusDompet">Memuat dompet...</span>
-                </div>
-            </div>
-            <div class="pi-badge">🚀 CAPY x Pi</div>
-        </div>
-
-        <div id="refPemberitahuan" class="ref-notice" style="display:none;"></div>
-        <!-- BARU: Info Bonus NFT -->
-        <div id="infoBonus" class="bonus-info" style="display:none;"></div>
-
-        <div class="score-container">
-            <div class="total-score" id="totalScore">0</div>
-            <div class="score-label">CAPY POINTS</div>
-            <div class="per-tap">+<span id="pointPerTap">1</span> per ketuk</div>
-        </div>
-
-        <div class="energy-wrapper">
-            <div class="energy-header">
-                <span>Energi</span>
-                <span id="energyText">100 / 100</span>
-            </div>
-            <div class="energy-bar">
-                <div class="energy-fill" id="energyFill"></div>
-            </div>
-        </div>
-
-        <div class="tap-main" id="tapArea">
-            <button class="tap-btn" id="tapBtn"></button>
-        </div>
-
-        <div class="cards">
-            <div class="card" onclick="pindahMenu('halamanReward')">🎁 Hadiah</div>
-            <div class="card" onclick="pindahMenu('halamanTeman')">👥 Teman</div>
-            <div class="card" onclick="pindahMenu('halamanNFT')">💎 Koleksi</div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanReward">
-        <h2 class="page-title">🎁 Pusat Hadiah</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" onclick="klaimHarian()">
-                <h4>📅 Bonus Harian</h4>
-                <p>Klaim setiap hari dapat +200 Poin</p>
-            </div>
-            <div class="menu-item-box" onclick="klaimPencapaian()">
-                <h4>🏆 Pencapaian</h4>
-                <p>Selesaikan misi untuk poin ekstra</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://t.me/+GrupKomunitasKamu')">
-                <h4>👾 Komunitas Resmi</h4>
-                <p>Gabung dapat info airdrop & NFT</p>
-            </div>
-        </div>
-        <button class="btn-aksi" onclick="pindahMenu('halamanMain')">Kembali Main</button>
-    </div>
-
-    <div class="page" id="halamanTeman">
-        <h2 class="page-title">👥 Undang Teman</h2>
-        <div class="menu-content">
-            <div class="menu-item-box">
-                <h4>✅ Diundang: <span id="jumlahTeman">0</span> Orang</h4>
-                <p>Tiap teman gabung: Kamu +50 Poin, Mereka +25 Poin 🎉</p>
-            </div>
-            <div class="menu-item-box">
-                <h4>🔗 Tautan Undangan:</h4>
-                <p id="linkReferal" style="word-break:break-all; font-size:12px; margin-top:5px;"></p>
-            </div>
-            <div class="menu-item-box" onclick="salinLink()">
-                <h4>📋 Salin Tautan</h4>
-                <p>Siap dibagikan ke grup & teman</p>
-            </div>
-        </div>
-        <button class="btn-aksi" onclick="bagikanLink()">Bagikan ke Telegram</button>
-    </div>
-
-    <!-- BARU: Halaman Koleksi NFT & Integrasi Dompet -->
-    <div class="page" id="halamanNFT">
-        <h2 class="page-title">💎 Koleksi NFT Resmi</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" id="kotakHubungkanDompet">
-                <h4>🔗 Hubungkan Dompet</h4>
-                <p>Hubungkan Tonkeeper/Dompet Telegram untuk baca NFT & aktifkan bonus</p>
-                <button class="btn-aksi btn-kecil" onclick="hubungkanDompet()">Hubungkan Sekarang</button>
-            </div>
-            <div id="daftarNFT"></div>
-            <div class="menu-item-box" onclick="bukaLink('https://t.me/+GrupKomunitasKamu')">
-                <h4>🏪 Beli NFT Baru</h4>
-                <p>Buka grup marketplace resmi untuk beli Capy Miner Pass</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanToko">
-        <h2 class="page-title">🛒 Toko Upgrade</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" onclick="beliUpgrade('ketuk')">
-                <h4>👆 Naikkan Kekuatan Ketuk</h4>
-                <p>Biaya: 500 Poin ➕ +1 poin/ketuk</p>
-            </div>
-            <div class="menu-item-box" onclick="beliUpgrade('energi')">
-                <h4>⚡ Tambah Batas Energi</h4>
-                <p>Biaya: 300 Poin ➕ +20 Energi Maks</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanPeringkat">
-        <h2 class="page-title">🏆 Papan Peringkat</h2>
-        <div class="menu-content">
-            <div class="menu-item-box">
-                <h4>📊 Peringkat Kamu: Belum Terdaftar</h4>
-                <p>Kumpulkan lebih banyak poin untuk naik ke atas!</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="bottom-menu">
-        <div class="menu-nav active" onclick="pindahMenu('halamanMain')">
-            <span class="menu-icon">🎮</span>Main
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanTeman')">
-            <span class="menu-icon">👥</span>Teman
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanToko')">
-            <span class="menu-icon">🛒</span>Toko
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanNFT')">
-            <span class="menu-icon">💎</span>NFT
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanPeringkat')">
-            <span class="menu-icon">🏆</span>Ranking
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        tg.setHeaderColor('#3D2F00');
-        tg.setBackgroundColor('#1A1400');
-
-        // ==================== KONFIGURASI INTEGRASI NFT ====================
-        const KONFIGURASI = {
-            ALAMAT_KOLEKSI_NFT: "EQxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", // GANTI DENGAN ALAMAT KONTRAK NFT KAMU
-            DAFTAR_EFEK_NFT: {
-                "Biasa": { bonusPoin: 0.1, bonusEnergi: 0 },
-                "Jarang": { bonusPoin: 0.3, bonusEnergi: 20 },
-                "Langka": { bonusPoin: 0.6, bonusEnergi: 50 },
-                "Legendaris": { bonusPoin: 1.0, bonusEnergi: 100 }
-            }
-        };
-
-        // ==================== INISIALISASI TON CONNECT ====================
-        let tonConnect;
-        let alamatDompet = null;
-        let nftTerbaca = [];
-
-        async function inisialisasiTonConnect() {
-            tonConnect = new window.TonConnectUI({
-                manifestUrl: 'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json', // GANTI DENGAN MILIKMU NANTI
-                buttonRootId: null
-            });
-
-            tonConnect.onStatusChange((status) => {
-                if (status === 'connected') {
-                    alamatDompet = tonConnect.account.address;
-                    perbaruiStatusDompet(true);
-                    bacaNFTDompet();
-                } else {
-                    alamatDompet = null;
-                    nftTerbaca = [];
-                    perbaruiStatusDompet(false);
-                    terapkanBonusNFT();
-                }
-            });
-        }
-
-        function hubungkanDompet() {
-            tonConnect.openModal();
-        }
-
-        function perbaruiStatusDompet(terhubung) {
-            const dot = document.getElementById('dompetDot');
-            const teks = document.getElementById('statusDompet');
-            const kotakHubungkan = document.getElementById('kotakHubungkanDompet');
-
-            if (terhubung) {
-                dot.classList.remove('off'); dot.classList.add('on');
-                teks.innerText = `Terhubung: ${alamatDompet.slice(0,6)}...${alamatDompet.slice(-4)}`;
-                kotakHubungkan.style.display = 'none';
-            } else {
-                dot.classList.remove('on'); dot.classList.add('off');
-                teks.innerText = 'Belum terhubung';
-                kotakHubungkan.style.display = 'block';
-            }
-        }
-
-        // ==================== BACA NFT & TERAPKAN BONUS ====================
-        async function bacaNFTDompet() {
-            if (!alamatDompet) return;
-            tampilkanNotif('🔍 Sedang memeriksa koleksi NFT...');
-
-            try {
-                // Contoh panggilan API Getgems/TON Scan (sesuaikan nanti)
-                const res = await fetch(`https://api.getgems.io/v1/nft/items?owner=${alamatDompet}&collection=${KONFIGURASI.ALAMAT_KOLEKSI_NFT}`);
-                const data = await res.json();
-                
-                nftTerbaca = data.items || [];
-                tampilkanDaftarNFT();
-                terapkanBonusNFT();
-
-                if (nftTerbaca.length > 0) {
-                    tampilkanNotif(`✅ Ditemukan ${nftTerbaca.length} NFT resmi! Bonus aktif 🚀`);
-                } else {
-                    tampilkanNotif('ℹ️ Belum ada NFT resmi di dompetmu');
-                }
-            } catch (e) {
-                console.error('Gagal baca NFT:', e);
-                tampilkanNotif('⚠️ Cek NFT gagal, coba lagi nanti');
-            }
-        }
-
-        function tampilkanDaftarNFT() {
-            const wadah = document.getElementById('daftarNFT');
-            wadah.innerHTML = '';
-
-            if (nftTerbaca.length === 0) {
-                wadah.innerHTML = `<div class="menu-item-box"><p>Belum ada NFT resmi Capy Miner Pass di dompetmu.</p></div>`;
-                return;
-            }
-
-            nftTerbaca.forEach((nft, i) => {
-                const kelangkaan = nft.metadata.attributes.find(a => a.trait_type === 'Kelangkaan')?.value || 'Biasa';
-                const efek = KONFIGURASI.DAFTAR_EFEK_NFT[kelangkaan];
-
-                wadah.innerHTML += `
-                <div class="nft-card">
-                    <div class="nft-name">✅ ${nft.metadata.name} (${kelangkaan})</div>
-                    <div class="nft-effect">Efek: +${efek.bonusPoin*100}% poin/ketuk • +${efek.bonusEnergi} energi maks</div>
-                </div>`;
-            });
-        }
-
-        function terapkanBonusNFT() {
-            let totalBonusPoin = 1;
-            let totalBonusEnergi = 0;
-
-            nftTerbaca.forEach(nft => {
-                const kelangkaan = nft.metadata.attributes.find(a => a.trait_type === 'Kelangkaan')?.value || 'Biasa';
-                const efek = KONFIGURASI.DAFTAR_EFEK_NFT[kelangkaan];
-                totalBonusPoin += efek.bonusPoin;
-                totalBonusEnergi += efek.bonusEnergi;
-            });
-
-            // Terapkan ke data game
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CAPYBARA TITAN</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- TAMBAH: Library TON Connect -->
-    <script src="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body {
-            background: linear-gradient(180deg, #1A1400 0%, #3D2F00 35%, #B8860B 100%);
-            min-height: 100vh;
-            text-align: center;
-            color: white;
-            overflow: hidden;
-            padding-bottom: 80px;
-        }
-
-        .page { display: none; padding: 20px 15px; }
-        .page.active { display: block; }
-        .page-title { font-size: 24px; font-weight: 900; margin-bottom: 20px; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
-
-        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .user-info { text-align: left; }
-        .game-title { font-size: 22px; font-weight: 900; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
-        .level { font-size: 13px; opacity: 0.9; margin-top: 2px; }
-        .pi-badge { background: rgba(255,215,0,0.25); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #FFD700; }
-        .ref-notice { background: rgba(255,215,0,0.2); border: 1px solid #FFD700; border-radius: 10px; padding: 10px; margin: 10px 0; font-size: 13px; }
-
-        /* BARU: Info Bonus & Dompet */
-        .bonus-info { background: rgba(0,255,128,0.15); border: 1px solid #00FF80; border-radius: 10px; padding: 8px; margin: 8px 0; font-size: 12px; }
-        .wallet-status { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 5px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dot.off { background: #ff4444; }
-        .dot.on { background: #00FF80; }
-
-        .score-container { margin: 15px 0; }
-        .total-score { font-size: 52px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        .score-label { font-size: 14px; opacity: 0.9; margin-top: 3px; }
-        .per-tap { font-size: 12px; margin-top: 3px; opacity: 0.8; }
-
-        .energy-wrapper { width: 90%; margin: 15px auto; }
-        .energy-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; opacity: 0.95; }
-        .energy-bar { width: 100%; height: 16px; background: rgba(255,255,255,0.2); border-radius: 12px; overflow: hidden; }
-        .energy-fill { height: 100%; background: linear-gradient(90deg, #FFD700, #FFA500); width: 100%; transition: width 0.15s ease; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
-
-        .tap-main { margin: 25px auto; position: relative; width: 240px; height: 240px; }
-      .tap-btn {
-    width: 100%; height: 100%; border-radius: 50%; border: 6px solid #FFD700;
-    background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhbU9QO5n0OS2BzGsgLuGbNKzXptzwsqz_dvGYRpu6pX6FQMydFEZmL15eh3_AZ5Y5fyXMwFGv7oYrmr5DLtyJwPE3bKi72jtZzRWgQawwULlM1MNDjiXgf1xDApdrLb1xucU0qfm9v7ykfeyZMNGT7tj1WxOb-n7CcQbg1gUJ-vOYNkRnuzqukKJsZfw42/s320/Logo%20Capybara%20Titan.png') center/cover no-repeat;
-    background-color: rgba(0,0,0,0.15);
-    box-shadow: 0 0 50px rgba(255,215,0,0.4), inset 0 0 30px rgba(255,215,0,0.1);
-    cursor: pointer; transition: all 0.3s ease; overflow: hidden;
-}
-
-/* Gaya Khusus NFT */
-.tap-btn.nft-jarang {
-    border-color: #4CAF50;
-    box-shadow: 0 0 60px rgba(76,175,80,0.6);
-    background-image: url('LINK_GAMBAR_CAPY_HIJAU_KAMU');
-}
-.tap-btn.nft-langka {
-    border-color: #2196F3;
-    box-shadow: 0 0 70px rgba(33,150,243,0.7);
-    background-image: url('LINK_GAMBAR_CAPY_BIRU_KAMU');
-}
-.tap-btn.nft-legendaris {
-    border-color: #9C27B0;
-    box-shadow: 0 0 80px rgba(156,39,176,0.8);
-    background-image: url('LINK_GAMBAR_CAPY_UNGU_KAMU');
-    animation: kilau 2s infinite;
-}
-@keyframes kilau {
-    0% { box-shadow: 0 0 80px rgba(156,39,176,0.8); }
-    50% { box-shadow: 0 0 120px rgba(156,39,176,1); }
-    100% { box-shadow: 0 0 80px rgba(156,39,176,0.8); }
-}
-
-        .tap-btn:active { transform: scale(0.9); box-shadow: 0 0 30px rgba(255,215,0,0.8); }
-
-        .float-point {
-            position: absolute; font-weight: bold; font-size: 22px; color: #FFD700;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5); pointer-events: none;
-            animation: flyUp 1.2s ease-out forwards;
-        }
-        @keyframes flyUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-100px) scale(1.6); }
-        }
-
-        .cards { display: flex; justify-content: center; gap: 10px; padding: 0 10px; margin-top: 15px; flex-wrap: wrap; }
-        .card {
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
-            padding: 10px 14px; border-radius: 12px; font-size: 12px;
-            border: 1px solid rgba(255,215,0,0.2); cursor: pointer; transition: 0.2s;
-        }
-        .card:hover { transform: translateY(-2px); background: rgba(255,215,0,0.15); }
-
-        .menu-content { margin-top: 15px; text-align: left; }
-        .menu-item-box {
-            background: rgba(255,255,255,0.1); border-radius: 12px; padding: 14px;
-            margin-bottom: 12px; border: 1px solid rgba(255,215,0,0.2);
-            cursor: pointer; transition: 0.2s;
-        }
-        .menu-item-box:hover { background: rgba(255,215,0,0.15); transform: translateX(3px); }
-        .menu-item-box h4 { margin-bottom: 5px; font-size: 15px; }
-        .menu-item-box p { font-size: 12px; opacity: 0.85; }
-        .btn-aksi {
-            width: 100%; padding: 12px; border: none; border-radius: 10px;
-            background: #FFD700; color: #1A1400; font-weight: bold; font-size: 14px;
-            margin-top: 15px; cursor: pointer; transition: 0.2s;
-        }
-        .btn-aksi:hover { transform: scale(1.02); }
-        .btn-kecil { padding: 8px 12px; font-size: 12px; margin-top: 8px; }
-
-        /* BARU: Tampilan Kartu NFT */
-        .nft-card { background: rgba(0,255,128,0.1); border: 1px solid #00FF80; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
-        .nft-card.inactive { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
-        .nft-name { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
-        .nft-effect { font-size: 12px; opacity: 0.9; }
-
-        .bottom-menu {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
-            display: flex; justify-content: space-around; padding: 12px 0 25px;
-            border-top: 1px solid rgba(255,215,0,0.15);
-            z-index: 100;
-        }
-        .menu-nav { font-size: 12px; opacity: 0.8; cursor: pointer; text-align: center; transition: 0.2s; }
-        .menu-nav.active { color: #FFD700; font-weight: bold; opacity: 1; }
-        .menu-icon { font-size: 20px; display: block; margin-bottom: 3px; }
-
-        .toast {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85); padding: 15px 25px; border-radius: 12px;
-            font-size: 15px; z-index: 999; display: none;
-            backdrop-filter: blur(5px);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="page active" id="halamanMain">
-        <div class="header">
-            <div class="user-info">
-                <div class="game-title">🦫 CAPYBARA TITAN</div>
-                <div class="level">Level <span id="userLevel">1</span> • <span id="nextLevel">0/100</span></div>
-                <!-- BARU: Status Dompet & Bonus -->
-                <div class="wallet-status">
-                    <span class="dot" id="dompetDot"></span>
-                    <span id="statusDompet">Memuat dompet...</span>
-                </div>
-            </div>
-            <div class="pi-badge">🚀 CAPY x Pi</div>
-        </div>
-
-        <div id="refPemberitahuan" class="ref-notice" style="display:none;"></div>
-        <!-- BARU: Info Bonus NFT -->
-        <div id="infoBonus" class="bonus-info" style="display:none;"></div>
-
-        <div class="score-container">
-            <div class="total-score" id="totalScore">0</div>
-            <div class="score-label">CAPY POINTS</div>
-            <div class="per-tap">+<span id="pointPerTap">1</span> per ketuk</div>
-        </div>
-
-        <div class="energy-wrapper">
-            <div class="energy-header">
-                <span>Energi</span>
-                <span id="energyText">100 / 100</span>
-            </div>
-            <div class="energy-bar">
-                <div class="energy-fill" id="energyFill"></div>
-            </div>
-        </div>
-
-        <div class="tap-main" id="tapArea">
-            <button class="tap-btn" id="tapBtn"></button>
-        </div>
-
-        <div class="cards">
-            <div class="card" onclick="pindahMenu('halamanReward')">🎁 Hadiah</div>
-            <div class="card" onclick="pindahMenu('halamanTeman')">👥 Teman</div>
-            <div class="card" onclick="pindahMenu('halamanNFT')">💎 Koleksi</div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanReward">
-        <h2 class="page-title">🎁 Pusat Hadiah</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" onclick="klaimHarian()">
-                <h4>📅 Bonus Harian</h4>
-                <p>Klaim setiap hari dapat +200 Poin</p>
-            </div>
-            <div class="menu-item-box" onclick="klaimPencapaian()">
-                <h4>🏆 Pencapaian</h4>
-                <p>Selesaikan misi untuk poin ekstra</p>
-            </div>
-            <div class="menu-item-box" onclick="bukaLink('https://t.me/+GrupKomunitasKamu')">
-                <h4>👾 Komunitas Resmi</h4>
-                <p>Gabung dapat info airdrop & NFT</p>
-            </div>
-        </div>
-        <button class="btn-aksi" onclick="pindahMenu('halamanMain')">Kembali Main</button>
-    </div>
-
-    <div class="page" id="halamanTeman">
-        <h2 class="page-title">👥 Undang Teman</h2>
-        <div class="menu-content">
-            <div class="menu-item-box">
-                <h4>✅ Diundang: <span id="jumlahTeman">0</span> Orang</h4>
-                <p>Tiap teman gabung: Kamu +50 Poin, Mereka +25 Poin 🎉</p>
-            </div>
-            <div class="menu-item-box">
-                <h4>🔗 Tautan Undangan:</h4>
-                <p id="linkReferal" style="word-break:break-all; font-size:12px; margin-top:5px;"></p>
-            </div>
-            <div class="menu-item-box" onclick="salinLink()">
-                <h4>📋 Salin Tautan</h4>
-                <p>Siap dibagikan ke grup & teman</p>
-            </div>
-        </div>
-        <button class="btn-aksi" onclick="bagikanLink()">Bagikan ke Telegram</button>
-    </div>
-
-    <!-- BARU: Halaman Koleksi NFT & Integrasi Dompet -->
-    <div class="page" id="halamanNFT">
-        <h2 class="page-title">💎 Koleksi NFT Resmi</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" id="kotakHubungkanDompet">
-                <h4>🔗 Hubungkan Dompet</h4>
-                <p>Hubungkan Tonkeeper/Dompet Telegram untuk baca NFT & aktifkan bonus</p>
-                <button class="btn-aksi btn-kecil" onclick="hubungkanDompet()">Hubungkan Sekarang</button>
-            </div>
-            <div id="daftarNFT"></div>
-            <div class="menu-item-box" onclick="bukaLink('https://t.me/+GrupKomunitasKamu')">
-                <h4>🏪 Beli NFT Baru</h4>
-                <p>Buka grup marketplace resmi untuk beli Capy Miner Pass</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanToko">
-        <h2 class="page-title">🛒 Toko Upgrade</h2>
-        <div class="menu-content">
-            <div class="menu-item-box" onclick="beliUpgrade('ketuk')">
-                <h4>👆 Naikkan Kekuatan Ketuk</h4>
-                <p>Biaya: 500 Poin ➕ +1 poin/ketuk</p>
-            </div>
-            <div class="menu-item-box" onclick="beliUpgrade('energi')">
-                <h4>⚡ Tambah Batas Energi</h4>
-                <p>Biaya: 300 Poin ➕ +20 Energi Maks</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="page" id="halamanPeringkat">
-        <h2 class="page-title">🏆 Papan Peringkat</h2>
-        <div class="menu-content">
-            <div class="menu-item-box">
-                <h4>📊 Peringkat Kamu: Belum Terdaftar</h4>
-                <p>Kumpulkan lebih banyak poin untuk naik ke atas!</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="bottom-menu">
-        <div class="menu-nav active" onclick="pindahMenu('halamanMain')">
-            <span class="menu-icon">🎮</span>Main
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanTeman')">
-            <span class="menu-icon">👥</span>Teman
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanToko')">
-            <span class="menu-icon">🛒</span>Toko
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanNFT')">
-            <span class="menu-icon">💎</span>NFT
-        </div>
-        <div class="menu-nav" onclick="pindahMenu('halamanPeringkat')">
-            <span class="menu-icon">🏆</span>Ranking
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        tg.setHeaderColor('#3D2F00');
-        tg.setBackgroundColor('#1A1400');
-
-        // ==================== KONFIGURASI INTEGRASI NFT ====================
-        const KONFIGURASI = {
-            ALAMAT_KOLEKSI_NFT: "EQxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", // GANTI DENGAN ALAMAT KONTRAK NFT KAMU
-            DAFTAR_EFEK_NFT: {
-                "Biasa": { bonusPoin: 0.1, bonusEnergi: 0 },
-                "Jarang": { bonusPoin: 0.3, bonusEnergi: 20 },
-                "Langka": { bonusPoin: 0.6, bonusEnergi: 50 },
-                "Legendaris": { bonusPoin: 1.0, bonusEnergi: 100 }
-            }
-        };
-
-        // ==================== INISIALISASI TON CONNECT ====================
-        let tonConnect;
-        let alamatDompet = null;
-        let nftTerbaca = [];
-
-        async function inisialisasiTonConnect() {
-            tonConnect = new window.TonConnectUI({
-                manifestUrl: 'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json', // GANTI DENGAN MILIKMU NANTI
-                buttonRootId: null
-            });
-
-            tonConnect.onStatusChange((status) => {
-                if (status === 'connected') {
-                    alamatDompet = tonConnect.account.address;
-                    perbaruiStatusDompet(true);
-                    bacaNFTDompet();
-                } else {
-                    alamatDompet = null;
-                    nftTerbaca = [];
-                    perbaruiStatusDompet(false);
-                    terapkanBonusNFT();
-                }
-            });
-        }
-
-        function hubungkanDompet() {
-            tonConnect.openModal();
-        }
-
-        function perbaruiStatusDompet(terhubung) {
-            const dot = document.getElementById('dompetDot');
-            const teks = document.getElementById('statusDompet');
-            const kotakHubungkan = document.getElementById('kotakHubungkanDompet');
-
-            if (terhubung) {
-                dot.classList.remove('off'); dot.classList.add('on');
-                teks.innerText = `Terhubung: ${alamatDompet.slice(0,6)}...${alamatDompet.slice(-4)}`;
-                kotakHubungkan.style.display = 'none';
-            } else {
-                dot.classList.remove('on'); dot.classList.add('off');
-                teks.innerText = 'Belum terhubung';
-                kotakHubungkan.style.display = 'block';
-            }
-        }
-
-        // ==================== BACA NFT & TERAPKAN BONUS ====================
-        async function bacaNFTDompet() {
-            if (!alamatDompet) return;
-            tampilkanNotif('🔍 Sedang memeriksa koleksi NFT...');
-
-            try {
-                // Contoh panggilan API Getgems/TON Scan (sesuaikan nanti)
-                const res = await fetch(`https://api.getgems.io/v1/nft/items?owner=${alamatDompet}&collection=${KONFIGURASI.ALAMAT_KOLEKSI_NFT}`);
-                const data = await res.json();
-                
-                nftTerbaca = data.items || [];
-                tampilkanDaftarNFT();
-                terapkanBonusNFT();
-
-                if (nftTerbaca.length > 0) {
-                    tampilkanNotif(`✅ Ditemukan ${nftTerbaca.length} NFT resmi! Bonus aktif 🚀`);
-                } else {
-                    tampilkanNotif('ℹ️ Belum ada NFT resmi di dompetmu');
-                }
-            } catch (e) {
-                console.error('Gagal baca NFT:', e);
-                tampilkanNotif('⚠️ Cek NFT gagal, coba lagi nanti');
-            }
-        }
-
-        function tampilkanDaftarNFT() {
-            const wadah = document.getElementById('daftarNFT');
-            wadah.innerHTML = '';
-
-            if (nftTerbaca.length === 0) {
-                wadah.innerHTML = `<div class="menu-item-box"><p>Belum ada NFT resmi Capy Miner Pass di dompetmu.</p></div>`;
-                return;
-            }
-
-            nftTerbaca.forEach((nft, i) => {
-                const kelangkaan = nft.metadata.attributes.find(a => a.trait_type === 'Kelangkaan')?.value || 'Biasa';
-                const efek = KONFIGURASI.DAFTAR_EFEK_NFT[kelangkaan];
-
-                wadah.innerHTML += `
-                <div class="nft-card">
-                    <div class="nft-name">✅ ${nft.metadata.name} (${kelangkaan})</div>
-                    <div class="nft-effect">Efek: +${efek.bonusPoin*100}% poin/ketuk • +${efek.bonusEnergi} energi maks</div>
-                </div>`;
-            });
-        }
-
-        function terapkanBonusNFT() {
-            let totalBonusPoin = 1;
-            let totalBonusEnergi = 0;
-
-            nftTerbaca.forEach(nft => {
-                const kelangkaan = nft.metadata.attributes.find(a => a.trait_type === 'Kelangkaan')?.value || 'Biasa';
-                const efek = KONFIGURASI.DAFTAR_EFEK_NFT[kelangkaan];
-                totalBonusPoin += efek.bonusPoin;
-                totalBonusEnergi += efek.bonusEnergi;
-            });
-
-            // Terapkan ke data game
-            data.poinPerKetukDasar = data.poinPerKetuk || 1;
-            data.poinPerKetuk = Math.round(data.poinPerKetukDasar * totalBonusPoin);
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CAPYBARA TITAN</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.css">
     <style>
@@ -1144,38 +28,92 @@
             flex-direction: column;
             align-items: center;
             gap: 8px;
+            position: relative;
         }
-        .logo-header { width: 72px; height: 72px; object-fit: contain; }
-        .judul { font-size: 24px; font-weight: bold; color: #FFD700; }
-        .subjudul { font-size: 14px; opacity: 0.7; margin-top: 2px; }
+        .lang-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,215,0,0.2);
+            border: 1px solid #FFD700;
+            color: #FFD700;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .lang-menu {
+            position: absolute;
+            top: 40px;
+            right: 10px;
+            background: #2B2516;
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            display: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+        .lang-menu.show { display: block; }
+        .lang-option {
+            padding: 8px 15px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .lang-option:hover { background: rgba(255,215,0,0.2); }
 
-        .status-dompet {
+        .vip-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 4px;
+            font-weight: bold;
+        }
+        .vip-status.vip {
+            background: rgba(255,215,0,0.15);
+            border: 1px solid #FFD700;
+            color: #FFD700;
+        }
+        .vip-status.regular {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.7);
+        }
+
+        .logo-header { width: 72px; height: 72px; object-fit: contain; }
+        .title { font-size: 24px; font-weight: bold; color: #FFD700; }
+        .subtitle { font-size: 14px; opacity: 0.7; margin-top: 2px; }
+
+        .wallet-status {
             display: flex; align-items: center; justify-content: center; gap: 8px;
             padding: 8px; border-radius: 10px; margin-bottom: 20px; font-size: 13px;
             background: rgba(255,255,255,0.1);
         }
-        .titik { width: 10px; height: 10px; border-radius: 50%; }
-        .titik.off { background: #ff4444; }
-        .titik.on { background: #00FF80; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot.off { background: #ff4444; }
+        .dot.on { background: #00FF80; }
 
-        .wadah-miner {
+        .miner-container {
             position: relative;
             width: 280px; height: 280px;
             margin: 20px auto;
             cursor: pointer;
         }
-        .lingkaran-latar {
+        .bg-ring {
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
             background: rgba(255,215,0,0.1); border: 3px solid rgba(255,215,0,0.3);
         }
-        .lingkaran-cahaya {
+        .progress-ring {
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
             background: conic-gradient(#FFD700 0deg, transparent 0deg);
             mask: radial-gradient(transparent 65%, #000 66%);
             -webkit-mask: radial-gradient(transparent 65%, #000 66%);
             transition: all 1s linear;
         }
-        .isi-bulat {
+        .inner-circle {
             position: absolute; width: 82%; height: 82%; top: 9%; left: 9%; border-radius: 50%;
             background: radial-gradient(circle, #4A3F25, #2B2516);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -1183,41 +121,41 @@
             box-shadow: 0 0 40px rgba(255,215,0,0.4);
             transition: all 0.3s;
         }
-        .isi-bulat.aktif { border-color: #00FF80; box-shadow: 0 0 50px rgba(0,255,128,0.5); }
-        .isi-bulat.berhenti { border-color: #ff4444; box-shadow: 0 0 50px rgba(255,68,68,0.5); }
+        .inner-circle.active { border-color: #00FF80; box-shadow: 0 0 50px rgba(0,255,128,0.5); }
+        .inner-circle.stopped { border-color: #ff4444; box-shadow: 0 0 50px rgba(255,68,68,0.5); }
 
-        .ikon-miner { font-size: 50px; margin-bottom: 5px; }
-        .waktu-tengah { font-size: 26px; font-weight: bold; color: #FFD700; margin-bottom: 5px; }
-        .status-tengah { font-size: 13px; opacity: 0.9; text-align: center; padding: 0 10px; }
-        .kecepatan-tengah { font-size: 12px; color: #FFD700; margin-top: 8px; opacity: 0.8; }
+        .miner-icon { font-size: 40px; margin-bottom: 5px; }
+        .time-center { font-size: 22px; font-weight: bold; color: #FFD700; margin-bottom: 5px; }
+        .status-center { font-size: 12px; opacity: 0.9; text-align: center; padding: 0 10px; margin-bottom: 8px; }
+        .speed-center { font-size: 11px; color: #FFD700; opacity: 0.8; }
 
-        .tombol-aktifkan {
-            display: block; width: 220px; padding: 13px; margin: 10px auto 0;
-            border: none; border-radius: 50px; font-weight: bold; font-size: 15px;
-            cursor: pointer; transition: 0.2s;
+        .start-btn {
+            padding: 10px 25px; border: none; border-radius: 50px;
+            font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s;
+            margin-top: 8px;
         }
-        .tombol-aktifkan.aktif { background: #00FF80; color: #00331A; }
-        .tombol-aktifkan.berhenti { background: #FFD700; color: #1A1400; }
-        .tombol-aktifkan:disabled { opacity: 0.5; cursor: not-allowed; }
+        .start-btn.active { background: #00FF80; color: #00331A; }
+        .start-btn.stopped { background: #FFD700; color: #1A1400; }
+        .start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .skor { font-size: 52px; font-weight: bold; text-align: center; margin: 10px 0 5px; }
-        .info-skor { text-align: center; font-size: 14px; opacity: 0.8; margin-bottom: 10px; }
+        .score { font-size: 52px; font-weight: bold; text-align: center; margin: 10px 0 5px; }
+        .score-info { text-align: center; font-size: 14px; opacity: 0.8; margin-bottom: 10px; }
 
-        .kotak {
+        .box {
             background: rgba(255,255,255,0.08); border-radius: 12px; padding: 15px;
             margin-bottom: 12px; border: 1px solid rgba(255,215,0,0.2);
         }
-        .kotak h4 { margin-bottom: 5px; font-size: 15px; color: #FFD700; }
-        .kotak p { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+        .box h4 { margin-bottom: 5px; font-size: 15px; color: #FFD700; }
+        .box p { font-size: 13px; opacity: 0.8; line-height: 1.5; }
 
-        .tombol {
+        .btn {
             width: 100%; padding: 12px; border: none; border-radius: 10px;
             font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 8px;
             transition: 0.2s;
         }
-        .tombol.kuning { background: #FFD700; color: #1A1400; }
-        .tombol.hijau { background: #00FF80; color: #00331A; }
-        .tombol.abu { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); }
+        .btn.yellow { background: #FFD700; color: #1A1400; }
+        .btn.green { background: #00FF80; color: #00331A; }
+        .btn.gray { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); }
 
         .nft-item {
             background: rgba(0,255,128,0.1); border: 1px solid #00FF80;
@@ -1225,24 +163,24 @@
         }
         .nft-item span { font-size: 12px; opacity: 0.9; }
 
-        .daftar-peringkat { margin-top: 10px; }
-        .baris-peringkat {
+        .leaderboard { margin-top: 10px; }
+        .leader-row {
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px; border-bottom: 1px solid rgba(255,215,0,0.1); font-size: 13px;
         }
-        .baris-peringkat.pertama { color: #FFD700; font-weight: bold; }
-        .posisi { width: 25px; font-weight: bold; }
-        .nama { flex: 1; text-align: left; padding-left: 10px; }
-        .skor-peringkat { font-weight: bold; }
+        .leader-row.first { color: #FFD700; font-weight: bold; }
+        .rank { width: 25px; font-weight: bold; }
+        .name { flex: 1; text-align: left; padding-left: 10px; }
+        .score-val { font-weight: bold; }
 
-        .menu-bawah {
+        .bottom-menu {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
             display: flex; justify-content: space-around; padding: 10px 0 15px;
             border-top: 1px solid rgba(255,215,0,0.2);
         }
         .menu-item { text-align: center; font-size: 11px; opacity: 0.6; cursor: pointer; transition: 0.2s; }
-        .menu-item.aktif { color: #FFD700; opacity: 1; font-weight: bold; }
+        .menu-item.active { color: #FFD700; opacity: 1; font-weight: bold; }
         .menu-icon { font-size: 18px; display: block; margin-bottom: 2px; }
 
         .notif {
@@ -1250,142 +188,202 @@
             background: rgba(0,0,0,0.9); padding: 15px 25px; border-radius: 10px;
             border: 1px solid #FFD700; z-index: 9999; display: none; font-size: 15px;
         }
+
+        .ad-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 99999; padding: 20px;
+        }
+        .ad-overlay.show { display: flex; }
+        .ad-box {
+            background: #1a1a1a; border: 2px solid #FFD700; border-radius: 12px;
+            width: 90%; max-width: 320px; padding: 20px; text-align: center;
+        }
+        .ad-title { color: #FFD700; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .ad-text { font-size: 13px; opacity: 0.8; margin-bottom: 15px; }
+        .ad-close {
+            background: #00FF80; color: #00331A; border: none; padding: 10px 25px;
+            border-radius: 50px; font-weight: bold; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div class="page active" id="halamanUtama">
+    <div class="ad-overlay" id="adOverlay">
+        <div class="ad-box">
+            <div class="ad-title">📢 Advertisement</div>
+            <div class="ad-text">Watch ad to start mining! <br>(Replace with your ad provider later)</div>
+            <button class="ad-close" onclick="closeAd()">✅ Continue</button>
+        </div>
+    </div>
+
+    <div class="page active" id="pageHome">
         <div class="header">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
-            <div class="judul">CAPYBARA TITAN</div>
-            <div class="subjudul">Level <span id="level">1</span> • Poin: <span id="targetLevel">0/1000</span></div>
+            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
+            <div class="lang-menu" id="langMenu">
+                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
+                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
+            </div>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
+            <div class="title">CAPYBARA TITAN</div>
+            <div class="vip-status regular" id="vipStatus">👤 Regular Miner</div>
+            <div class="subtitle">Level <span id="level">1</span> • Points: <span id="targetLevel">0/1000</span></div>
         </div>
 
-        <div class="status-dompet">
-            <span class="titik" id="titikDompet"></span>
-            <span id="teksDompet">Belum hubungkan dompet</span>
+        <div class="wallet-status">
+            <span class="dot" id="dotWallet"></span>
+            <span id="textWallet">Wallet not connected</span>
         </div>
 
-        <div class="skor" id="skor">0</div>
-        <div class="info-skor">Total Poin Tambang</div>
+        <div class="score" id="score">0</div>
+        <div class="score-info">Total Mining Points</div>
 
-        <div class="wadah-miner" id="wadahMiner">
-            <div class="lingkaran-latar"></div>
-            <div class="lingkaran-cahaya" id="lingkaranCahaya"></div>
-            <div class="isi-bulat" id="isiBulat">
-                <div class="ikon-miner">⛏️</div>
-                <div class="waktu-tengah" id="waktuTengah">00:00:00</div>
-                <div class="status-tengah" id="statusTengah">Siap Dimulai</div>
-                <div class="kecepatan-tengah">+<span id="poinPerDetik">1</span> poin/detik</div>
+        <div class="miner-container" id="minerWrap">
+            <div class="bg-ring"></div>
+            <div class="progress-ring" id="progressRing"></div>
+            <div class="inner-circle" id="innerCircle">
+                <div class="miner-icon">⛏️</div>
+                <div class="time-center" id="timeCenter">00:00:00</div>
+                <div class="status-center" id="statusCenter">Ready to Start</div>
+                <div class="speed-center">+<span id="pointsPerSec">10</span> pts/h <small>(Max 30 pts/h)</small></div>
+                <button class="start-btn stopped" id="btnMiner" onclick="showAdThenStart()">Start Mining</button>
             </div>
         </div>
 
-        <button class="tombol-aktifkan" id="tombolMiner" onclick="aktifkanMiner()">Mulai Tambang</button>
-
-        <div class="kotak" style="margin-top:20px;">
-            <h4>📜 Cara Kerja</h4>
-            <p>✅ Lingkaran kuning menyusut seiring berjalannya waktu<br>
-               ✅ Wajib klik "Aktifkan Ulang" setelah waktu habis<br>
-               ✅ NFT menambah kecepatan & durasi tambang
+        <div class="box" style="margin-top:20px;">
+            <h4>📜 Mining Rules</h4>
+            <p>✅ Base: 10 points/hour<br>
+               ✅ +20% per <strong>active invited friend</strong><br>
+               ✅ Bonus only counts if friend started mining<br>
+               ✅ Max total bonus: 200% → <strong>Max 30 pts/h</strong><br>
+               ✅ NFTs add extra speed & duration
             </p>
         </div>
     </div>
 
-    <div class="page" id="halamanTeman">
+    <div class="page" id="pageInvite">
         <div class="header">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
-            <div class="judul">👥 Undang Teman</div>
-            <div class="subjudul">Dapat poin tambahan bersama teman</div>
+            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
+            <div class="lang-menu" id="langMenu">
+                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
+                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
+            </div>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
+            <div class="title">👥 Invite Friends</div>
+            <div class="vip-status regular" id="vipStatus2">👤 Regular Miner</div>
+            <div class="subtitle">Earn bonus points together</div>
         </div>
 
-        <div class="kotak">
-            <h4>📊 Hasil Undangan</h4>
-            <p>✅ Teman yang sudah bergabung: <span id="jumlahTeman">0</span> Orang</p>
-            <p>🎁 Hadiah: Kamu +500 poin • Teman baru +250 poin</p>
+        <div class="box">
+            <h4>📊 Invite Stats</h4>
+            <p>✅ Active miners invited: <span id="friendCount">0</span></p>
+            <p>🎁 Reward: You +500 pts • New user +250 pts</p>
+            <p>⚡ Speed bonus: +20% per active miner | <strong>Max total +200%</strong></p>
+            <p style="font-size:12px; opacity:0.7;">⚠️ Bonus only applies when your friend starts mining at least once</p>
         </div>
 
-        <div class="kotak">
-            <h4>🔗 Tautan Undanganmu</h4>
-            <p id="tautanUndang" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0,0.3); border-radius:5px; margin-top:5px;"></p>
-            <button class="tombol kuning" onclick="salinTautan()">📋 Salin Tautan</button>
-            <button class="tombol abu" onclick="bagikanTautan()">📤 Bagikan ke Telegram</button>
+        <div class="box">
+            <h4>🔗 Your Invite Link</h4>
+            <p id="inviteLink" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0,0.3); border-radius:5px; margin-top:5px;"></p>
+            <button class="btn yellow" onclick="copyLink()">📋 Copy Link</button>
+            <button class="btn gray" onclick="shareLink()">📤 Share to Telegram</button>
         </div>
     </div>
 
-    <div class="page" id="halamanPeringkat">
+    <div class="page" id="pageRank">
         <div class="header">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
-            <div class="judul">🏆 Papan Peringkat</div>
-            <div class="subjudul">Penambang Terbaik</div>
+            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
+            <div class="lang-menu" id="langMenu">
+                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
+                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
+            </div>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
+            <div class="title">🏆 Leaderboard</div>
+            <div class="vip-status regular" id="vipStatus3">👤 Regular Miner</div>
+            <div class="subtitle">Top Miners</div>
         </div>
 
-        <div class="kotak">
-            <h4>Posisi Kamu</h4>
-            <p id="posisiKamu">Belum masuk peringkat</p>
+        <div class="box">
+            <h4>Your Rank</h4>
+            <p id="yourRank">Not ranked yet</p>
         </div>
 
-        <div class="daftar-peringkat" id="daftarPeringkat">
-            <div class="baris-peringkat pertama">
-                <div class="posisi">1</div>
-                <div class="nama">Penambang Utama</div>
-                <div class="skor-peringkat">999.999</div>
+        <div class="leaderboard" id="rankList">
+            <div class="leader-row first">
+                <div class="rank">1</div>
+                <div class="name">Top Miner</div>
+                <div class="score-val">999,999</div>
             </div>
-            <div class="baris-peringkat">
-                <div class="posisi">2</div>
-                <div class="nama">Kapten Capy</div>
-                <div class="skor-peringkat">750.000</div>
+            <div class="leader-row">
+                <div class="rank">2</div>
+                <div class="name">Capy Captain</div>
+                <div class="score-val">750,000</div>
             </div>
-            <div class="baris-peringkat">
-                <div class="posisi">3</div>
-                <div class="nama">Penambang Aktif</div>
-                <div class="skor-peringkat">500.000</div>
+            <div class="leader-row">
+                <div class="rank">3</div>
+                <div class="name">Active Miner</div>
+                <div class="score-val">500,000</div>
             </div>
-            <div class="baris-peringkat">
-                <div class="posisi">...</div>
-                <div class="nama">Ayo mulai menambang!</div>
-                <div class="skor-peringkat">0</div>
+            <div class="leader-row">
+                <div class="rank">...</div>
+                <div class="name">Start mining now!</div>
+                <div class="score-val">0</div>
             </div>
         </div>
     </div>
 
-    <div class="page" id="halamanKoleksi">
+    <div class="page" id="pageNft">
         <div class="header">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
-            <div class="judul">🎒 Koleksi Saya</div>
-            <div class="subjudul">NFT Capy Miner Pass Resmi</div>
+            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
+            <div class="lang-menu" id="langMenu">
+                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
+                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
+            </div>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
+            <div class="title">🎒 My Collection</div>
+            <div class="vip-status regular" id="vipStatus4">👤 Regular Miner</div>
+            <div class="subtitle">Official Capy Miner Pass NFT</div>
         </div>
 
-        <div class="kotak">
-            <h4>🔗 Hubungkan Dompet</h4>
-            <p>Hubungkan Tonkeeper/Dompet Telegram untuk baca NFT</p>
-            <button class="tombol hijau" onclick="hubungkanDompet()">Hubungkan Sekarang</button>
+        <div class="box">
+            <h4>🔗 Connect Wallet</h4>
+            <p>Connect Tonkeeper/Telegram Wallet to read your NFTs</p>
+            <button class="btn green" onclick="connectWallet()">Connect Now</button>
         </div>
 
-        <div id="daftarNFT">
-            <div class="kotak"><p style="text-align:center; opacity:0.7;">Belum ada NFT terdeteksi</p></div>
+        <div id="nftList">
+            <div class="box"><p style="text-align:center; opacity:0.7;">No NFTs detected yet</p></div>
         </div>
     </div>
 
-    <div class="page" id="halamanPasar">
+    <div class="page" id="pageMarket">
         <div class="header">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
-            <div class="judul">🏪 Pasar NFT</div>
-            <div class="subjudul">Beli NFT resmi percepat tambang</div>
+            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
+            <div class="lang-menu" id="langMenu">
+                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
+                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
+            </div>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
+            <div class="title">🏪 NFT Market</div>
+            <div class="vip-status regular" id="vipStatus5">👤 Regular Miner</div>
+            <div class="subtitle">Buy official NFTs to boost mining</div>
         </div>
 
-        <div class="kotak">
-            <h4>⚡ Efek Tiap NFT</h4>
-            <p>✅ Biasa: +10% kecepatan<br>✅ Jarang: +30% • +2 jam<br>✅ Langka: +60% • +4 jam<br>✅ Legendaris: +100% • +6 jam</p>
+        <div class="box">
+            <h4>⚡ NFT Effects</h4>
+            <p>✅ Common: +10% speed<br>✅ Rare: +30% • +2 hours<br>✅ Epic: +60% • +4 hours<br>✅ Legendary: +100% • +6 hours</p>
+            <p><strong>⚠️ All bonuses capped at total +200% → Max 30 pts/h</strong></p>
         </div>
-        <button class="tombol kuning" onclick="bukaTautan('https://getgems.io/')">Buka Getgems</button>
+        <button class="btn yellow" onclick="openLink('https://getgems.io/')">Open Getgems</button>
     </div>
 
-    <div class="menu-bawah">
-        <div class="menu-item aktif" onclick="pindahHalaman('halamanUtama', this)"><span class="menu-icon">⛏️</span>Tambang</div>
-        <div class="menu-item" onclick="pindahHalaman('halamanTeman', this)"><span class="menu-icon">👥</span>Teman</div>
-        <div class="menu-item" onclick="pindahHalaman('halamanPeringkat', this)"><span class="menu-icon">🏆</span>Peringkat</div>
-        <div class="menu-item" onclick="pindahHalaman('halamanKoleksi', this)"><span class="menu-icon">💎</span>NFT</div>
-        <div class="menu-item" onclick="pindahHalaman('halamanPasar', this)"><span class="menu-icon">🛒</span>Pasar</div>
+    <div class="bottom-menu">
+        <div class="menu-item active" onclick="switchPage('pageHome', this)"><span class="menu-icon">⛏️</span>Mine</div>
+        <div class="menu-item" onclick="switchPage('pageInvite', this)"><span class="menu-icon">👥</span>Friends</div>
+        <div class="menu-item" onclick="switchPage('pageRank', this)"><span class="menu-icon">🏆</span>Ranks</div>
+        <div class="menu-item" onclick="switchPage('pageNft', this)"><span class="menu-icon">💎</span>NFT</div>
+        <div class="menu-item" onclick="switchPage('pageMarket', this)"><span class="menu-icon">🛒</span>Market</div>
     </div>
 
     <div class="notif" id="notif"></div>
@@ -1397,124 +395,277 @@ tg.expand();
 tg.setHeaderColor('#2B2516');
 tg.setBackgroundColor('#2B2516');
 
-const KONFIG = {
-    ALAMAT_KOLEKSI: "EQ_______________________________", 
-    NAMA_BOT: "capytap_pibot",
-    DURASI_DASAR: 12 * 60 * 60,
-    KECEPATAN_DASAR: 1,
-    EFEK_NFT: {
-        "Biasa": { kecepatan: 0.1, durasi: 0 },
-        "Jarang": { kecepatan: 0.3, durasi: 2*3600 },
-        "Langka": { kecepatan: 0.6, durasi: 4*3600 },
-        "Legendaris": { kecepatan: 1.0, durasi: 6*3600 }
+// === PENGATURAN UTAMA ===
+const BASE_POINTS_PER_HOUR = 10;
+const REF_BONUS_PER_REF = 0.20; // +20% per teman yang aktif menambang
+const MAX_TOTAL_BONUS_RATE = 2.00; // Batas maksimal total bonus 200%
+const MAX_POINTS_PER_HOUR = BASE_POINTS_PER_HOUR * (1 + MAX_TOTAL_BONUS_RATE); // 30 poin/jam
+
+let currentLang = localStorage.getItem('capyLang') || 'en';
+const translations = {
+    en: {
+        walletNotConn: "Wallet not connected",
+        connected: "Connected",
+        ready: "Ready to Start",
+        mining: "⛏️ Mining...",
+        stopped: "⏹️ Mining Stopped",
+        start: "Start Mining",
+        restart: "🔄 Restart",
+        copied: "✅ Link copied!",
+        adNote: "Watch ad to start mining!",
+        adTitle: "📢 Advertisement",
+        adBtn: "✅ Continue",
+        regular: "👤 Regular Miner",
+        vip: "👑 VIP Miner"
+    },
+    id: {
+        walletNotConn: "Dompet belum terhubung",
+        connected: "Terhubung",
+        ready: "Siap Dimulai",
+        mining: "⛏️ Sedang Menambang",
+        stopped: "⏹️ Tambang Berhenti",
+        start: "Mulai Tambang",
+        restart: "🔄 Aktifkan Ulang",
+        copied: "✅ Tautan disalin!",
+        adNote: "Tonton iklan untuk mulai menambang!",
+        adTitle: "📢 Iklan",
+        adBtn: "✅ Lanjutkan",
+        regular: "👤 Penambang Biasa",
+        vip: "👑 Penambang VIP"
     }
 };
 
-let tonConnect, alamatDompet = null, daftarNFTValid = [];
-let intervalMiner = null;
-const userData = tg.initDataUnsafe || {};
-const userId = userData.user?.id || `guest_${Date.now()}`;
-let referalDari = userData.startParam || null;
+function toggleLang() { document.getElementById('langMenu').classList.toggle('show'); }
+function changeLang(code) {
+    currentLang = code;
+    localStorage.setItem('capyLang', code);
+    document.getElementById('langMenu').classList.remove('show');
+    applyLang();
+}
+function applyLang() {
+    const t = translations[currentLang];
+    document.getElementById('textWallet').innerText = t.walletNotConn;
+    updateVipStatus();
+    checkMinerStatus();
+}
 
-let data = JSON.parse(localStorage.getItem('capyTitanMiner_' + userId)) || {
-    poin: referalDari ? 250 : 0, level:1, targetBerikut:1000,
-    temanDiundang:0, dapatBonusReferal:false,
-    waktuSelesaiTambang:0, kecepatanTambang:KONFIG.KECEPATAN_DASAR, durasiTambang:KONFIG.DURASI_DASAR
+const CONFIG = {
+    COLLECTION_ADDR: "EQ_______________________________", 
+    BOT_NAME: "capytap_pibot",
+    BASE_DURATION: 12 * 60 * 60,
+    BASE_SPEED: BASE_POINTS_PER_HOUR / 3600, // Ubah ke poin per detik
+    NFT_BONUS: {
+        "Common": { speed: 0.1, duration: 0 },
+        "Rare": { speed: 0.3, duration: 2*3600 },
+        "Epic": { speed: 0.6, duration: 4*3600 },
+        "Legendary": { speed: 1.0, duration: 6*3600 }
+    }
 };
 
-const elSkor = document.getElementById('skor');
+let tonConnect, walletAddr = null, validNfts = [];
+let minerInterval = null;
+const userData = tg.initDataUnsafe || {};
+const userId = userData.user?.id || `guest_${Date.now()}`;
+let refCode = userData.startParam || null;
+
+let data = JSON.parse(localStorage.getItem('capyTitanMiner_' + userId)) || {
+    points: refCode ? 250 : 0, level:1, nextTarget:1000,
+    invites:0, activeRefs:0, gotRefBonus:false,
+    endTime:0, mineSpeed:CONFIG.BASE_SPEED, mineDuration:CONFIG.BASE_DURATION,
+    hasStartedMining: false // Tanda pengguna sudah pernah mulai menambang
+};
+
+const elScore = document.getElementById('score');
 const elLevel = document.getElementById('level');
 const elTarget = document.getElementById('targetLevel');
-const elLingkaranCahaya = document.getElementById('lingkaranCahaya');
-const elIsiBulat = document.getElementById('isiBulat');
-const elWaktuTengah = document.getElementById('waktuTengah');
-const elStatusTengah = document.getElementById('statusTengah');
-const elTombolMiner = document.getElementById('tombolMiner');
-const elPoinPerDetik = document.getElementById('poinPerDetik');
-const elTitikDompet = document.getElementById('titikDompet');
-const elTeksDompet = document.getElementById('teksDompet');
-const elDaftarNFT = document.getElementById('daftarNFT');
-const elJumlahTeman = document.getElementById('jumlahTeman');
-const elTautanUndang = document.getElementById('tautanUndang');
+const elProgressRing = document.getElementById('progressRing');
+const elInnerCircle = document.getElementById('innerCircle');
+const elTimeCenter = document.getElementById('timeCenter');
+const elStatusCenter = document.getElementById('statusCenter');
+const elBtnMiner = document.getElementById('btnMiner');
+const elPointsPerSec = document.getElementById('pointsPerSec');
+const elDotWallet = document.getElementById('dotWallet');
+const elTextWallet = document.getElementById('textWallet');
+const elNftList = document.getElementById('nftList');
+const elFriendCount = document.getElementById('friendCount');
+const elInviteLink = document.getElementById('inviteLink');
 const elNotif = document.getElementById('notif');
+const elAdOverlay = document.getElementById('adOverlay');
+const allVipStatus = [document.getElementById('vipStatus'), document.getElementById('vipStatus2'), document.getElementById('vipStatus3'), document.getElementById('vipStatus4'), document.getElementById('vipStatus5')];
 
-function tampilkanNotif(pesan) { elNotif.innerText = pesan; elNotif.style.display='block'; setTimeout(()=>elNotif.style.display='none',2500); }
-function pindahHalaman(id, elm) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('aktif')); elm.classList.add('aktif'); }
-function bukaTautan(url) { tg.openLink(url); }
-function salinTautan() { navigator.clipboard.writeText(elTautanUndang.innerText); tampilkanNotif('✅ Tautan disalin!'); }
-function bagikanTautan() { tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(elTautanUndang.innerText)}&text=${encodeURIComponent('Tambang CAPYBARA TITAN 🚀')}`); }
-function formatWaktu(detik) { const j=Math.floor(detik/3600), m=Math.floor((detik%3600)/60), d=detik%60; return `${j.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${d.toString().padStart(2,'0')}`; }
+function updateVipStatus() {
+    const t = translations[currentLang];
+    if(validNfts.length > 0) {
+        allVipStatus.forEach(el => {
+            el.className = 'vip-status vip';
+            el.innerText = t.vip;
+        });
+    } else {
+        allVipStatus.forEach(el => {
+            el.className = 'vip-status regular';
+            el.innerText = t.regular;
+        });
+    }
+}
 
-function perbaruiUI() {
-    elSkor.innerText = data.poin.toLocaleString('id-ID');
+function showNotif(msg) { elNotif.innerText = msg; elNotif.style.display='block'; setTimeout(()=>elNotif.style.display='none',2500); }
+function switchPage(id, elm) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active')); elm.classList.add('active'); }
+function openLink(url) { tg.openLink(url); }
+function copyLink() { navigator.clipboard.writeText(elInviteLink.innerText); showNotif(translations[currentLang].copied); }
+function shareLink() { tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(elInviteLink.innerText)}&text=${encodeURIComponent('Mining CAPYBARA TITAN 🚀')}`); }
+function formatTime(sec) { let h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60; return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
+
+// === PERHITUNGAN KECEPATAN DENGAN PEMBATASAN & SYARAT AKTIF ===
+function calculateFinalSpeed() {
+    let totalBonusRate = 0;
+
+    // Bonus Referral: HANYA dihitung dari teman yang SUDAH MENAMBANG
+    totalBonusRate += data.activeRefs * REF_BONUS_PER_REF;
+
+    // Bonus NFT
+    validNfts.forEach(nft=>{
+        const rarity = nft.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';
+        const b = CONFIG.NFT_BONUS[rarity];
+        totalBonusRate += b.speed;
+    });
+
+    // Batasi total bonus agar tidak melebihi batas maksimal
+    totalBonusRate = Math.min(totalBonusRate, MAX_TOTAL_BONUS_RATE);
+
+    // Hitung kecepatan akhir
+    const finalPerHour = BASE_POINTS_PER_HOUR * (1 + totalBonusRate);
+    const finalPerSec = finalPerHour / 3600;
+
+    return { finalPerHour, finalPerSec };
+}
+
+function updateUI() {
+    const speed = calculateFinalSpeed();
+    elScore.innerText = data.points.toLocaleString('en-US');
     elLevel.innerText = data.level;
-    elTarget.innerText = `${data.poin} / ${data.targetBerikut}`;
-    elJumlahTeman.innerText = data.temanDiundang;
-    elTautanUndang.innerText = `https://t.me/${KONFIG.NAMA_BOT}?start=${userId}`;
-    elPoinPerDetik.innerText = data.kecepatanTambang.toFixed(1);
+    elTarget.innerText = `${data.points} / ${data.nextTarget}`;
+    elFriendCount.innerText = data.activeRefs;
+    elInviteLink.innerText = `https://t.me/${CONFIG.BOT_NAME}?start=${userId}`;
+    elPointsPerSec.innerText = speed.finalPerHour.toFixed(1);
+    data.mineSpeed = speed.finalPerSec;
     localStorage.setItem('capyTitanMiner_' + userId, JSON.stringify(data));
 }
 
-function cekStatusMiner() {
-    const sekarang = Math.floor(Date.now()/1000);
-    const sisa = data.waktuSelesaiTambang - sekarang;
-    const totalDurasi = data.durasiTambang;
+function showAdThenStart() { elAdOverlay.classList.add('show'); }
+function closeAd() { elAdOverlay.classList.remove('show'); startMining(); }
 
-    if (sisa > 0) {
-        const persen = sisa / totalDurasi;
-        const sudut = 360 * persen;
-        elLingkaranCahaya.style.background = `conic-gradient(#FFD700 ${sudut}deg, transparent ${sudut}deg)`;
-        
-        elIsiBulat.className = 'isi-bulat aktif';
-        elWaktuTengah.innerText = formatWaktu(sisa);
-        elStatusTengah.innerText = '⛏️ Sedang Menambang';
-        elTombolMiner.innerText = 'Sedang Berjalan...';
-        elTombolMiner.className = 'tombol-aktifkan aktif';
-        elTombolMiner.disabled = true;
+function checkMinerStatus() {
+    const now = Math.floor(Date.now()/1000);
+    const remain = data.endTime - now;
+    const totalDur = data.mineDuration;
+    const t = translations[currentLang];
+
+    if (remain > 0) {
+        const pct = remain / totalDur;
+        const deg = 360 * pct;
+        elProgressRing.style.background = `conic-gradient(#FFD700 ${deg}deg, transparent ${deg}deg)`;
+        elInnerCircle.className = 'inner-circle active';
+        elTimeCenter.innerText = formatTime(remain);
+        elStatusCenter.innerText = t.mining;
+        elBtnMiner.innerText = t.mining;
+        elBtnMiner.className = 'start-btn active';
+        elBtnMiner.disabled = true;
         return true;
     } else {
-        elLingkaranCahaya.style.background = `conic-gradient(#FFD700 0deg, transparent 0deg)`;
-        
-        elIsiBulat.className = 'isi-bulat berhenti';
-        elWaktuTengah.innerText = '00:00:00';
-        elStatusTengah.innerText = '⏹️ Tambang Berhenti';
-        elTombolMiner.innerText = '🔄 Aktifkan Ulang';
-        elTombolMiner.className = 'tombol-aktifkan berhenti';
-        elTombolMiner.disabled = false;
+        elProgressRing.style.background = `conic-gradient(#FFD700 0deg, transparent 0deg)`;
+        elInnerCircle.className = 'inner-circle stopped';
+        elTimeCenter.innerText = '00:00:00';
+        elStatusCenter.innerText = t.stopped;
+        elBtnMiner.innerText = t.restart;
+        elBtnMiner.className = 'start-btn stopped';
+        elBtnMiner.disabled = false;
         return false;
     }
 }
 
-function aktifkanMiner() {
-    const sekarang = Math.floor(Date.now()/1000);
-    data.waktuSelesaiTambang = sekarang + data.durasiTambang;
-    cekStatusMiner();
-    perbaruiUI();
-    tampilkanNotif('✅ Tambang diaktifkan! Lingkaran akan menyusut perlahan');
+function startMining() {
+    const now = Math.floor(Date.now()/1000);
+    
+    // Tandai pengguna ini sudah aktif menambang
+    if(!data.hasStartedMining) {
+        data.hasStartedMining = true;
+        // Beritahu pengundang bahwa referal ini sudah aktif
+        if(refCode) {
+            const inviterData = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode)) || null;
+            if(inviterData) {
+                inviterData.activeRefs = (inviterData.activeRefs || 0) + 1;
+                localStorage.setItem('capyTitanMiner_' + refCode, JSON.stringify(inviterData));
+            }
+        }
+    }
+
+    data.endTime = now + data.mineDuration;
+    checkMinerStatus();
+    updateUI();
+    showNotif('✅ Mining started!');
     if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 }
 
-function jalankanOtomatis() {
-    intervalMiner = setInterval(()=>{
-        if(cekStatusMiner()) {
-            data.poin += data.kecepatanTambang;
-            if(data.poin >= data.targetBerikut) { data.level++; data.targetBerikut = Math.round(data.targetBerikut*1.8); tampilkanNotif(`🎉 Naik Level ${data.level}!`); }
-            perbaruiUI();
+function runAuto() {
+    minerInterval = setInterval(()=>{
+        if(checkMinerStatus()) {
+            data.points += data.mineSpeed;
+            if(data.points >= data.nextTarget) { data.level++; data.nextTarget = Math.round(data.nextTarget*1.8); showNotif(`🎉 Level ${data.level} Up!`); }
+            updateUI();
         }
     }, 1000);
 }
 
-if(referalDari && !data.dapatBonusReferal) {
-    const refData = JSON.parse(localStorage.getItem('capyTitanMiner_' + referalDari)) || null;
-    if(refData) { refData.poin += 500; refData.temanDiundang++; localStorage.setItem('capyTitanMiner_' + referalDari, JSON.stringify(refData)); }
-    data.dapatBonusReferal = true;
-    tampilkanNotif('🎉 Selamat datang! +250 poin bonus!');
+if(refCode && !data.gotRefBonus) {
+    const refData = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode)) || null;
+    if(refData) { refData.points += 500; refData.invites++; localStorage.setItem('capyTitanMiner_' + refCode, JSON.stringify(refData)); }
+    data.gotRefBonus = true;
+    showNotif('🎉 Welcome! +250 bonus points!');
 }
 
-async function inisialisasiDompet() {
+async function initWallet() {
     tonConnect = new window.TonConnectUI({ manifestUrl: 'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json', buttonRootId: null });
-    tonConnect.onStatusChange(async (sts)=>{
-        if(sts==='connected') { alamatDompet = tonConnect.account.address; elTitikDompet.className='titik on'; elTeksDompet.innerText=`Terhubung: ${alamatDompet.slice(0,6)}...`; await bacaNFT(); }
-        else { alamatDompet=null;  dataPengundang.temanDiundang += 1;
-                localStorage.setItem(`capyTap_${referalDari}`, JSON.stringify(dataPengundang));
-    
+    tonConnect.onStatusChange(async (stat)=>{
+        if(stat==='connected') { walletAddr = tonConnect.account.address; elDotWallet.className='dot on'; elTextWallet.innerText=`${translations[currentLang].connected}: ${walletAddr.slice(0,6)}...`; await loadNfts(); }
+        else { walletAddr=null; validNfts=[]; elDotWallet.className='dot off'; elTextWallet.innerText=translations[currentLang].walletNotConn; applyNftBonus(); updateVipStatus(); }
+    });
+}
+function connectWallet() { tonConnect.openModal(); }
+async function loadNfts() {
+    if(!walletAddr || CONFIG.COLLECTION_ADDR.includes('_')) { showNotif('⚠️ Contract not set'); return; }
+    showNotif('🔍 Checking NFTs...');
+    try {
+        const res = await fetch(`https://api.getgems.io/v1/nft/items?owner=${walletAddr}&collection=${CONFIG.COLLECTION_ADDR}&limit=50`);
+        const out = await res.json();
+        validNfts = out.items || [];
+        renderNfts();
+        applyNftBonus();
+        updateVipStatus();
+        showNotif(validNfts.length>0 ? `✅ Found ${validNfts.length} NFTs!` : 'ℹ️ No NFTs found');
+    } catch { showNotif('⚠️ Failed to load NFTs'); }
+}
+function renderNfts() {
+    elNftList.innerHTML = '';
+    if(validNfts.length===0) { elNftList.innerHTML=`<div class="box"><p style="text-align:center;opacity:0.7;">No official NFTs yet</p></div>`; return; }
+    validNfts.forEach(nft=>{
+        const rarity = nft.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';
+        const b = CONFIG.NFT_BONUS[rarity];
+        elNftList.innerHTML += `<div class="nft-item"><h4>${nft.metadata.name||'Capy Miner Pass'}</h4><span>${rarity} • +${b.speed*100}% • +${b.duration/3600}h</span></div>`;
+    });
+}
+function applyNftBonus() {
+    updateUI();
+}
+
+async function initApp() {
+    await initWallet();
+    updateUI();
+    applyLang();
+    updateVipStatus();
+    checkMinerStatus();
+    runAuto();
+}
+initApp();
+</script>
+</body>
+</html>
