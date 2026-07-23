@@ -1114,49 +1114,407 @@
             // Terapkan ke data game
             data.poinPerKetukDasar = data.poinPerKetuk || 1;
             data.poinPerKetuk = Math.round(data.poinPerKetukDasar * totalBonusPoin);
-            data.energiMaksDasar = data.energiMaksDasar || 100;
-            data.energiMaks = data.energiMaksDasar + totalBonusEnergi;
-
-            // Tampilkan info bonus
-            const infoBonus = document.getElementById('infoBonus');
-            if (totalBonusPoin > 1 || totalBonusEnergi > 0) {
-                infoBonus.style.display = 'block';
-                infoBonus.innerHTML = `✨ Bonus NFT Aktif: +${Math.round((totalBonusPoin-1)*100)}% Poin • +${totalBonusEnergi} Energi`;
-            } else {
-                infoBonus.style.display = 'none';
-            }
-
-            updateUI();
-            simpanData();
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CAPYBARA TITAN</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
+        body {
+            background: linear-gradient(180deg, #2B2516, #4A3F25);
+            min-height: 100vh;
+            color: white;
+            padding-bottom: 90px;
+            overflow-x: hidden;
         }
 
-        // ==================== DATA GAME DASAR ====================
-        const NAMA_BOT = 'capytap_pibot';
-        const userData = tg.initDataUnsafe || {};
-        const userId = userData.user?.id || `guest_${Date.now()}`;
-        let referalDari = null;
-
-        if(userData.startParam) {
-            referalDari = userData.startParam;
-            localStorage.setItem(`ref_${userId}`, referalDari);
-            tampilkanPemberitahuanReferal();
-        } else {
-            referalDari = localStorage.getItem(`ref_${userId}`) || null;
+        .page { display: none; padding: 15px; }
+        .page.active { display: block; }
+        .header { 
+            text-align: center; 
+            padding: 15px 0; 
+            border-bottom: 1px solid rgba(255,215,0,0.2); 
+            margin-bottom: 15px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
+        .logo-header { width: 72px; height: 72px; object-fit: contain; }
+        .judul { font-size: 24px; font-weight: bold; color: #FFD700; }
+        .subjudul { font-size: 14px; opacity: 0.7; margin-top: 2px; }
 
-        let data = JSON.parse(localStorage.getItem(`capyTap_${userId}`)) || {
-            poin: referalDari ? 25 : 0,
-            energi: 100, energiMaks: 100, poinPerKetuk: 1, poinPerKetukDasar: 1, energiMaksDasar: 100,
-            level: 1, poinKeLevelBerikut: 100, klaimHarianTerakhir: null,
-            temanDiundang: 0, dapatBonusReferal: false
-        };
+        .status-dompet {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 8px; border-radius: 10px; margin-bottom: 20px; font-size: 13px;
+            background: rgba(255,255,255,0.1);
+        }
+        .titik { width: 10px; height: 10px; border-radius: 50%; }
+        .titik.off { background: #ff4444; }
+        .titik.on { background: #00FF80; }
 
-        if(referalDari && !data.dapatBonusReferal) {
-            const dataPengundang = JSON.parse(localStorage.getItem(`capyTap_${referalDari}`)) || null;
-            if(dataPengundang) {
-                dataPengundang.poin += 50;
-                dataPengundang.temanDiundang += 1;
-                localStorage.setItem(`capyTap_${referalDari}`, JSON.stringify(dataPengundang));
-           dataPengundang.temanDiundang += 1;
+        .wadah-miner {
+            position: relative;
+            width: 280px; height: 280px;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+        .lingkaran-latar {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            background: rgba(255,215,0,0.1); border: 3px solid rgba(255,215,0,0.3);
+        }
+        .lingkaran-cahaya {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            background: conic-gradient(#FFD700 0deg, transparent 0deg);
+            mask: radial-gradient(transparent 65%, #000 66%);
+            -webkit-mask: radial-gradient(transparent 65%, #000 66%);
+            transition: all 1s linear;
+        }
+        .isi-bulat {
+            position: absolute; width: 82%; height: 82%; top: 9%; left: 9%; border-radius: 50%;
+            background: radial-gradient(circle, #4A3F25, #2B2516);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 4px solid #FFD700;
+            box-shadow: 0 0 40px rgba(255,215,0,0.4);
+            transition: all 0.3s;
+        }
+        .isi-bulat.aktif { border-color: #00FF80; box-shadow: 0 0 50px rgba(0,255,128,0.5); }
+        .isi-bulat.berhenti { border-color: #ff4444; box-shadow: 0 0 50px rgba(255,68,68,0.5); }
+
+        .ikon-miner { font-size: 50px; margin-bottom: 5px; }
+        .waktu-tengah { font-size: 26px; font-weight: bold; color: #FFD700; margin-bottom: 5px; }
+        .status-tengah { font-size: 13px; opacity: 0.9; text-align: center; padding: 0 10px; }
+        .kecepatan-tengah { font-size: 12px; color: #FFD700; margin-top: 8px; opacity: 0.8; }
+
+        .tombol-aktifkan {
+            display: block; width: 220px; padding: 13px; margin: 10px auto 0;
+            border: none; border-radius: 50px; font-weight: bold; font-size: 15px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .tombol-aktifkan.aktif { background: #00FF80; color: #00331A; }
+        .tombol-aktifkan.berhenti { background: #FFD700; color: #1A1400; }
+        .tombol-aktifkan:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .skor { font-size: 52px; font-weight: bold; text-align: center; margin: 10px 0 5px; }
+        .info-skor { text-align: center; font-size: 14px; opacity: 0.8; margin-bottom: 10px; }
+
+        .kotak {
+            background: rgba(255,255,255,0.08); border-radius: 12px; padding: 15px;
+            margin-bottom: 12px; border: 1px solid rgba(255,215,0,0.2);
+        }
+        .kotak h4 { margin-bottom: 5px; font-size: 15px; color: #FFD700; }
+        .kotak p { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+
+        .tombol {
+            width: 100%; padding: 12px; border: none; border-radius: 10px;
+            font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 8px;
+            transition: 0.2s;
+        }
+        .tombol.kuning { background: #FFD700; color: #1A1400; }
+        .tombol.hijau { background: #00FF80; color: #00331A; }
+        .tombol.abu { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); }
+
+        .nft-item {
+            background: rgba(0,255,128,0.1); border: 1px solid #00FF80;
+            border-radius: 10px; padding: 12px; margin-bottom: 10px;
+        }
+        .nft-item span { font-size: 12px; opacity: 0.9; }
+
+        .daftar-peringkat { margin-top: 10px; }
+        .baris-peringkat {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; border-bottom: 1px solid rgba(255,215,0,0.1); font-size: 13px;
+        }
+        .baris-peringkat.pertama { color: #FFD700; font-weight: bold; }
+        .posisi { width: 25px; font-weight: bold; }
+        .nama { flex: 1; text-align: left; padding-left: 10px; }
+        .skor-peringkat { font-weight: bold; }
+
+        .menu-bawah {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 10px 0 15px;
+            border-top: 1px solid rgba(255,215,0,0.2);
+        }
+        .menu-item { text-align: center; font-size: 11px; opacity: 0.6; cursor: pointer; transition: 0.2s; }
+        .menu-item.aktif { color: #FFD700; opacity: 1; font-weight: bold; }
+        .menu-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+
+        .notif {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            background: rgba(0,0,0,0.9); padding: 15px 25px; border-radius: 10px;
+            border: 1px solid #FFD700; z-index: 9999; display: none; font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page active" id="halamanUtama">
+        <div class="header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
+            <div class="judul">CAPYBARA TITAN</div>
+            <div class="subjudul">Level <span id="level">1</span> • Poin: <span id="targetLevel">0/1000</span></div>
+        </div>
+
+        <div class="status-dompet">
+            <span class="titik" id="titikDompet"></span>
+            <span id="teksDompet">Belum hubungkan dompet</span>
+        </div>
+
+        <div class="skor" id="skor">0</div>
+        <div class="info-skor">Total Poin Tambang</div>
+
+        <div class="wadah-miner" id="wadahMiner">
+            <div class="lingkaran-latar"></div>
+            <div class="lingkaran-cahaya" id="lingkaranCahaya"></div>
+            <div class="isi-bulat" id="isiBulat">
+                <div class="ikon-miner">⛏️</div>
+                <div class="waktu-tengah" id="waktuTengah">00:00:00</div>
+                <div class="status-tengah" id="statusTengah">Siap Dimulai</div>
+                <div class="kecepatan-tengah">+<span id="poinPerDetik">1</span> poin/detik</div>
+            </div>
+        </div>
+
+        <button class="tombol-aktifkan" id="tombolMiner" onclick="aktifkanMiner()">Mulai Tambang</button>
+
+        <div class="kotak" style="margin-top:20px;">
+            <h4>📜 Cara Kerja</h4>
+            <p>✅ Lingkaran kuning menyusut seiring berjalannya waktu<br>
+               ✅ Wajib klik "Aktifkan Ulang" setelah waktu habis<br>
+               ✅ NFT menambah kecepatan & durasi tambang
+            </p>
+        </div>
+    </div>
+
+    <div class="page" id="halamanTeman">
+        <div class="header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
+            <div class="judul">👥 Undang Teman</div>
+            <div class="subjudul">Dapat poin tambahan bersama teman</div>
+        </div>
+
+        <div class="kotak">
+            <h4>📊 Hasil Undangan</h4>
+            <p>✅ Teman yang sudah bergabung: <span id="jumlahTeman">0</span> Orang</p>
+            <p>🎁 Hadiah: Kamu +500 poin • Teman baru +250 poin</p>
+        </div>
+
+        <div class="kotak">
+            <h4>🔗 Tautan Undanganmu</h4>
+            <p id="tautanUndang" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0,0.3); border-radius:5px; margin-top:5px;"></p>
+            <button class="tombol kuning" onclick="salinTautan()">📋 Salin Tautan</button>
+            <button class="tombol abu" onclick="bagikanTautan()">📤 Bagikan ke Telegram</button>
+        </div>
+    </div>
+
+    <div class="page" id="halamanPeringkat">
+        <div class="header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
+            <div class="judul">🏆 Papan Peringkat</div>
+            <div class="subjudul">Penambang Terbaik</div>
+        </div>
+
+        <div class="kotak">
+            <h4>Posisi Kamu</h4>
+            <p id="posisiKamu">Belum masuk peringkat</p>
+        </div>
+
+        <div class="daftar-peringkat" id="daftarPeringkat">
+            <div class="baris-peringkat pertama">
+                <div class="posisi">1</div>
+                <div class="nama">Penambang Utama</div>
+                <div class="skor-peringkat">999.999</div>
+            </div>
+            <div class="baris-peringkat">
+                <div class="posisi">2</div>
+                <div class="nama">Kapten Capy</div>
+                <div class="skor-peringkat">750.000</div>
+            </div>
+            <div class="baris-peringkat">
+                <div class="posisi">3</div>
+                <div class="nama">Penambang Aktif</div>
+                <div class="skor-peringkat">500.000</div>
+            </div>
+            <div class="baris-peringkat">
+                <div class="posisi">...</div>
+                <div class="nama">Ayo mulai menambang!</div>
+                <div class="skor-peringkat">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="halamanKoleksi">
+        <div class="header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
+            <div class="judul">🎒 Koleksi Saya</div>
+            <div class="subjudul">NFT Capy Miner Pass Resmi</div>
+        </div>
+
+        <div class="kotak">
+            <h4>🔗 Hubungkan Dompet</h4>
+            <p>Hubungkan Tonkeeper/Dompet Telegram untuk baca NFT</p>
+            <button class="tombol hijau" onclick="hubungkanDompet()">Hubungkan Sekarang</button>
+        </div>
+
+        <div id="daftarNFT">
+            <div class="kotak"><p style="text-align:center; opacity:0.7;">Belum ada NFT terdeteksi</p></div>
+        </div>
+    </div>
+
+    <div class="page" id="halamanPasar">
+        <div class="header">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Logo Capybara Titan" class="logo-header">
+            <div class="judul">🏪 Pasar NFT</div>
+            <div class="subjudul">Beli NFT resmi percepat tambang</div>
+        </div>
+
+        <div class="kotak">
+            <h4>⚡ Efek Tiap NFT</h4>
+            <p>✅ Biasa: +10% kecepatan<br>✅ Jarang: +30% • +2 jam<br>✅ Langka: +60% • +4 jam<br>✅ Legendaris: +100% • +6 jam</p>
+        </div>
+        <button class="tombol kuning" onclick="bukaTautan('https://getgems.io/')">Buka Getgems</button>
+    </div>
+
+    <div class="menu-bawah">
+        <div class="menu-item aktif" onclick="pindahHalaman('halamanUtama', this)"><span class="menu-icon">⛏️</span>Tambang</div>
+        <div class="menu-item" onclick="pindahHalaman('halamanTeman', this)"><span class="menu-icon">👥</span>Teman</div>
+        <div class="menu-item" onclick="pindahHalaman('halamanPeringkat', this)"><span class="menu-icon">🏆</span>Peringkat</div>
+        <div class="menu-item" onclick="pindahHalaman('halamanKoleksi', this)"><span class="menu-icon">💎</span>NFT</div>
+        <div class="menu-item" onclick="pindahHalaman('halamanPasar', this)"><span class="menu-icon">🛒</span>Pasar</div>
+    </div>
+
+    <div class="notif" id="notif"></div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+tg.setHeaderColor('#2B2516');
+tg.setBackgroundColor('#2B2516');
+
+const KONFIG = {
+    ALAMAT_KOLEKSI: "EQ_______________________________", 
+    NAMA_BOT: "capytap_pibot",
+    DURASI_DASAR: 12 * 60 * 60,
+    KECEPATAN_DASAR: 1,
+    EFEK_NFT: {
+        "Biasa": { kecepatan: 0.1, durasi: 0 },
+        "Jarang": { kecepatan: 0.3, durasi: 2*3600 },
+        "Langka": { kecepatan: 0.6, durasi: 4*3600 },
+        "Legendaris": { kecepatan: 1.0, durasi: 6*3600 }
+    }
+};
+
+let tonConnect, alamatDompet = null, daftarNFTValid = [];
+let intervalMiner = null;
+const userData = tg.initDataUnsafe || {};
+const userId = userData.user?.id || `guest_${Date.now()}`;
+let referalDari = userData.startParam || null;
+
+let data = JSON.parse(localStorage.getItem('capyTitanMiner_' + userId)) || {
+    poin: referalDari ? 250 : 0, level:1, targetBerikut:1000,
+    temanDiundang:0, dapatBonusReferal:false,
+    waktuSelesaiTambang:0, kecepatanTambang:KONFIG.KECEPATAN_DASAR, durasiTambang:KONFIG.DURASI_DASAR
+};
+
+const elSkor = document.getElementById('skor');
+const elLevel = document.getElementById('level');
+const elTarget = document.getElementById('targetLevel');
+const elLingkaranCahaya = document.getElementById('lingkaranCahaya');
+const elIsiBulat = document.getElementById('isiBulat');
+const elWaktuTengah = document.getElementById('waktuTengah');
+const elStatusTengah = document.getElementById('statusTengah');
+const elTombolMiner = document.getElementById('tombolMiner');
+const elPoinPerDetik = document.getElementById('poinPerDetik');
+const elTitikDompet = document.getElementById('titikDompet');
+const elTeksDompet = document.getElementById('teksDompet');
+const elDaftarNFT = document.getElementById('daftarNFT');
+const elJumlahTeman = document.getElementById('jumlahTeman');
+const elTautanUndang = document.getElementById('tautanUndang');
+const elNotif = document.getElementById('notif');
+
+function tampilkanNotif(pesan) { elNotif.innerText = pesan; elNotif.style.display='block'; setTimeout(()=>elNotif.style.display='none',2500); }
+function pindahHalaman(id, elm) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('aktif')); elm.classList.add('aktif'); }
+function bukaTautan(url) { tg.openLink(url); }
+function salinTautan() { navigator.clipboard.writeText(elTautanUndang.innerText); tampilkanNotif('✅ Tautan disalin!'); }
+function bagikanTautan() { tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(elTautanUndang.innerText)}&text=${encodeURIComponent('Tambang CAPYBARA TITAN 🚀')}`); }
+function formatWaktu(detik) { const j=Math.floor(detik/3600), m=Math.floor((detik%3600)/60), d=detik%60; return `${j.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${d.toString().padStart(2,'0')}`; }
+
+function perbaruiUI() {
+    elSkor.innerText = data.poin.toLocaleString('id-ID');
+    elLevel.innerText = data.level;
+    elTarget.innerText = `${data.poin} / ${data.targetBerikut}`;
+    elJumlahTeman.innerText = data.temanDiundang;
+    elTautanUndang.innerText = `https://t.me/${KONFIG.NAMA_BOT}?start=${userId}`;
+    elPoinPerDetik.innerText = data.kecepatanTambang.toFixed(1);
+    localStorage.setItem('capyTitanMiner_' + userId, JSON.stringify(data));
+}
+
+function cekStatusMiner() {
+    const sekarang = Math.floor(Date.now()/1000);
+    const sisa = data.waktuSelesaiTambang - sekarang;
+    const totalDurasi = data.durasiTambang;
+
+    if (sisa > 0) {
+        const persen = sisa / totalDurasi;
+        const sudut = 360 * persen;
+        elLingkaranCahaya.style.background = `conic-gradient(#FFD700 ${sudut}deg, transparent ${sudut}deg)`;
+        
+        elIsiBulat.className = 'isi-bulat aktif';
+        elWaktuTengah.innerText = formatWaktu(sisa);
+        elStatusTengah.innerText = '⛏️ Sedang Menambang';
+        elTombolMiner.innerText = 'Sedang Berjalan...';
+        elTombolMiner.className = 'tombol-aktifkan aktif';
+        elTombolMiner.disabled = true;
+        return true;
+    } else {
+        elLingkaranCahaya.style.background = `conic-gradient(#FFD700 0deg, transparent 0deg)`;
+        
+        elIsiBulat.className = 'isi-bulat berhenti';
+        elWaktuTengah.innerText = '00:00:00';
+        elStatusTengah.innerText = '⏹️ Tambang Berhenti';
+        elTombolMiner.innerText = '🔄 Aktifkan Ulang';
+        elTombolMiner.className = 'tombol-aktifkan berhenti';
+        elTombolMiner.disabled = false;
+        return false;
+    }
+}
+
+function aktifkanMiner() {
+    const sekarang = Math.floor(Date.now()/1000);
+    data.waktuSelesaiTambang = sekarang + data.durasiTambang;
+    cekStatusMiner();
+    perbaruiUI();
+    tampilkanNotif('✅ Tambang diaktifkan! Lingkaran akan menyusut perlahan');
+    if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+}
+
+function jalankanOtomatis() {
+    intervalMiner = setInterval(()=>{
+        if(cekStatusMiner()) {
+            data.poin += data.kecepatanTambang;
+            if(data.poin >= data.targetBerikut) { data.level++; data.targetBerikut = Math.round(data.targetBerikut*1.8); tampilkanNotif(`🎉 Naik Level ${data.level}!`); }
+            perbaruiUI();
+        }
+    }, 1000);
+}
+
+if(referalDari && !data.dapatBonusReferal) {
+    const refData = JSON.parse(localStorage.getItem('capyTitanMiner_' + referalDari)) || null;
+    if(refData) { refData.poin += 500; refData.temanDiundang++; localStorage.setItem('capyTitanMiner_' + referalDari, JSON.stringify(refData)); }
+    data.dapatBonusReferal = true;
+    tampilkanNotif('🎉 Selamat datang! +250 poin bonus!');
+}
+
+async function inisialisasiDompet() {
+    tonConnect = new window.TonConnectUI({ manifestUrl: 'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json', buttonRootId: null });
+    tonConnect.onStatusChange(async (sts)=>{
+        if(sts==='connected') { alamatDompet = tonConnect.account.address; elTitikDompet.className='titik on'; elTeksDompet.innerText=`Terhubung: ${alamatDompet.slice(0,6)}...`; await bacaNFT(); }
+        else { alamatDompet=null;  dataPengundang.temanDiundang += 1;
                 localStorage.setItem(`capyTap_${referalDari}`, JSON.stringify(dataPengundang));
     
