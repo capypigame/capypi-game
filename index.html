@@ -397,82 +397,36 @@ tg.setBackgroundColor('#2B2516');
 
 // === PENGATURAN UTAMA ===
 const BASE_POINTS_PER_HOUR = 10;
-const REF_BONUS_PER_REF = 0.20; // +20% per teman yang aktif menambang
-const MAX_TOTAL_BONUS_RATE = 2.00; // Batas maksimal total bonus 200%
-const MAX_POINTS_PER_HOUR = BASE_POINTS_PER_HOUR * (1 + MAX_TOTAL_BONUS_RATE); // 30 poin/jam
+const REF_BONUS_PER_REF = 0.20;
+const MAX_TOTAL_BONUS_RATE = 2.00;
+const MAX_POINTS_PER_HOUR = BASE_POINTS_PER_HOUR * (1 + MAX_TOTAL_BONUS_RATE);
 
 let currentLang = localStorage.getItem('capyLang') || 'en';
 const translations = {
-    en: {
-        walletNotConn: "Wallet not connected",
-        connected: "Connected",
-        ready: "Ready to Start",
-        mining: "⛏️ Mining...",
-        stopped: "⏹️ Mining Stopped",
-        start: "Start Mining",
-        restart: "🔄 Restart",
-        copied: "✅ Link copied!",
-        adNote: "Watch ad to start mining!",
-        adTitle: "📢 Advertisement",
-        adBtn: "✅ Continue",
-        regular: "👤 Regular Miner",
-        vip: "👑 VIP Miner"
-    },
-    id: {
-        walletNotConn: "Dompet belum terhubung",
-        connected: "Terhubung",
-        ready: "Siap Dimulai",
-        mining: "⛏️ Sedang Menambang",
-        stopped: "⏹️ Tambang Berhenti",
-        start: "Mulai Tambang",
-        restart: "🔄 Aktifkan Ulang",
-        copied: "✅ Tautan disalin!",
-        adNote: "Tonton iklan untuk mulai menambang!",
-        adTitle: "📢 Iklan",
-        adBtn: "✅ Lanjutkan",
-        regular: "👤 Penambang Biasa",
-        vip: "👑 Penambang VIP"
-    }
+    en: { walletNotConn: "Wallet not connected", connected: "Connected", ready: "Ready to Start", mining: "⛏️ Mining...", stopped: "⏹️ Mining Stopped", start: "Start Mining", restart: "🔄 Restart", copied: "✅ Link copied!", adNote: "Watch ad to start mining!", adTitle: "📢 Advertisement", adBtn: "✅ Continue", regular: "👤 Regular Miner", vip: "👑 VIP Miner" },
+    id: { walletNotConn: "Dompet belum terhubung", connected: "Terhubung", ready: "Siap Dimulai", mining: "⛏️ Sedang Menambang", stopped: "⏹️ Tambang Berhenti", start: "Mulai Tambang", restart: "🔄 Aktifkan Ulang", copied: "✅ Tautan disalin!", adNote: "Tonton iklan untuk mulai menambang!", adTitle: "📢 Iklan", adBtn: "✅ Lanjutkan", regular: "👤 Penambang Biasa", vip: "👑 Penambang VIP" }
 };
 
 function toggleLang() { document.getElementById('langMenu').classList.toggle('show'); }
-function changeLang(code) {
-    currentLang = code;
-    localStorage.setItem('capyLang', code);
-    document.getElementById('langMenu').classList.remove('show');
-    applyLang();
-}
-function applyLang() {
-    const t = translations[currentLang];
-    document.getElementById('textWallet').innerText = t.walletNotConn;
-    updateVipStatus();
-    checkMinerStatus();
-}
+function changeLang(code) { currentLang=code; localStorage.setItem('capyLang',code); document.getElementById('langMenu').classList.remove('show'); applyLang(); }
+function applyLang() { const t=translations[currentLang]; document.getElementById('textWallet').innerText=t.walletNotConn; updateVipStatus(); checkMinerStatus(); }
 
 const CONFIG = {
     COLLECTION_ADDR: "EQ_______________________________", 
     BOT_NAME: "capytap_pibot",
     BASE_DURATION: 12 * 60 * 60,
-    BASE_SPEED: BASE_POINTS_PER_HOUR / 3600, // Ubah ke poin per detik
-    NFT_BONUS: {
-        "Common": { speed: 0.1, duration: 0 },
-        "Rare": { speed: 0.3, duration: 2*3600 },
-        "Epic": { speed: 0.6, duration: 4*3600 },
-        "Legendary": { speed: 1.0, duration: 6*3600 }
-    }
+    BASE_SPEED: BASE_POINTS_PER_HOUR / 3600,
+    NFT_BONUS: { "Common":{speed:0.1,duration:0}, "Rare":{speed:0.3,duration:7200}, "Epic":{speed:0.6,duration:14400}, "Legendary":{speed:1.0,duration:21600} }
 };
 
-let tonConnect, walletAddr = null, validNfts = [];
-let minerInterval = null;
+let tonConnect, walletAddr=null, validNfts=[], minerInterval=null;
 const userData = tg.initDataUnsafe || {};
 const userId = userData.user?.id || `guest_${Date.now()}`;
 let refCode = userData.startParam || null;
 
 let data = JSON.parse(localStorage.getItem('capyTitanMiner_' + userId)) || {
-    points: refCode ? 250 : 0, level:1, nextTarget:1000,
-    invites:0, activeRefs:0, gotRefBonus:false,
-    endTime:0, mineSpeed:CONFIG.BASE_SPEED, mineDuration:CONFIG.BASE_DURATION,
-    hasStartedMining: false // Tanda pengguna sudah pernah mulai menambang
+    points: refCode?250:0, level:1, nextTarget:1000, invites:0, activeRefs:0, gotRefBonus:false,
+    endTime:0, mineSpeed:CONFIG.BASE_SPEED, mineDuration:CONFIG.BASE_DURATION, hasStartedMining:false
 };
 
 const elScore = document.getElementById('score');
@@ -494,85 +448,55 @@ const elAdOverlay = document.getElementById('adOverlay');
 const allVipStatus = [document.getElementById('vipStatus'), document.getElementById('vipStatus2'), document.getElementById('vipStatus3'), document.getElementById('vipStatus4'), document.getElementById('vipStatus5')];
 
 function updateVipStatus() {
-    const t = translations[currentLang];
-    if(validNfts.length > 0) {
-        allVipStatus.forEach(el => {
-            el.className = 'vip-status vip';
-            el.innerText = t.vip;
-        });
-    } else {
-        allVipStatus.forEach(el => {
-            el.className = 'vip-status regular';
-            el.innerText = t.regular;
-        });
-    }
+    const t=translations[currentLang];
+    allVipStatus.forEach(el=>{ el.className=validNfts.length>0?'vip-status vip':'vip-status regular'; el.innerText=validNfts.length>0?t.vip:t.regular; });
 }
-
-function showNotif(msg) { elNotif.innerText = msg; elNotif.style.display='block'; setTimeout(()=>elNotif.style.display='none',2500); }
-function switchPage(id, elm) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active')); elm.classList.add('active'); }
+function showNotif(msg) { elNotif.innerText=msg; elNotif.style.display='block'; setTimeout(()=>elNotif.style.display='none',2500); }
+function switchPage(id,elm) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active')); elm.classList.add('active'); }
 function openLink(url) { tg.openLink(url); }
 function copyLink() { navigator.clipboard.writeText(elInviteLink.innerText); showNotif(translations[currentLang].copied); }
 function shareLink() { tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(elInviteLink.innerText)}&text=${encodeURIComponent('Mining CAPYBARA TITAN 🚀')}`); }
-function formatTime(sec) { 
+function formatTime(sec) {
     sec = Math.max(0, Math.floor(sec));
-    let h = Math.floor(sec / 3600);
-    let m = Math.floor((sec % 3600) / 60);
-    let s = sec % 60;
-    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; 
+    let h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
-// === PERHITUNGAN KECEPATAN DENGAN PEMBATASAN & SYARAT AKTIF ===
 function calculateFinalSpeed() {
-    let totalBonusRate = 0;
-
-    // Bonus Referral: HANYA dihitung dari teman yang SUDAH MENAMBANG
-    totalBonusRate += data.activeRefs * REF_BONUS_PER_REF;
-
-    // Bonus NFT
+    let totalBonus = data.activeRefs * REF_BONUS_PER_REF;
     validNfts.forEach(nft=>{
-        const rarity = nft.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';
-        const b = CONFIG.NFT_BONUS[rarity];
-        totalBonusRate += b.speed;
+        const r = nft.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';
+        totalBonus += CONFIG.NFT_BONUS[r].speed;
     });
-
-    // Batasi total bonus agar tidak melebihi batas maksimal
-    totalBonusRate = Math.min(totalBonusRate, MAX_TOTAL_BONUS_RATE);
-
-    // Hitung kecepatan akhir
-    const finalPerHour = BASE_POINTS_PER_HOUR * (1 + totalBonusRate);
-    const finalPerSec = finalPerHour / 3600;
-
-    return { finalPerHour, finalPerSec };
+    totalBonus = Math.min(totalBonus, MAX_TOTAL_BONUS_RATE);
+    const perHour = BASE_POINTS_PER_HOUR*(1+totalBonus);
+    return {perHour, perSec: perHour/3600};
 }
-
 function updateUI() {
-    const speed = calculateFinalSpeed();
+    const spd = calculateFinalSpeed();
     elScore.innerText = Math.floor(data.points).toLocaleString('en-US');
     elLevel.innerText = data.level;
     elTarget.innerText = `${Math.floor(data.points)} / ${data.nextTarget}`;
     elFriendCount.innerText = data.activeRefs;
     elInviteLink.innerText = `https://t.me/${CONFIG.BOT_NAME}?start=${userId}`;
-    elPointsPerSec.innerText = speed.finalPerHour.toFixed(1);
-    data.mineSpeed = speed.finalPerSec;
+    elPointsPerSec.innerText = spd.perHour.toFixed(1);
+    data.mineSpeed = spd.perSec;
     localStorage.setItem('capyTitanMiner_' + userId, JSON.stringify(data));
 }
-
 function showAdThenStart() { elAdOverlay.classList.add('show'); }
 function closeAd() { elAdOverlay.classList.remove('show'); startMining(); }
 
+// === LOGIKA TIMER DIPERBAIKI TOTAL: SELALU PAKAI WAKTU SEKARANG ===
 function checkMinerStatus() {
     const now = Math.floor(Date.now() / 1000);
     let remain = data.endTime - now;
     const totalDur = data.mineDuration;
     const t = translations[currentLang];
-
-    // Pastikan sisa waktu tidak negatif
     remain = Math.max(0, remain);
 
     if (remain > 0) {
         const pct = remain / totalDur;
-        const deg = 360 * pct;
-        elProgressRing.style.background = `conic-gradient(#FFD700 ${deg}deg, transparent ${deg}deg)`;
+        elProgressRing.style.background = `conic-gradient(#FFD700 ${(1-pct)*360}deg, transparent ${(1-pct)*360}deg)`;
         elInnerCircle.className = 'inner-circle active';
         elTimeCenter.innerText = formatTime(remain);
         elStatusCenter.innerText = t.mining;
@@ -594,20 +518,13 @@ function checkMinerStatus() {
 
 function startMining() {
     const now = Math.floor(Date.now() / 1000);
-    
-    // Tandai pengguna ini sudah aktif menambang
     if(!data.hasStartedMining) {
         data.hasStartedMining = true;
-        // Beritahu pengundang bahwa referal ini sudah aktif
         if(refCode) {
-            const inviterData = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode)) || null;
-            if(inviterData) {
-                inviterData.activeRefs = (inviterData.activeRefs || 0) + 1;
-                localStorage.setItem('capyTitanMiner_' + refCode, JSON.stringify(inviterData));
-            }
+            const inv = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode))||null;
+            if(inv) { inv.activeRefs=(inv.activeRefs||0)+1; localStorage.setItem('capyTitanMiner_'+refCode,JSON.stringify(inv)); }
         }
     }
-
     data.endTime = now + data.mineDuration;
     checkMinerStatus();
     updateUI();
@@ -616,33 +533,27 @@ function startMining() {
 }
 
 function runAuto() {
-    // Hentikan interval lama kalau ada
     if(minerInterval) clearInterval(minerInterval);
-    // Jalankan baru setiap 1 detik
     minerInterval = setInterval(()=>{
         if(checkMinerStatus()) {
             data.points += data.mineSpeed;
-            if(data.points >= data.nextTarget) { 
-                data.level++; 
-                data.nextTarget = Math.round(data.nextTarget * 1.8); 
-                showNotif(`🎉 Level ${data.level} Up!`); 
-            }
+            if(data.points >= data.nextTarget) { data.level++; data.nextTarget = Math.round(data.nextTarget*1.8); showNotif(`🎉 Level ${data.level} Up!`); }
             updateUI();
         }
     }, 1000);
 }
 
 if(refCode && !data.gotRefBonus) {
-    const refData = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode)) || null;
-    if(refData) { refData.points += 500; refData.invites++; localStorage.setItem('capyTitanMiner_' + refCode, JSON.stringify(refData)); }
+    const refD = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode))||null;
+    if(refD) { refD.points += 500; refD.invites++; localStorage.setItem('capyTitanMiner_'+refCode,JSON.stringify(refD)); }
     data.gotRefBonus = true;
     showNotif('🎉 Welcome! +250 bonus points!');
 }
 
 async function initWallet() {
     tonConnect = new window.TonConnectUI({ manifestUrl: 'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json', buttonRootId: null });
-    tonConnect.onStatusChange(async (stat)=>{
-        if(stat==='connected') { walletAddr = tonConnect.account.address; elDotWallet.className='dot on'; elTextWallet.innerText=`${translations[currentLang].connected}: ${walletAddr.slice(0,6)}...`; await loadNfts(); }
+    tonConnect.onStatusChange(async s=>{
+        if(s==='connected') { walletAddr=tonConnect.account.address; elDotWallet.className='dot on'; elTextWallet.innerText=`${translations[currentLang].connected}: ${walletAddr.slice(0,6)}...`; await loadNfts(); }
         else { walletAddr=null; validNfts=[]; elDotWallet.className='dot off'; elTextWallet.innerText=translations[currentLang].walletNotConn; applyNftBonus(); updateVipStatus(); }
     });
 }
@@ -653,33 +564,26 @@ async function loadNfts() {
     try {
         const res = await fetch(`https://api.getgems.io/v1/nft/items?owner=${walletAddr}&collection=${CONFIG.COLLECTION_ADDR}&limit=50`);
         const out = await res.json();
-        validNfts = out.items || [];
-        renderNfts();
-        applyNftBonus();
-        updateVipStatus();
-        showNotif(validNfts.length>0 ? `✅ Found ${validNfts.length} NFTs!` : 'ℹ️ No NFTs found');
+        validNfts = out.items||[];
+        renderNfts(); applyNftBonus(); updateVipStatus();
+        showNotif(validNfts.length>0?`✅ Found ${validNfts.length} NFTs!`:'ℹ️ No NFTs found');
     } catch { showNotif('⚠️ Failed to load NFTs'); }
 }
 function renderNfts() {
-    elNftList.innerHTML = '';
-    if(validNfts.length===0) { elNftList.innerHTML=`<div class="box"><p style="text-align:center;opacity:0.7;">No official NFTs yet</p></div>`; return; }
-    validNfts.forEach(nft=>{
-        const rarity = nft.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';
-        const b = CONFIG.NFT_BONUS[rarity];
-        elNftList.innerHTML += `<div class="nft-item"><h4>${nft.metadata.name||'Capy Miner Pass'}</h4><span>${rarity} • +${b.speed*100}% • +${b.duration/3600}h</span></div>`;
+    elNftList.innerHTML='';
+    if(!validNfts.length) { elNftList.innerHTML=`<div class="box"><p style="text-align:center;opacity:0.7;">No official NFTs yet</p></div>`; return; }
+    validNfts.forEach(n=>{
+        const r = n.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';
+        const b = CONFIG.NFT_BONUS[r];
+        elNftList.innerHTML += `<div class="nft-item"><h4>${n.metadata.name||'Capy Miner Pass'}</h4><span>${r} • +${(b.speed*100).toFixed(0)}% • +${b.duration/3600}h</span></div>`;
     });
 }
-function applyNftBonus() {
-    updateUI();
-}
+function applyNftBonus() { updateUI(); }
 
 async function initApp() {
     await initWallet();
-    updateUI();
-    applyLang();
-    updateVipStatus();
-    // Langsung cek status waktu saat halaman terbuka
-    checkMinerStatus();
+    updateUI(); applyLang(); updateVipStatus();
+    checkMinerStatus(); // Langsung periksa waktu saat buka
     runAuto();
 }
 initApp();
