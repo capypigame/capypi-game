@@ -111,7 +111,7 @@
             background: conic-gradient(#FFD700 0deg, transparent 0deg);
             mask: radial-gradient(transparent 65%, #000 66%);
             -webkit-mask: radial-gradient(transparent 65%, #000 66%);
-            transition: all 1s linear;
+            transition: none;
         }
         .inner-circle {
             position: absolute; width: 82%; height: 82%; top: 9%; left: 9%; border-radius: 50%;
@@ -409,7 +409,7 @@ const translations = {
 
 function toggleLang() { document.getElementById('langMenu').classList.toggle('show'); }
 function changeLang(code) { currentLang=code; localStorage.setItem('capyLang',code); document.getElementById('langMenu').classList.remove('show'); applyLang(); }
-function applyLang() { const t=translations[currentLang]; document.getElementById('textWallet').innerText=t.walletNotConn; updateVipStatus(); checkMinerStatus(); }
+function applyLang() { const t=translations[currentLang]; document.getElementById('textWallet').innerText=t.walletNotConn; updateVipStatus(); }
 
 const CONFIG = {
     COLLECTION_ADDR: "EQ_______________________________", 
@@ -486,7 +486,7 @@ function updateUI() {
 function showAdThenStart() { elAdOverlay.classList.add('show'); }
 function closeAd() { elAdOverlay.classList.remove('show'); startMining(); }
 
-// === LOGIKA TIMER DIPERBAIKI TOTAL: SELALU PAKAI WAKTU SEKARANG ===
+// === TIMER DIPASTIKAN BERJALAN MANDIRI TANPA TERGANGGU ===
 function checkMinerStatus() {
     const now = Math.floor(Date.now() / 1000);
     let remain = data.endTime - now;
@@ -532,10 +532,12 @@ function startMining() {
     if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 }
 
+// === INTERVAL DIPASTIKAN BERJALAN SEJAK AWAL, TIDAK MENUNGGU APA-APA ===
 function runAuto() {
     if(minerInterval) clearInterval(minerInterval);
     minerInterval = setInterval(()=>{
-        if(checkMinerStatus()) {
+        const isRunning = checkMinerStatus();
+        if(isRunning) {
             data.points += data.mineSpeed;
             if(data.points >= data.nextTarget) { data.level++; data.nextTarget = Math.round(data.nextTarget*1.8); showNotif(`🎉 Level ${data.level} Up!`); }
             updateUI();
@@ -581,10 +583,13 @@ function renderNfts() {
 function applyNftBonus() { updateUI(); }
 
 async function initApp() {
-    await initWallet();
-    updateUI(); applyLang(); updateVipStatus();
-    checkMinerStatus(); // Langsung periksa waktu saat buka
-    runAuto();
+    // === URUTAN DIUBAH: TIMER JALAN DULUAN SEBELUM LAINNYA ===
+    updateUI();
+    applyLang();
+    updateVipStatus();
+    checkMinerStatus();
+    runAuto(); // Timer berjalan SEKARANG juga
+    await initWallet(); // Dompet berjalan belakangan, tidak menghambat timer
 }
 initApp();
 </script>
