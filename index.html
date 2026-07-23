@@ -285,7 +285,7 @@
 
         <div class="box">
             <h4>🔗 Your Invite Link</h4>
-            <p id="inviteLink" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0,0.3); border-radius:5px; margin-top:5px;"></p>
+            <p id="inviteLink" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0.3); border-radius:5px; margin-top:5px;"></p>
             <button class="btn yellow" onclick="copyLink()">📋 Copy Link</button>
             <button class="btn gray" onclick="shareLink()">📤 Share to Telegram</button>
         </div>
@@ -513,7 +513,13 @@ function switchPage(id, elm) { document.querySelectorAll('.page').forEach(p=>p.c
 function openLink(url) { tg.openLink(url); }
 function copyLink() { navigator.clipboard.writeText(elInviteLink.innerText); showNotif(translations[currentLang].copied); }
 function shareLink() { tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(elInviteLink.innerText)}&text=${encodeURIComponent('Mining CAPYBARA TITAN 🚀')}`); }
-function formatTime(sec) { let h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60; return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
+function formatTime(sec) { 
+    sec = Math.max(0, Math.floor(sec));
+    let h = Math.floor(sec / 3600);
+    let m = Math.floor((sec % 3600) / 60);
+    let s = sec % 60;
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; 
+}
 
 // === PERHITUNGAN KECEPATAN DENGAN PEMBATASAN & SYARAT AKTIF ===
 function calculateFinalSpeed() {
@@ -541,9 +547,9 @@ function calculateFinalSpeed() {
 
 function updateUI() {
     const speed = calculateFinalSpeed();
-    elScore.innerText = data.points.toLocaleString('en-US');
+    elScore.innerText = Math.floor(data.points).toLocaleString('en-US');
     elLevel.innerText = data.level;
-    elTarget.innerText = `${data.points} / ${data.nextTarget}`;
+    elTarget.innerText = `${Math.floor(data.points)} / ${data.nextTarget}`;
     elFriendCount.innerText = data.activeRefs;
     elInviteLink.innerText = `https://t.me/${CONFIG.BOT_NAME}?start=${userId}`;
     elPointsPerSec.innerText = speed.finalPerHour.toFixed(1);
@@ -555,10 +561,13 @@ function showAdThenStart() { elAdOverlay.classList.add('show'); }
 function closeAd() { elAdOverlay.classList.remove('show'); startMining(); }
 
 function checkMinerStatus() {
-    const now = Math.floor(Date.now()/1000);
-    const remain = data.endTime - now;
+    const now = Math.floor(Date.now() / 1000);
+    let remain = data.endTime - now;
     const totalDur = data.mineDuration;
     const t = translations[currentLang];
+
+    // Pastikan sisa waktu tidak negatif
+    remain = Math.max(0, remain);
 
     if (remain > 0) {
         const pct = remain / totalDur;
@@ -584,7 +593,7 @@ function checkMinerStatus() {
 }
 
 function startMining() {
-    const now = Math.floor(Date.now()/1000);
+    const now = Math.floor(Date.now() / 1000);
     
     // Tandai pengguna ini sudah aktif menambang
     if(!data.hasStartedMining) {
@@ -607,10 +616,17 @@ function startMining() {
 }
 
 function runAuto() {
+    // Hentikan interval lama kalau ada
+    if(minerInterval) clearInterval(minerInterval);
+    // Jalankan baru setiap 1 detik
     minerInterval = setInterval(()=>{
         if(checkMinerStatus()) {
             data.points += data.mineSpeed;
-            if(data.points >= data.nextTarget) { data.level++; data.nextTarget = Math.round(data.nextTarget*1.8); showNotif(`🎉 Level ${data.level} Up!`); }
+            if(data.points >= data.nextTarget) { 
+                data.level++; 
+                data.nextTarget = Math.round(data.nextTarget * 1.8); 
+                showNotif(`🎉 Level ${data.level} Up!`); 
+            }
             updateUI();
         }
     }, 1000);
@@ -662,6 +678,7 @@ async function initApp() {
     updateUI();
     applyLang();
     updateVipStatus();
+    // Langsung cek status waktu saat halaman terbuka
     checkMinerStatus();
     runAuto();
 }
