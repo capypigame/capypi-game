@@ -187,6 +187,7 @@
             position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
             background: rgba(0,0,0,0.9); padding: 15px 25px; border-radius: 10px;
             border: 1px solid #FFD700; z-index: 9999; display: none; font-size: 15px;
+            font-weight: bold;
         }
 
         .ad-overlay {
@@ -253,7 +254,8 @@
 
         <div class="box" style="margin-top:20px;">
             <h4>📜 Mining Rules</h4>
-            <p>✅ Base: 10 points/hour<br>
+            <p>✅ New Member Bonus: <strong>+500 Points</strong> (only first start)<br>
+               ✅ Base: 10 points/hour<br>
                ✅ +20% per <strong>active invited friend</strong><br>
                ✅ Bonus only counts if friend started mining<br>
                ✅ Max total bonus: 200% → <strong>Max 30 pts/h</strong><br>
@@ -400,11 +402,12 @@ const BASE_POINTS_PER_HOUR = 10;
 const REF_BONUS_PER_REF = 0.20;
 const MAX_TOTAL_BONUS_RATE = 2.00;
 const MAX_POINTS_PER_HOUR = BASE_POINTS_PER_HOUR * (1 + MAX_TOTAL_BONUS_RATE);
+const NEW_MEMBER_BONUS = 500; // Bonus khusus anggota baru
 
 let currentLang = localStorage.getItem('capyLang') || 'en';
 const translations = {
-    en: { walletNotConn: "Wallet not connected", connected: "Connected", ready: "Ready to Start", mining: "⛏️ Mining...", stopped: "⏹️ Mining Stopped", start: "Start Mining", restart: "🔄 Restart", copied: "✅ Link copied!", adNote: "Watch ad to start mining!", adTitle: "📢 Advertisement", adBtn: "✅ Continue", regular: "👤 Regular Miner", vip: "👑 VIP Miner" },
-    id: { walletNotConn: "Dompet belum terhubung", connected: "Terhubung", ready: "Siap Dimulai", mining: "⛏️ Sedang Menambang", stopped: "⏹️ Tambang Berhenti", start: "Mulai Tambang", restart: "🔄 Aktifkan Ulang", copied: "✅ Tautan disalin!", adNote: "Tonton iklan untuk mulai menambang!", adTitle: "📢 Iklan", adBtn: "✅ Lanjutkan", regular: "👤 Penambang Biasa", vip: "👑 Penambang VIP" }
+    en: { walletNotConn: "Wallet not connected", connected: "Connected", ready: "Ready to Start", mining: "⛏️ Mining...", stopped: "⏹️ Mining Stopped", start: "Start Mining", restart: "🔄 Restart", copied: "✅ Link copied!", adNote: "Watch ad to start mining!", adTitle: "📢 Advertisement", adBtn: "✅ Continue", regular: "👤 Regular Miner", vip: "👑 VIP Miner", welcomeBonus: "🎉 Welcome Bonus! +500 Points Added!" },
+    id: { walletNotConn: "Dompet belum terhubung", connected: "Terhubung", ready: "Siap Dimulai", mining: "⛏️ Sedang Menambang", stopped: "⏹️ Tambang Berhenti", start: "Mulai Tambang", restart: "🔄 Aktifkan Ulang", copied: "✅ Tautan disalin!", adNote: "Tonton iklan untuk mulai menambang!", adTitle: "📢 Iklan", adBtn: "✅ Lanjutkan", regular: "👤 Penambang Biasa", vip: "👑 Penambang VIP", welcomeBonus: "🎉 Bonus Selamat Datang! +500 Poin Ditambahkan!" }
 };
 
 function toggleLang() { document.getElementById('langMenu').classList.toggle('show'); }
@@ -426,7 +429,8 @@ let refCode = userData.startParam || null;
 
 let data = JSON.parse(localStorage.getItem('capyTitanMiner_' + userId)) || {
     points: refCode?250:0, level:1, nextTarget:1000, invites:0, activeRefs:0, gotRefBonus:false,
-    endTime:0, mineSpeed:CONFIG.BASE_SPEED, mineDuration:CONFIG.BASE_DURATION, hasStartedMining:false
+    endTime:0, mineSpeed:CONFIG.BASE_SPEED, mineDuration:CONFIG.BASE_DURATION, hasStartedMining:false,
+    gotWelcomeBonus:false // Penanda bonus anggota baru sudah diterima atau belum
 };
 
 const elScore = document.getElementById('score');
@@ -518,6 +522,15 @@ function checkMinerStatus() {
 
 function startMining() {
     const now = Math.floor(Date.now() / 1000);
+    const t = translations[currentLang];
+
+    // === BERIKAN BONUS 500 POIN JIKA ANGGOTA BARU & BELUM PERNAH DAPAT ===
+    if(!data.hasStartedMining && !data.gotWelcomeBonus) {
+        data.points += NEW_MEMBER_BONUS;
+        data.gotWelcomeBonus = true;
+        showNotif(t.welcomeBonus);
+    }
+
     if(!data.hasStartedMining) {
         data.hasStartedMining = true;
         if(refCode) {
@@ -549,7 +562,6 @@ if(refCode && !data.gotRefBonus) {
     const refD = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode))||null;
     if(refD) { refD.points += 500; refD.invites++; localStorage.setItem('capyTitanMiner_'+refCode,JSON.stringify(refD)); }
     data.gotRefBonus = true;
-    showNotif('🎉 Welcome! +250 bonus points!');
 }
 
 async function initWallet() {
@@ -583,13 +595,12 @@ function renderNfts() {
 function applyNftBonus() { updateUI(); }
 
 async function initApp() {
-    // === URUTAN DIUBAH: TIMER JALAN DULUAN SEBELUM LAINNYA ===
     updateUI();
     applyLang();
     updateVipStatus();
     checkMinerStatus();
-    runAuto(); // Timer berjalan SEKARANG juga
-    await initWallet(); // Dompet berjalan belakangan, tidak menghambat timer
+    runAuto();
+    await initWallet();
 }
 initApp();
 </script>
