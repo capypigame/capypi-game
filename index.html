@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CAPYBARA TITAN</title>
+    <title>Capybara Titan</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.css">
@@ -145,8 +145,15 @@
             background: rgba(255,255,255,0.08); border-radius: 12px; padding: 15px;
             margin-bottom: 12px; border: 1px solid rgba(255,215,0,0.2);
         }
-        .box h4 { margin-bottom: 5px; font-size: 15px; color: #FFD700; }
-        .box p { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+        .box h4 { margin-bottom: 8px; font-size: 15px; color: #FFD700; }
+        .box p { font-size: 13px; opacity: 0.8; line-height: 1.6; }
+
+        .stat-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,215,0,0.1); font-size: 14px;
+        }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-val { font-weight: bold; color: #FFD700; font-size: 16px; }
 
         .btn {
             width: 100%; padding: 12px; border: none; border-radius: 10px;
@@ -227,7 +234,7 @@
                 <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
             </div>
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
-            <div class="title">CAPYBARA TITAN</div>
+            <div class="title">Capybara Titan</div>
             <div class="vip-status regular" id="vipStatus">👤 Regular Miner</div>
             <div class="subtitle">Level <span id="level">1</span> • Points: <span id="targetLevel">0/1000</span></div>
         </div>
@@ -290,6 +297,41 @@
             <p id="inviteLink" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0.3); border-radius:5px; margin-top:5px;"></p>
             <button class="btn yellow" onclick="copyLink()">📋 Copy Link</button>
             <button class="btn gray" onclick="shareLink()">📤 Share to Telegram</button>
+        </div>
+    </div>
+
+    <div class="page" id="pageStats">
+        <div class="header">
+            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
+            <div class="lang-menu" id="langMenu">
+                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
+                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
+            </div>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
+            <div class="title">📊 Statistics</div>
+            <div class="vip-status regular" id="vipStatusStats">👤 Regular Miner</div>
+            <div class="subtitle">Platform Overview</div>
+        </div>
+
+        <div class="box">
+            <h4>👥 User Data</h4>
+            <div class="stat-row">
+                <span>Total Users</span>
+                <span class="stat-val" id="totalUsers">1,247</span>
+            </div>
+            <div class="stat-row">
+                <span>Active Users Today</span>
+                <span class="stat-val" id="activeUsers">389</span>
+            </div>
+            <div class="stat-row">
+                <span>Mining Right Now</span>
+                <span class="stat-val" id="miningNow">156</span>
+            </div>
+        </div>
+
+        <div class="box">
+            <h4>ℹ️ Info</h4>
+            <p>Data di atas akan otomatis terupdate nanti setelah terhubung ke server.</p>
         </div>
     </div>
 
@@ -383,6 +425,7 @@
     <div class="bottom-menu">
         <div class="menu-item active" onclick="switchPage('pageHome', this)"><span class="menu-icon">⛏️</span>Mine</div>
         <div class="menu-item" onclick="switchPage('pageInvite', this)"><span class="menu-icon">👥</span>Friends</div>
+        <div class="menu-item" onclick="switchPage('pageStats', this)"><span class="menu-icon">📊</span>Stats</div>
         <div class="menu-item" onclick="switchPage('pageRank', this)"><span class="menu-icon">🏆</span>Ranks</div>
         <div class="menu-item" onclick="switchPage('pageNft', this)"><span class="menu-icon">💎</span>NFT</div>
         <div class="menu-item" onclick="switchPage('pageMarket', this)"><span class="menu-icon">🛒</span>Market</div>
@@ -402,7 +445,7 @@ const BASE_POINTS_PER_HOUR = 10;
 const REF_BONUS_PER_REF = 0.20;
 const MAX_TOTAL_BONUS_RATE = 2.00;
 const MAX_POINTS_PER_HOUR = BASE_POINTS_PER_HOUR * (1 + MAX_TOTAL_BONUS_RATE);
-const NEW_MEMBER_BONUS = 500; // Bonus khusus anggota baru
+const NEW_MEMBER_BONUS = 500;
 
 let currentLang = localStorage.getItem('capyLang') || 'en';
 const translations = {
@@ -430,7 +473,7 @@ let refCode = userData.startParam || null;
 let data = JSON.parse(localStorage.getItem('capyTitanMiner_' + userId)) || {
     points: refCode?250:0, level:1, nextTarget:1000, invites:0, activeRefs:0, gotRefBonus:false,
     endTime:0, mineSpeed:CONFIG.BASE_SPEED, mineDuration:CONFIG.BASE_DURATION, hasStartedMining:false,
-    gotWelcomeBonus:false // Penanda bonus anggota baru sudah diterima atau belum
+    gotWelcomeBonus:false
 };
 
 const elScore = document.getElementById('score');
@@ -449,7 +492,7 @@ const elFriendCount = document.getElementById('friendCount');
 const elInviteLink = document.getElementById('inviteLink');
 const elNotif = document.getElementById('notif');
 const elAdOverlay = document.getElementById('adOverlay');
-const allVipStatus = [document.getElementById('vipStatus'), document.getElementById('vipStatus2'), document.getElementById('vipStatus3'), document.getElementById('vipStatus4'), document.getElementById('vipStatus5')];
+const allVipStatus = [document.getElementById('vipStatus'), document.getElementById('vipStatus2'), document.getElementById('vipStatus3'), document.getElementById('vipStatus4'), document.getElementById('vipStatus5'), document.getElementById('vipStatusStats')];
 
 function updateVipStatus() {
     const t=translations[currentLang];
@@ -459,7 +502,7 @@ function showNotif(msg) { elNotif.innerText=msg; elNotif.style.display='block'; 
 function switchPage(id,elm) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active')); elm.classList.add('active'); }
 function openLink(url) { tg.openLink(url); }
 function copyLink() { navigator.clipboard.writeText(elInviteLink.innerText); showNotif(translations[currentLang].copied); }
-function shareLink() { tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(elInviteLink.innerText)}&text=${encodeURIComponent('Mining CAPYBARA TITAN 🚀')}`); }
+function shareLink() { tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(elInviteLink.innerText)}&text=${encodeURIComponent('Mining Capybara Titan 🚀')}`); }
 function formatTime(sec) {
     sec = Math.max(0, Math.floor(sec));
     let h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
@@ -490,7 +533,6 @@ function updateUI() {
 function showAdThenStart() { elAdOverlay.classList.add('show'); }
 function closeAd() { elAdOverlay.classList.remove('show'); startMining(); }
 
-// === TIMER DIPASTIKAN BERJALAN MANDIRI TANPA TERGANGGU ===
 function checkMinerStatus() {
     const now = Math.floor(Date.now() / 1000);
     let remain = data.endTime - now;
@@ -524,7 +566,6 @@ function startMining() {
     const now = Math.floor(Date.now() / 1000);
     const t = translations[currentLang];
 
-    // === BERIKAN BONUS 500 POIN JIKA ANGGOTA BARU & BELUM PERNAH DAPAT ===
     if(!data.hasStartedMining && !data.gotWelcomeBonus) {
         data.points += NEW_MEMBER_BONUS;
         data.gotWelcomeBonus = true;
@@ -545,7 +586,6 @@ function startMining() {
     if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 }
 
-// === INTERVAL DIPASTIKAN BERJALAN SEJAK AWAL, TIDAK MENUNGGU APA-APA ===
 function runAuto() {
     if(minerInterval) clearInterval(minerInterval);
     minerInterval = setInterval(()=>{
