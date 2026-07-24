@@ -74,6 +74,11 @@
         .buy-btn.epic { background: #8B5CF6; color: white; }
         .buy-btn.legendary { background: #F59E0B; color: #1A1400; }
 
+        .roadmap-phase { border-left: 3px solid #FFD700; padding-left: 12px; margin-bottom: 15px; }
+        .roadmap-title { font-weight: bold; color: #FFD700; margin-bottom: 5px; }
+        .roadmap-done { color: #00FF80; font-size: 11px; }
+        .roadmap-list { font-size: 13px; opacity: 0.9; line-height: 1.7; }
+
         .bottom-menu { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,30,80,0.95); display: flex; justify-content: space-around; padding: 10px 0 12px; border-top: 1px solid rgba(255,215,0,0.2); }
         .menu-item { text-align: center; font-size: 11px; opacity: 0.7; cursor: pointer; }
         .menu-item.active { color: #FFD700; opacity: 1; font-weight: bold; }
@@ -111,18 +116,18 @@
     </div>
 
     <div class="info-row">
-        <div class="info-col"><div class="info-num">12:00:00</div><div data-txt="mine_time"></div></div>
-        <div class="info-col"><div class="info-num" id="targetLevel">0 / 1,000</div><div data-txt="coin_level"></div></div>
-        <div class="info-col"><div class="info-num" id="coinsPerHour">10</div><div data-txt="coin_hour"></div></div>
+        <div class="info-col"><div class="info-num">12:00:00</div><div>Mining Time</div></div>
+        <div class="info-col"><div class="info-num" id="targetLevel">0 / 1,000</div><div>Coin Level</div></div>
+        <div class="info-col"><div class="info-num" id="coinsPerHour">10</div><div>Coin/Hour</div></div>
     </div>
 
     <div class="side-menu side-left">
-        <div class="side-btn" onclick="switchPage('pageNft')"><div class="icon">💎</div><span data-txt="nft"></span></div>
-        <div class="side-btn" onclick="switchPage('pageInvite')"><div class="icon">👥</div><span data-txt="invite"></span></div>
+        <div class="side-btn" onclick="switchPage('pageNft')"><div class="icon">💎</div><span>NFT</span></div>
+        <div class="side-btn" onclick="switchPage('pageInvite')"><div class="icon">👥</div><span>Invite</span></div>
     </div>
     <div class="side-menu side-right">
-        <div class="side-btn" onclick="switchPage('pageRank')"><div class="icon">🏆</div><span data-txt="rank"></span></div>
-        <div class="side-btn" onclick="switchPage('pageStats')"><div class="icon">📊</div><span data-txt="data"></span></div>
+        <div class="side-btn" onclick="switchPage('pageRoadmap')"><div class="icon">🗺️</div><span>Roadmap</span></div>
+        <div class="side-btn" onclick="switchPage('pageStats')"><div class="icon">📊</div><span>Data</span></div>
     </div>
 
     <div class="miner-container">
@@ -131,106 +136,155 @@
         <div class="inner-circle" id="innerCircle">
             <div class="miner-icon">⛏️</div>
             <div class="time-center" id="timeCenter">00:00:00</div>
-            <div class="speed-center">+<span id="spdVal">10</span> <span data-txt="coin_hour"></span> (Max 30)</div>
+            <div class="speed-center">+<span id="spdVal">10</span> Coin/Hour (Max 30)</div>
         </div>
     </div>
 
-    <button class="start-btn" id="btnMiner" onclick="showAdThenStart()" data-txt="start_mine"></button>
-    <button class="btn-bonus" id="btnBonusAd" onclick="showBonusAd()">🎁 Tonton Iklan Bonus (<span id="adCount">0</span>/2)</button>
+    <button class="start-btn" id="btnMiner" onclick="showAdThenStart()">Start Mining</button>
+    <button class="btn-bonus" id="btnBonusAd" onclick="showBonusAd()">🎁 Bonus Ad (<span id="adCount">0</span>/2)</button>
 
     <div class="box" style="margin-top:10px;">
-        <h4 data-txt="rules"></h4>
-        <p data-txt="rule_list"></p>
+        <h4>📜 Mining Rules</h4>
+        <p>✅ New User: +500 Coin<br>✅ Base: 10/hour<br>✅ +20% per friend<br>✅ Max: 30/hour<br>✅ NFT Boost<br>✅ Bonus Ad: 2x/day +100 each</p>
+    </div>
+</div>
+
+<div class="page" id="pageRoadmap">
+    <div class="top-bar"><div class="profile-info"><span>🗺️ Project Roadmap</span></div></div>
+    <div class="box">
+        <h4 style="text-align:center; font-size:16px;">Capybara Titan</h4>
+        <p style="text-align:center; opacity:0.9; margin-bottom:15px;">Building the lightest, fairest, and most sustainable mining ecosystem on Telegram.</p>
+    </div>
+
+    <div class="roadmap-phase">
+        <div class="roadmap-title">✅ Phase 1: Foundation & Community Building <span class="roadmap-done">— Completed</span></div>
+        <div class="roadmap-list">
+            • Core mining system & coin calculation<br>
+            • Adsgram integration & daily reward limit<br>
+            • Secure data storage via Telegram Bot<br>
+            • Referral system & welcome bonus<br>
+            • Multi-language support<br>
+            • Early community growth & official channels<br>
+            • Basic NFT & wallet preparation
+        </div>
+    </div>
+
+    <div class="roadmap-phase">
+        <div class="roadmap-title">⚙️ Phase 2: Improvement & Features <span class="roadmap-done" style="color:#FFD700;">— Ongoing</span></div>
+        <div class="roadmap-list">
+            • Official Event page with schedule<br>
+            • Auto-updated global leaderboard<br>
+            • Real-time platform statistics<br>
+            • Enhanced security & anti-cheat<br>
+            • Economic balance optimization
+        </div>
+    </div>
+
+    <div class="roadmap-phase">
+        <div class="roadmap-title">🎉 Phase 3: Real Value & Rewards <span class="roadmap-done" style="color:#888;">— Coming Soon</span></div>
+        <div class="roadmap-list">
+            • Regular & special reward events<br>
+            • Real prize redemption system<br>
+            • Integrated NFT marketplace<br>
+            • Official partnerships & collaborations
+        </div>
+    </div>
+
+    <div class="roadmap-phase">
+        <div class="roadmap-title">🚀 Phase 4: Ecosystem Expansion <span class="roadmap-done" style="color:#888;">— Long Term</span></div>
+        <div class="roadmap-list">
+            • Direct withdrawal to personal wallets<br>
+            • Full community features<br>
+            • Ecosystem expansion across TON<br>
+            • Exclusive perks for early supporters
+        </div>
+    </div>
+
+    <div class="box" style="margin-top:15px;">
+        <h4>Our Principles</h4>
+        <p>⚡ Lightweight • ⚖️ Fair • 🤝 Transparent • ♻️ Sustainable</p>
     </div>
 </div>
 
 <div class="page" id="pageInvite">
-    <div class="top-bar"><div class="profile-info"><span data-txt="invite_friend"></span></div></div>
+    <div class="top-bar"><div class="profile-info"><span>Invite Friends</span></div></div>
     <div class="box">
-        <h4 data-txt="invite_stat"></h4>
-        <p data-txt="active_miner"></p> <span id="friendCount">0</span>
-        <p data-txt="reward"></p>
-        <p data-txt="bonus_rule"></p>
+        <h4>Invite Stats</h4>
+        <p>Active Miners: <span id="friendCount">0</span></p>
+        <p>Reward: You +500 • Friend +250</p>
+        <p>Max bonus: +200% speed</p>
     </div>
     <div class="box">
-        <h4 data-txt="invite_link"></h4>
+        <h4>Your Link</h4>
         <p id="inviteLink" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0,0.3); border-radius:5px;"></p>
-        <button class="btn yellow" onclick="copyLink()" data-txt="copy_link"></button>
-        <button class="btn gray" onclick="shareLink()" data-txt="share"></button>
+        <button class="btn yellow" onclick="copyLink()">Copy Link</button>
+        <button class="btn gray" onclick="shareLink()">Share</button>
     </div>
 </div>
 
 <div class="page" id="pageStats">
-    <div class="top-bar"><div class="profile-info"><span data-txt="platform_data"></span></div></div>
+    <div class="top-bar"><div class="profile-info"><span>Platform Data</span></div></div>
     <div class="box">
-        <h4 data-txt="users"></h4>
-        <div class="stat-row"><span data-txt="total_user"></span><span class="stat-val" id="totalUsers">1,247</span></div>
-        <div class="stat-row"><span data-txt="active_today"></span><span class="stat-val" id="activeUsers">389</span></div>
-        <div class="stat-row"><span data-txt="mining_now"></span><span class="stat-val" id="miningNow">156</span></div>
+        <h4>Users</h4>
+        <div class="stat-row"><span>Total Users</span><span class="stat-val" id="totalUsers">1,247</span></div>
+        <div class="stat-row"><span>Active Today</span><span class="stat-val" id="activeUsers">389</span></div>
+        <div class="stat-row"><span>Mining Now</span><span class="stat-val" id="miningNow">156</span></div>
     </div>
 </div>
 
 <div class="page" id="pageRank">
-    <div class="top-bar"><div class="profile-info"><span data-txt="ranking"></span></div></div>
-    <div class="box"><h4 data-txt="your_rank"></h4><p data-txt="no_rank"></p></div>
+    <div class="top-bar"><div class="profile-info"><span>Ranking</span></div></div>
+    <div class="box"><h4>Your Rank</h4><p>Not ranked yet</p></div>
 </div>
 
 <div class="page" id="pageNft">
-    <div class="top-bar"><div class="profile-info"><span data-txt="nft_collection"></span></div></div>
+    <div class="top-bar"><div class="profile-info"><span>NFT Collection</span></div></div>
     <div class="box">
-        <h4 data-txt="connect_wallet"></h4>
-        <p data-txt="wallet_desc"></p>
-        <button class="btn green" id="btnConnectWallet" onclick="connectWallet()" data-txt="connect_now"></button>
+        <h4>Connect Wallet</h4>
+        <p>Use Tonkeeper or Telegram Wallet</p>
+        <button class="btn green" id="btnConnectWallet" onclick="connectWallet()">Connect Now</button>
     </div>
-    <div class="box"><p style="text-align:center; opacity:0.7;" data-txt="no_nft"></p></div>
+    <div class="box"><p style="text-align:center; opacity:0.7;">No NFT owned yet</p></div>
 </div>
 
 <div class="page" id="pageMarket">
-    <div class="top-bar"><div class="profile-info"><span data-txt="shop"></span></div></div>
+    <div class="top-bar"><div class="profile-info"><span>Shop</span></div></div>
     <div class="box">
-        <h4 data-txt="nft_effect"></h4>
-        <p data-txt="nft_bonus"></p>
-        <p><strong data-txt="max_bonus"></strong></p>
+        <h4>NFT Benefits</h4>
+        <p>NFT increases mining speed & duration</p>
+        <p><strong>Max total boost: +200%</strong></p>
     </div>
     <div class="nft-tier rare">
         <div class="tier-header"><span class="tier-name">🔵 Rare</span></div>
-        <div class="tier-desc" data-txt="rare_desc"></div>
-        <div class="tier-bonus">⚡ +30% Speed • ⏱️ +2 Jam</div>
-        <button class="buy-btn rare" onclick="window.open('https://getgems.io/collection/rare-capybara')" data-txt="buy_getgems"></button>
+        <div class="tier-desc">Good bonus boost</div>
+        <div class="tier-bonus">⚡ +30% Speed • ⏱️ +2 Hours</div>
+        <button class="buy-btn rare" onclick="window.open('https://getgems.io/collection/rare-capybara')">Buy on Getgems</button>
     </div>
     <div class="nft-tier epic">
         <div class="tier-header"><span class="tier-name">🟣 Epic</span></div>
-        <div class="tier-desc" data-txt="epic_desc"></div>
-        <div class="tier-bonus">⚡ +60% Speed • ⏱️ +4 Jam</div>
-        <button class="buy-btn epic" onclick="window.open('https://getgems.io/collection/epic-capybara')" data-txt="buy_getgems"></button>
+        <div class="tier-desc">Great bonus boost</div>
+        <div class="tier-bonus">⚡ +60% Speed • ⏱️ +4 Hours</div>
+        <button class="buy-btn epic" onclick="window.open('https://getgems.io/collection/epic-capybara')">Buy on Getgems</button>
     </div>
     <div class="nft-tier legendary">
         <div class="tier-header"><span class="tier-name">🟡 Legendary</span></div>
-        <div class="tier-desc" data-txt="legend_desc"></div>
-        <div class="tier-bonus">⚡ +100% Speed • ⏱️ +6 Jam</div>
-        <button class="buy-btn legendary" onclick="window.open('https://getgems.io/collection/legendary-capybara')" data-txt="buy_getgems"></button>
+        <div class="tier-desc">Maximum bonus boost</div>
+        <div class="tier-bonus">⚡ +100% Speed • ⏱️ +6 Hours</div>
+        <button class="buy-btn legendary" onclick="window.open('https://getgems.io/collection/legendary-capybara')">Buy on Getgems</button>
     </div>
 </div>
 
 <div class="bottom-menu">
-    <div class="menu-item active" onclick="switchPage('pageHome')"><span class="menu-icon">⛏️</span><span data-txt="mine"></span></div>
-    <div class="menu-item" onclick="switchPage('pageInvite')"><span class="menu-icon">👥</span><span data-txt="friends"></span></div>
-    <div class="menu-item" onclick="switchPage('pageNft')"><span class="menu-icon">💎</span><span data-txt="nft"></span></div>
-    <div class="menu-item" onclick="switchPage('pageMarket')"><span class="menu-icon">🛒</span><span data-txt="shop"></span></div>
-    <div class="menu-item" onclick="switchPage('pageStats')"><span class="menu-icon">📊</span><span data-txt="data"></span></div>
+    <div class="menu-item active" onclick="switchPage('pageHome')"><span class="menu-icon">⛏️</span><span>Mine</span></div>
+    <div class="menu-item" onclick="switchPage('pageInvite')"><span class="menu-icon">👥</span><span>Friends</span></div>
+    <div class="menu-item" onclick="switchPage('pageNft')"><span class="menu-icon">💎</span><span>NFT</span></div>
+    <div class="menu-item" onclick="switchPage('pageMarket')"><span class="menu-icon">🛒</span><span>Shop</span></div>
+    <div class="menu-item" onclick="switchPage('pageRoadmap')"><span class="menu-icon">🗺️</span><span>Roadmap</span></div>
 </div>
 
 <div class="notif" id="notif"></div>
 
 <script>
-const t = {
- en:{start_mine:"Start Mining",mine_time:"Mining Time",coin_level:"Coin Level",coin_hour:"Coin/Hour",rules:"📜 Mining Rules",rule_list:"✅ New: +500 Coin<br>✅ Base: 10/h<br>✅ +20%/friend<br>✅ Max: 30/h<br>✅ NFT boost<br>✅ Bonus Ad: 2x/day +100 each",invite_friend:"Invite Friends",invite_stat:"Invite Stats",active_miner:"Active:",reward:"Reward: You +500 • Friend +250",bonus_rule:"Max bonus +200%",invite_link:"Your Link",copy_link:"Copy",share:"Share",platform_data:"Platform Data",users:"Users",total_user:"Total",active_today:"Active Today",mining_now:"Mining Now",ranking:"Ranking",your_rank:"Your Rank",no_rank:"Not ranked",nft_collection:"NFT",connect_wallet:"Connect Wallet",wallet_desc:"Use Tonkeeper/Telegram Wallet",connect_now:"Connect Now",no_nft:"No NFT yet",shop:"Shop",mine:"Mine",friends:"Friends",nft:"NFT",data:"Data",rank:"Rank",nft_effect:"NFT Benefits",nft_bonus:"NFT increases speed & time",max_bonus:"Max total +200%",rare_desc:"Good bonus",epic_desc:"Big bonus",legend_desc:"Max bonus",buy_getgems:"Buy on Getgems",vip:"VIP",nft_owner:"NFT Owner",level_up:"Level Up",mine_done:"Mining Finished!",ad_ok:"✅ +100 Coin Added!",ad_max:"⚠️ Limit 2x/day, try again tomorrow",sync_ok:"✅ Synced",sync_wait:"🔄 Syncing...",sync_off:"⚠️ Offline mode"},
- id:{start_mine:"Mulai Tambang",mine_time:"Waktu Tambang",coin_level:"Level Coin",coin_hour:"Coin/Jam",rules:"📜 Aturan",rule_list:"✅ Baru: +500 Coin<br>✅ Dasar: 10/jam<br>✅ +20%/teman<br>✅ Maks: 30/jam<br>✅ NFT tambah kecepatan<br>✅ Iklan Bonus: 2x/hari +100",invite_friend:"Undang Teman",invite_stat:"Statistik",active_miner:"Aktif:",reward:"Hadiah: Kamu +500 • Teman +250",bonus_rule:"Maks bonus +200%",invite_link:"Tautan",copy_link:"Salin",share:"Bagikan",platform_data:"Data",users:"Pengguna",total_user:"Total",active_today:"Hari Ini",mining_now:"Sedang Tambang",ranking:"Peringkat",your_rank:"Peringkatmu",no_rank:"Belum ada",nft_collection:"NFT",connect_wallet:"Hubungkan Dompet",wallet_desc:"Gunakan Tonkeeper/Dompet Telegram",connect_now:"Hubungkan",no_nft:"Belum ada NFT",shop:"Toko",mine:"Tambang",friends:"Teman",nft:"NFT",data:"Data",rank:"Peringkat",nft_effect:"Keuntungan NFT",nft_bonus:"NFT tambah kecepatan & waktu",max_bonus:"Maks total +200%",rare_desc:"Bonus bagus",epic_desc:"Bonus besar",legend_desc:"Bonus maksimal",buy_getgems:"Beli di Getgems",vip:"VIP",nft_owner:"Pemilik NFT",level_up:"Naik Level",mine_done:"Tambang Selesai!",ad_ok:"✅ +100 Coin Masuk!",ad_max:"⚠️ Maks 2x/hari, coba besok",sync_ok:"✅ Tersimpan",sync_wait:"🔄 Menyimpan...",sync_off:"⚠️ Mode Lokal"},
- zh:{start_mine:"开始挖矿",mine_time:"挖矿时间",coin_level:"等级",coin_hour:"代币/小时",rules:"规则",rule_list:"✅新用户+500<br>✅基础10/小时<br>✅每好友+20%<br>✅最高30/小时<br>✅NFT加成<br>✅每日2次广告+100",invite_friend:"邀请好友",invite_stat:"统计",active_miner:"活跃:",reward:"奖励:你+500 好友+250",bonus_rule:"最高+200%",invite_link:"链接",copy_link:"复制",share:"分享",platform_data:"数据",users:"用户",total_user:"总计",active_today:"今日活跃",mining_now:"挖矿中",ranking:"排行",your_rank:"排名",no_rank:"暂无",nft_collection:"NFT",connect_wallet:"连接钱包",wallet_desc:"用Tonkeeper连接",connect_now:"连接",no_nft:"暂无NFT",shop:"商店",mine:"挖矿",friends:"好友",nft:"NFT",data:"数据",rank:"排行",nft_effect:"权益",nft_bonus:"提升速度时长",max_bonus:"最高+200%",rare_desc:"稀有",epic_desc:"史诗",legend_desc:"传说",buy_getgems:"前往购买",vip:"贵宾",nft_owner:"NFT持有者",level_up:"升级",mine_done:"挖矿完成！",ad_ok:"✅+100代币到账！",ad_max:"⚠️每日限2次",sync_ok:"✅已同步",sync_wait:"🔄同步中",sync_off:"⚠️离线模式"},
- vi:{start_mine:"Bắt Đào",mine_time:"Thời Gian",coin_level:"Cấp",coin_hour:"Coin/Giờ",rules:"Quy tắc",rule_list:"✅Mới+500<br>✅Cơ bản 10/giờ<br>✅+20%/bạn<br>✅Tối đa 30/giờ<br>✅NFT tăng tốc<br>✅2 lần/ngày +100",invite_friend:"Mời Bạn",invite_stat:"Thống kê",active_miner:"Hoạt động:",reward:"Thưởng: Bạn+500 • Bạn+250",bonus_rule:"Tối đa +200%",invite_link:"Liên kết",copy_link:"Sao chép",share:"Chia sẻ",platform_data:"Dữ liệu",users:"Người dùng",total_user:"Tổng",active_today:"Hôm nay",mining_now:"Đang đào",ranking:"Xếp hạng",your_rank:"Hạng của bạn",no_rank:"Chưa có",nft_collection:"NFT",connect_wallet:"Kết nối ví",wallet_desc:"Dùng Tonkeeper",connect_now:"Kết nối",no_nft:"Chưa có NFT",shop:"Cửa hàng",mine:"Đào",friends:"Bạn bè",nft:"NFT",data:"Dữ liệu",rank:"Hạng",nft_effect:"Lợi ích",nft_bonus:"Tăng tốc & thời gian",max_bonus:"Tối đa +200%",rare_desc:"Hiếm",epic_desc:"Rất hiếm",legend_desc:"Đặc biệt",buy_getgems:"Mua trên Getgems",vip:"VIP",nft_owner:"Chủ NFT",level_up:"Lên Cấp",mine_done:"Đào xong!",ad_ok:"✅+100 Coin!",ad_max:"⚠️Tối đa 2 lần/ngày",sync_ok:"✅Đã lưu",sync_wait:"🔄Đang lưu",sync_off:"⚠️Chế độ cục bộ"}
-};
-
-let curLang = localStorage.getItem('appLang') || 'en';
 const tg = window.Telegram.WebApp; tg.ready(); tg.expand();
 const user = tg.initDataUnsafe?.user || {};
 const uid = user.id || `g${Date.now()}`;
@@ -241,13 +295,11 @@ const BONUS_AD = 100;
 let syncOk = false;
 let timer = null;
 
-// === STRUKTUR DATA UTAMA ===
 let data = {
  coins: ref?250:0, level:1, next:1000, refs:0, end:0, spd:10/3600, dur:12*3600,
  start:false, welcome:false, adToday:0, adDate: new Date().toDateString()
 };
 
-// === FUNGSI SIMPAN & AMBIL DATA KE/DARI BOT ===
 function updateSyncStatus(txt, ok){
  const s=document.getElementById('syncStatus'); s.innerText=txt; s.className=ok?'sync-status':'sync-status off';
 }
@@ -255,16 +307,16 @@ function updateSyncStatus(txt, ok){
 function saveData(){
  try{
   localStorage.setItem('capy_'+uid, JSON.stringify(data));
-  updateSyncStatus(t[curLang].sync_wait, true);
+  updateSyncStatus('🔄 Saving...', true);
   tg.sendData(JSON.stringify({ action:'save', user_id:uid, data:data }));
- }catch{ updateSyncStatus(t[curLang].sync_off, false); }
+ }catch{ updateSyncStatus('⚠️ Offline Mode', false); }
 }
 
 function loadData(){
  const local = localStorage.getItem('capy_'+uid);
  if(local) try{ data = JSON.parse(local); }catch{}
  tg.sendData(JSON.stringify({ action:'load', user_id:uid }));
- setTimeout(()=>{ checkAdReset(); ui(); updLang(); }, 500);
+ setTimeout(()=>{ checkAdReset(); ui(); }, 500);
 }
 
 tg.onEvent('message', e=>{
@@ -272,9 +324,9 @@ tg.onEvent('message', e=>{
   const res = JSON.parse(e.data);
   if(res.action==='load_result' && res.data){
    data = res.data; syncOk = true;
-   saveData(); updateSyncStatus(t[curLang].sync_ok, true);
+   saveData(); updateSyncStatus('✅ Synced', true);
   }
-  if(res.action==='save_done') updateSyncStatus(t[curLang].sync_ok, true);
+  if(res.action==='save_done') updateSyncStatus('✅ Saved', true);
   if(res.action==='stats'){
    document.getElementById('totalUsers').innerText = res.total||'1,247';
    document.getElementById('activeUsers').innerText = res.active||'389';
@@ -291,15 +343,6 @@ function checkAdReset(){
  document.getElementById('btnBonusAd').disabled = data.adToday >= MAX_AD_DAY;
 }
 
-function updLang(){
- document.querySelectorAll('[data-txt]').forEach(e=>e.innerHTML=t[curLang][e.dataset.txt]||'');
- document.getElementById('userName').innerText = user.first_name||user.username||'Guest';
- document.getElementById('vipBadge').innerHTML = data.refs>=5?`<span class="vip-badge">${t[curLang].vip}</span>`:'';
-}
-function setLang(l){curLang=l;localStorage.setItem('appLang',l);updLang();closeLang();}
-function openLang(){document.getElementById('langMenu').classList.add('show');}
-function closeLang(){document.getElementById('langMenu').classList.remove('show');}
-
 function showNotif(m){const n=document.getElementById('notif');n.innerText=m;n.style.display='block';setTimeout(()=>n.style.display='none',2500);}
 function switchPage(id){document.querySelectorAll('.page,.menu-item').forEach(e=>e.classList.remove('active'));document.getElementById(id).classList.add('active');event.target?.closest('.menu-item')?.classList.add('active');}
 function fmt(s){s=Math.max(0,s);return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor((s%3600)/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;}
@@ -313,6 +356,8 @@ function ui(){
  document.getElementById('coinsPerHour').innerText=s.b.toFixed(1);
  document.getElementById('friendCount').innerText=data.refs;
  document.getElementById('inviteLink').innerText=`https://t.me/capytap_pibot?start=${uid}`;
+ document.getElementById('userName').innerText = user.first_name||user.username||'Guest';
+ document.getElementById('vipBadge').innerHTML = data.refs>=5?`<span class="vip-badge">VIP</span>`:'';
  data.spd=s.s;
  saveData();
 }
@@ -327,23 +372,21 @@ async function showAdThenStart(){
 }
 
 async function showBonusAd(){
- if(data.adToday >= MAX_AD_DAY){showNotif(t[curLang].ad_max);return;}
+ if(data.adToday >= MAX_AD_DAY){showNotif('⚠️ Limit 2x/day, try tomorrow');return;}
  try{
   if(window.Adsgram){
    const ad = window.Adsgram.init({blockId:ADS});
-   ad.on('reward',()=>{ data.coins += BONUS_AD; data.adToday++; showNotif(t[curLang].ad_ok); ui(); });
-   ad.on('error',()=>showNotif('⚠️ Iklan tidak tersedia'));
+   ad.on('reward',()=>{ data.coins += BONUS_AD; data.adToday++; showNotif('✅ +100 Coin Added!'); ui(); });
+   ad.on('error',()=>showNotif('⚠️ Ad not available'));
    ad.show();
-  }else{ data.coins += BONUS_AD; data.adToday++; showNotif(t[curLang].ad_ok); ui(); }
- }catch{showNotif('⚠️ Gagal memuat iklan');}
+  }else{ data.coins += BONUS_AD; data.adToday++; showNotif('✅ +100 Coin Added!'); ui(); }
+ }catch{showNotif('⚠️ Failed to load ad');}
 }
 
 function start(){
  const now = Math.floor(Date.now()/1000);
- if(!data.start&&!data.welcome){data.coins+=500;data.welcome=true;showNotif('🎉 +500 Coin!');}
- if(!data.start&&ref){
-  tg.sendData(JSON.stringify({action:'add_ref',ref:ref}));
- }
+ if(!data.start&&!data.welcome){data.coins+=500;data.welcome=true;showNotif('🎉 +500 Welcome Coins!');}
+ if(!data.start&&ref){ tg.sendData(JSON.stringify({action:'add_ref',ref:ref})); }
  data.start=true; data.end=now+data.dur;
  ui(); run();
 }
@@ -360,14 +403,14 @@ function run(){
    document.getElementById('timeCenter').innerText=fmt(rem);
    document.getElementById('btnMiner').disabled=true;
    data.coins+=data.spd;
-   if(data.coins>=data.next){data.level++;data.next=Math.round(data.next*1.8);showNotif(`🎉 ${t[curLang].level_up} ${data.level}!`);}
+   if(data.coins>=data.next){data.level++;data.next=Math.round(data.next*1.8);showNotif(`🎉 Level Up! Level ${data.level}`);}
    saveData();
   }else{
    document.getElementById('progressRing').style.background=`conic-gradient(#FFD700 0deg, transparent 0deg)`;
    document.getElementById('innerCircle').classList.remove('active');
    document.getElementById('timeCenter').innerText='00:00:00';
    document.getElementById('btnMiner').disabled=false;
-   showNotif(t[curLang].mine_done);
+   showNotif('✅ Mining Complete!');
   }
  },1000);
 }
@@ -376,7 +419,6 @@ function copyLink(){navigator.clipboard.writeText(document.getElementById('invit
 function shareLink(){tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(`https://t.me/capytap_pibot?start=${uid}`)}&text=${encodeURIComponent('Mine Capybara Titan 🚀')}`);}
 async function connectWallet(){showNotif('⚠️ Wallet coming soon');}
 
-// === MULAI: AMBIL DATA DARI BOT ===
 loadData();
 if(data.end>Math.floor(Date.now()/1000)) run();
 </script>
