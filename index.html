@@ -42,6 +42,9 @@
         .start-btn.active { background: #00FF80; color: #00331A; }
         .start-btn:disabled { opacity: 0.5; }
 
+        .btn-bonus { display: block; margin: 15px auto; padding: 10px 25px; border: none; border-radius: 50px; font-weight: bold; font-size: 13px; background: #9333EA; color: white; cursor: pointer; }
+        .btn-bonus:disabled { opacity: 0.4; cursor: not-allowed; }
+
         .side-menu { position: fixed; top: 140px; display: flex; flex-direction: column; gap: 12px; }
         .side-left { left: 12px; }
         .side-right { right: 12px; }
@@ -132,7 +135,9 @@
 
     <button class="start-btn" id="btnMiner" onclick="showAdThenStart()" data-txt="start_mine"></button>
 
-    <div class="box" style="margin-top:20px;">
+    <button class="btn-bonus" id="btnBonusAd" onclick="showBonusAd()">🎁 Tonton Iklan Bonus (<span id="adCount">0</span>/2)</button>
+
+    <div class="box" style="margin-top:10px;">
         <h4 data-txt="rules"></h4>
         <p data-txt="rule_list"></p>
     </div>
@@ -218,10 +223,10 @@
 
 <script>
 const t = {
- en:{start_mine:"Start Mining",mine_time:"Mining Time",coin_level:"Coin Level",coin_hour:"Coin/Hour",rules:"📜 Mining Rules",rule_list:"✅ New: +500 Coin<br>✅ Base: 10/h<br>✅ +20%/friend<br>✅ Max: 30/h<br>✅ NFT boost",invite_friend:"Invite Friends",invite_stat:"Invite Stats",active_miner:"Active:",reward:"Reward: You +500 • Friend +250",bonus_rule:"Max bonus +200%",invite_link:"Your Link",copy_link:"Copy",share:"Share",platform_data:"Platform Data",users:"Users",total_user:"Total",active_today:"Active Today",mining_now:"Mining Now",ranking:"Ranking",your_rank:"Your Rank",no_rank:"Not ranked",nft_collection:"NFT",connect_wallet:"Connect Wallet",wallet_desc:"Use Tonkeeper/Telegram Wallet",connect_now:"Connect Now",no_nft:"No NFT yet",shop:"Shop",mine:"Mine",friends:"Friends",nft:"NFT",data:"Data",rank:"Rank",nft_effect:"NFT Benefits",nft_bonus:"NFT increases speed & time",max_bonus:"Max total +200%",rare_desc:"Good bonus",epic_desc:"Big bonus",legend_desc:"Max bonus",buy_getgems:"Buy on Getgems",vip:"VIP",nft_owner:"NFT Owner",level_up:"Level Up",mine_done:"Mining Finished!"},
- id:{start_mine:"Mulai Tambang",mine_time:"Waktu Tambang",coin_level:"Level Coin",coin_hour:"Coin/Jam",rules:"📜 Aturan",rule_list:"✅ Baru: +500 Coin<br>✅ Dasar: 10/jam<br>✅ +20%/teman<br>✅ Maks: 30/jam<br>✅ NFT tambah kecepatan",invite_friend:"Undang Teman",invite_stat:"Statistik",active_miner:"Aktif:",reward:"Hadiah: Kamu +500 • Teman +250",bonus_rule:"Maks bonus +200%",invite_link:"Tautan",copy_link:"Salin",share:"Bagikan",platform_data:"Data",users:"Pengguna",total_user:"Total",active_today:"Hari Ini",mining_now:"Sedang Tambang",ranking:"Peringkat",your_rank:"Peringkatmu",no_rank:"Belum ada",nft_collection:"NFT",connect_wallet:"Hubungkan Dompet",wallet_desc:"Gunakan Tonkeeper/Dompet Telegram",connect_now:"Hubungkan",no_nft:"Belum ada NFT",shop:"Toko",mine:"Tambang",friends:"Teman",nft:"NFT",data:"Data",rank:"Peringkat",nft_effect:"Keuntungan NFT",nft_bonus:"NFT tambah kecepatan & waktu",max_bonus:"Maks total +200%",rare_desc:"Bonus bagus",epic_desc:"Bonus besar",legend_desc:"Bonus maksimal",buy_getgems:"Beli di Getgems",vip:"VIP",nft_owner:"Pemilik NFT",level_up:"Naik Level",mine_done:"Tambang Selesai!"},
- zh:{start_mine:"开始挖矿",mine_time:"挖矿时间",coin_level:"等级",coin_hour:"代币/小时",rules:"规则",rule_list:"✅新用户+500<br>✅基础10/小时<br>✅每好友+20%<br>✅最高30/小时",invite_friend:"邀请好友",invite_stat:"统计",active_miner:"活跃:",reward:"奖励:你+500 好友+250",bonus_rule:"最高+200%",invite_link:"链接",copy_link:"复制",share:"分享",platform_data:"数据",users:"用户",total_user:"总计",active_today:"今日活跃",mining_now:"挖矿中",ranking:"排行",your_rank:"排名",no_rank:"暂无",nft_collection:"NFT",connect_wallet:"连接钱包",wallet_desc:"用Tonkeeper连接",connect_now:"连接",no_nft:"暂无NFT",shop:"商店",mine:"挖矿",friends:"好友",nft:"NFT",data:"数据",rank:"排行",nft_effect:"权益",nft_bonus:"提升速度时长",max_bonus:"最高+200%",rare_desc:"稀有",epic_desc:"史诗",legend_desc:"传说",buy_getgems:"前往购买",vip:"贵宾",nft_owner:"NFT持有者",level_up:"升级",mine_done:"挖矿完成！"},
- vi:{start_mine:"Bắt Đào",mine_time:"Thời Gian",coin_level:"Cấp",coin_hour:"Coin/Giờ",rules:"Quy tắc",rule_list:"✅Mới+500<br>✅Cơ bản 10/giờ<br>✅+20%/bạn<br>✅Tối đa 30/giờ",invite_friend:"Mời Bạn",invite_stat:"Thống kê",active_miner:"Hoạt động:",reward:"Thưởng: Bạn+500 • Bạn+250",bonus_rule:"Tối đa +200%",invite_link:"Liên kết",copy_link:"Sao chép",share:"Chia sẻ",platform_data:"Dữ liệu",users:"Người dùng",total_user:"Tổng",active_today:"Hôm nay",mining_now:"Đang đào",ranking:"Xếp hạng",your_rank:"Hạng của bạn",no_rank:"Chưa có",nft_collection:"NFT",connect_wallet:"Kết nối ví",wallet_desc:"Dùng Tonkeeper",connect_now:"Kết nối",no_nft:"Chưa có NFT",shop:"Cửa hàng",mine:"Đào",friends:"Bạn bè",nft:"NFT",data:"Dữ liệu",rank:"Hạng",nft_effect:"Lợi ích",nft_bonus:"Tăng tốc & thời gian",max_bonus:"Tối đa +200%",rare_desc:"Hiếm",epic_desc:"Rất hiếm",legend_desc:"Đặc biệt",buy_getgems:"Mua trên Getgems",vip:"VIP",nft_owner:"Chủ NFT",level_up:"Lên Cấp",mine_done:"Đào xong!"}
+ en:{start_mine:"Start Mining",mine_time:"Mining Time",coin_level:"Coin Level",coin_hour:"Coin/Hour",rules:"📜 Mining Rules",rule_list:"✅ New: +500 Coin<br>✅ Base: 10/h<br>✅ +20%/friend<br>✅ Max: 30/h<br>✅ NFT boost<br>✅ Bonus Ad: 2x/day +100 each",invite_friend:"Invite Friends",invite_stat:"Invite Stats",active_miner:"Active:",reward:"Reward: You +500 • Friend +250",bonus_rule:"Max bonus +200%",invite_link:"Your Link",copy_link:"Copy",share:"Share",platform_data:"Platform Data",users:"Users",total_user:"Total",active_today:"Active Today",mining_now:"Mining Now",ranking:"Ranking",your_rank:"Your Rank",no_rank:"Not ranked",nft_collection:"NFT",connect_wallet:"Connect Wallet",wallet_desc:"Use Tonkeeper/Telegram Wallet",connect_now:"Connect Now",no_nft:"No NFT yet",shop:"Shop",mine:"Mine",friends:"Friends",nft:"NFT",data:"Data",rank:"Rank",nft_effect:"NFT Benefits",nft_bonus:"NFT increases speed & time",max_bonus:"Max total +200%",rare_desc:"Good bonus",epic_desc:"Big bonus",legend_desc:"Max bonus",buy_getgems:"Buy on Getgems",vip:"VIP",nft_owner:"NFT Owner",level_up:"Level Up",mine_done:"Mining Finished!",ad_ok:"✅ +100 Coin Added!",ad_max:"⚠️ Limit 2x/day, coba lagi besok"},
+ id:{start_mine:"Mulai Tambang",mine_time:"Waktu Tambang",coin_level:"Level Coin",coin_hour:"Coin/Jam",rules:"📜 Aturan",rule_list:"✅ Baru: +500 Coin<br>✅ Dasar: 10/jam<br>✅ +20%/teman<br>✅ Maks: 30/jam<br>✅ NFT tambah kecepatan<br>✅ Iklan Bonus: 2x/hari +100",invite_friend:"Undang Teman",invite_stat:"Statistik",active_miner:"Aktif:",reward:"Hadiah: Kamu +500 • Teman +250",bonus_rule:"Maks bonus +200%",invite_link:"Tautan",copy_link:"Salin",share:"Bagikan",platform_data:"Data",users:"Pengguna",total_user:"Total",active_today:"Hari Ini",mining_now:"Sedang Tambang",ranking:"Peringkat",your_rank:"Peringkatmu",no_rank:"Belum ada",nft_collection:"NFT",connect_wallet:"Hubungkan Dompet",wallet_desc:"Gunakan Tonkeeper/Dompet Telegram",connect_now:"Hubungkan",no_nft:"Belum ada NFT",shop:"Toko",mine:"Tambang",friends:"Teman",nft:"NFT",data:"Data",rank:"Peringkat",nft_effect:"Keuntungan NFT",nft_bonus:"NFT tambah kecepatan & waktu",max_bonus:"Maks total +200%",rare_desc:"Bonus bagus",epic_desc:"Bonus besar",legend_desc:"Bonus maksimal",buy_getgems:"Beli di Getgems",vip:"VIP",nft_owner:"Pemilik NFT",level_up:"Naik Level",mine_done:"Tambang Selesai!",ad_ok:"✅ +100 Coin Masuk!",ad_max:"⚠️ Maks 2x/hari, coba besok"},
+ zh:{start_mine:"开始挖矿",mine_time:"挖矿时间",coin_level:"等级",coin_hour:"代币/小时",rules:"规则",rule_list:"✅新用户+500<br>✅基础10/小时<br>✅每好友+20%<br>✅最高30/小时<br>✅NFT加成<br>✅每日2次广告+100",invite_friend:"邀请好友",invite_stat:"统计",active_miner:"活跃:",reward:"奖励:你+500 好友+250",bonus_rule:"最高+200%",invite_link:"链接",copy_link:"复制",share:"分享",platform_data:"数据",users:"用户",total_user:"总计",active_today:"今日活跃",mining_now:"挖矿中",ranking:"排行",your_rank:"排名",no_rank:"暂无",nft_collection:"NFT",connect_wallet:"连接钱包",wallet_desc:"用Tonkeeper连接",connect_now:"连接",no_nft:"暂无NFT",shop:"商店",mine:"挖矿",friends:"好友",nft:"NFT",data:"数据",rank:"排行",nft_effect:"权益",nft_bonus:"提升速度时长",max_bonus:"最高+200%",rare_desc:"稀有",epic_desc:"史诗",legend_desc:"传说",buy_getgems:"前往购买",vip:"贵宾",nft_owner:"NFT持有者",level_up:"升级",mine_done:"挖矿完成！",ad_ok:"✅+100代币到账！",ad_max:"⚠️每日限2次"},
+ vi:{start_mine:"Bắt Đào",mine_time:"Thời Gian",coin_level:"Cấp",coin_hour:"Coin/Giờ",rules:"Quy tắc",rule_list:"✅Mới+500<br>✅Cơ bản 10/giờ<br>✅+20%/bạn<br>✅Tối đa 30/giờ<br>✅NFT tăng tốc<br>✅2 lần/ngày +100",invite_friend:"Mời Bạn",invite_stat:"Thống kê",active_miner:"Hoạt động:",reward:"Thưởng: Bạn+500 • Bạn+250",bonus_rule:"Tối đa +200%",invite_link:"Liên kết",copy_link:"Sao chép",share:"Chia sẻ",platform_data:"Dữ liệu",users:"Người dùng",total_user:"Tổng",active_today:"Hôm nay",mining_now:"Đang đào",ranking:"Xếp hạng",your_rank:"Hạng của bạn",no_rank:"Chưa có",nft_collection:"NFT",connect_wallet:"Kết nối ví",wallet_desc:"Dùng Tonkeeper",connect_now:"Kết nối",no_nft:"Chưa có NFT",shop:"Cửa hàng",mine:"Đào",friends:"Bạn bè",nft:"NFT",data:"Dữ liệu",rank:"Hạng",nft_effect:"Lợi ích",nft_bonus:"Tăng tốc & thời gian",max_bonus:"Tối đa +200%",rare_desc:"Hiếm",epic_desc:"Rất hiếm",legend_desc:"Đặc biệt",buy_getgems:"Mua trên Getgems",vip:"VIP",nft_owner:"Chủ NFT",level_up:"Lên Cấp",mine_done:"Đào xong!",ad_ok:"✅+100 Coin!",ad_max:"⚠️Tối đa 2 lần/ngày"}
 };
 
 let curLang = localStorage.getItem('appLang') || 'en';
@@ -229,11 +234,25 @@ const tg = window.Telegram.WebApp; tg.ready(); tg.expand();
 const uid = tg.initDataUnsafe?.user?.id || `g${Date.now()}`;
 const ref = tg.initDataUnsafe?.startParam;
 const ADS = 39513;
+const MAX_AD_DAY = 2;
+const BONUS_AD = 100;
 
 let data = JSON.parse(localStorage.getItem('capy_' + uid)) || {
- coins: ref?250:0, level:1, next:1000, refs:0, end:0, spd:10/3600, dur:12*3600, start:false, welcome:false
+ coins: ref?250:0, level:1, next:1000, refs:0, end:0, spd:10/3600, dur:12*3600, start:false, welcome:false,
+ adToday:0, adDate: new Date().toDateString()
 };
 let timer = null;
+
+function checkAdReset(){
+ const today = new Date().toDateString();
+ if(data.adDate !== today){
+  data.adToday = 0;
+  data.adDate = today;
+  save();
+ }
+ document.getElementById('adCount').innerText = data.adToday;
+ document.getElementById('btnBonusAd').disabled = data.adToday >= MAX_AD_DAY;
+}
 
 function updLang(){
  document.querySelectorAll('[data-txt]').forEach(e=>e.innerHTML=t[curLang][e.dataset.txt]||'');
@@ -250,7 +269,7 @@ function switchPage(id){document.querySelectorAll('.page,.menu-item').forEach(e=
 function fmt(s){s=Math.max(0,s);return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor((s%3600)/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;}
 function calcSpd(){const b=Math.min(1+data.refs*0.2,3);return{b:b*10,s:(b*10)/3600};}
 function save(){localStorage.setItem('capy_'+uid,JSON.stringify(data));}
-function ui(){const s=calcSpd();document.getElementById('score').innerText=Math.floor(data.coins).toLocaleString();document.getElementById('level').innerText=data.level;document.getElementById('targetLevel').innerText=`${Math.floor(data.coins).toLocaleString()} / ${data.next.toLocaleString()}`;document.getElementById('spdVal').innerText=s.b.toFixed(1);document.getElementById('coinsPerHour').innerText=s.b.toFixed(1);document.getElementById('friendCount').innerText=data.refs;document.getElementById('inviteLink').innerText=`https://t.me/capytap_pibot?start=${uid}`;data.spd=s.s;save();updLang();}
+function ui(){const s=calcSpd();document.getElementById('score').innerText=Math.floor(data.coins).toLocaleString();document.getElementById('level').innerText=data.level;document.getElementById('targetLevel').innerText=`${Math.floor(data.coins).toLocaleString()} / ${data.next.toLocaleString()}`;document.getElementById('spdVal').innerText=s.b.toFixed(1);document.getElementById('coinsPerHour').innerText=s.b.toFixed(1);document.getElementById('friendCount').innerText=data.refs;document.getElementById('inviteLink').innerText=`https://t.me/capytap_pibot?start=${uid}`;data.spd=s.s;checkAdReset();save();updLang();}
 
 async function showAdThenStart(){
  try{
@@ -259,6 +278,28 @@ async function showAdThenStart(){
    ad.on('reward',start); ad.on('error',start); ad.show();
   }else start();
  }catch{start();}
+}
+
+async function showBonusAd(){
+ if(data.adToday >= MAX_AD_DAY){showNotif(t[curLang].ad_max);return;}
+ try{
+  if(window.Adsgram){
+   const ad = window.Adsgram.init({blockId:ADS});
+   ad.on('reward',()=>{
+    data.coins += BONUS_AD;
+    data.adToday++;
+    showNotif(t[curLang].ad_ok);
+    ui();
+   });
+   ad.on('error',()=>showNotif('⚠️ Iklan tidak tersedia'));
+   ad.show();
+  }else{
+   data.coins += BONUS_AD;
+   data.adToday++;
+   showNotif(t[curLang].ad_ok);
+   ui();
+  }
+ }catch{showNotif('⚠️ Gagal memuat iklan');}
 }
 
 function start(){
@@ -297,6 +338,7 @@ function copyLink(){navigator.clipboard.writeText(document.getElementById('invit
 function shareLink(){tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(`https://t.me/capytap_pibot?start=${uid}`)}&text=${encodeURIComponent('Mine Capybara Titan 🚀')}`);}
 async function connectWallet(){showNotif('⚠️ Wallet coming soon');}
 
+checkAdReset();
 ui(); updLang();
 if(data.end>Math.floor(Date.now()/1000)) run();
 </script>
