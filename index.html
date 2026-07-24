@@ -7,100 +7,39 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.css">
+    <!-- === LIBRARY ADSGRAM === -->
+    <script src="https://api.adsgram.ai/js/adsgram.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
         body {
-            background: linear-gradient(180deg, #2B2516, #4A3F25);
-            min-height: 100vh;
-            color: white;
-            padding-bottom: 90px;
-            overflow-x: hidden;
+            background: linear-gradient(180deg, #162A46, #1E3A66);
+            min-height: 100vh; color: white;
+            padding-bottom: 85px; overflow-x: hidden;
         }
-
-        .page { display: none; padding: 15px; }
+        .page { display: none; padding: 12px; }
         .page.active { display: block; }
-        .header { 
-            text-align: center; 
-            padding: 15px 0; 
-            border-bottom: 1px solid rgba(255,215,0,0.2); 
-            margin-bottom: 15px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-        }
-        .lang-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,215,0,0.2);
-            border: 1px solid #FFD700;
-            color: #FFD700;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .lang-menu {
-            position: absolute;
-            top: 40px;
-            right: 10px;
-            background: #2B2516;
-            border: 1px solid #FFD700;
-            border-radius: 8px;
-            display: none;
-            z-index: 100;
-            overflow: hidden;
-        }
-        .lang-menu.show { display: block; }
-        .lang-option {
-            padding: 8px 15px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .lang-option:hover { background: rgba(255,215,0,0.2); }
 
-        .vip-status {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-top: 4px;
-            font-weight: bold;
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 15px; margin-bottom: 10px;
+            background: rgba(0,0,0,0.25); border-radius: 12px;
         }
-        .vip-status.vip {
-            background: rgba(255,215,0,0.15);
-            border: 1px solid #FFD700;
-            color: #FFD700;
-        }
-        .vip-status.regular {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: rgba(255,255,255,0.7);
-        }
+        .user-level { display: flex; align-items: center; gap: 8px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: contain; }
+        .stat-box { display: flex; align-items: center; gap: 5px; font-size: 14px; font-weight: bold; }
+        .icon-stat { font-size: 18px; }
+        .lang-btn { font-size: 13px; padding: 4px 8px; border-radius: 8px; background: rgba(255,215,0,0.2); border: 1px solid rgba(255,215,0,0.4); cursor: pointer; }
 
-        .logo-header { width: 72px; height: 72px; object-fit: contain; }
-        .title { font-size: 24px; font-weight: bold; color: #FFD700; }
-        .subtitle { font-size: 14px; opacity: 0.7; margin-top: 2px; }
-
-        .wallet-status {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 8px; border-radius: 10px; margin-bottom: 20px; font-size: 13px;
-            background: rgba(255,255,255,0.1);
+        .info-row {
+            display: flex; justify-content: space-around; margin-bottom: 12px;
+            background: rgba(255,215,0,0.1); border-radius: 10px; padding: 10px;
         }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
-        .dot.off { background: #ff4444; }
-        .dot.on { background: #00FF80; }
+        .info-col { text-align: center; font-size: 12px; }
+        .info-num { font-weight: bold; color: #FFD700; font-size: 15px; }
 
         .miner-container {
-            position: relative;
-            width: 280px; height: 280px;
-            margin: 20px auto;
-            cursor: pointer;
+            position: relative; width: 280px; height: 280px;
+            margin: 30px auto; cursor: pointer;
         }
         .bg-ring {
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
@@ -131,15 +70,23 @@
 
         .start-btn {
             padding: 10px 25px; border: none; border-radius: 50px;
-            font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s;
-            margin-top: 8px;
+            font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; margin-top: 8px;
         }
         .start-btn.active { background: #00FF80; color: #00331A; }
         .start-btn.stopped { background: #FFD700; color: #1A1400; }
         .start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .score { font-size: 52px; font-weight: bold; text-align: center; margin: 10px 0 5px; }
-        .score-info { text-align: center; font-size: 14px; opacity: 0.8; margin-bottom: 10px; }
+        .side-menu {
+            position: fixed; top: 140px; display: flex; flex-direction: column; gap: 12px;
+        }
+        .side-left { left: 12px; }
+        .side-right { right: 12px; }
+        .side-btn {
+            width: 70px; padding: 10px 5px; border-radius: 12px;
+            background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3);
+            text-align: center; font-size: 11px; cursor: pointer; position: relative;
+        }
+        .side-btn .icon { font-size: 22px; margin-bottom: 4px; }
 
         .box {
             background: rgba(255,255,255,0.08); border-radius: 12px; padding: 15px;
@@ -157,321 +104,254 @@
 
         .btn {
             width: 100%; padding: 12px; border: none; border-radius: 10px;
-            font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 8px;
-            transition: 0.2s;
+            font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 8px; transition: 0.2s;
         }
         .btn.yellow { background: #FFD700; color: #1A1400; }
         .btn.green { background: #00FF80; color: #00331A; }
         .btn.gray { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); }
 
-        .nft-item {
-            background: rgba(0,255,128,0.1); border: 1px solid #00FF80;
-            border-radius: 10px; padding: 12px; margin-bottom: 10px;
-        }
-        .nft-item span { font-size: 12px; opacity: 0.9; }
-
-        .leaderboard { margin-top: 10px; }
-        .leader-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; border-bottom: 1px solid rgba(255,215,0,0.1); font-size: 13px;
-        }
-        .leader-row.first { color: #FFD700; font-weight: bold; }
-        .rank { width: 25px; font-weight: bold; }
-        .name { flex: 1; text-align: left; padding-left: 10px; }
-        .score-val { font-weight: bold; }
-
         .bottom-menu {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around; padding: 10px 0 15px;
+            background: rgba(0,30,80,0.95); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 10px 0 12px;
             border-top: 1px solid rgba(255,215,0,0.2);
         }
-        .menu-item { text-align: center; font-size: 11px; opacity: 0.6; cursor: pointer; transition: 0.2s; }
+        .menu-item { text-align: center; font-size: 11px; opacity: 0.7; cursor: pointer; transition: 0.2s; }
         .menu-item.active { color: #FFD700; opacity: 1; font-weight: bold; }
-        .menu-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+        .menu-icon { font-size: 20px; display: block; margin-bottom: 2px; }
 
         .notif {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
             background: rgba(0,0,0,0.9); padding: 15px 25px; border-radius: 10px;
-            border: 1px solid #FFD700; z-index: 9999; display: none; font-size: 15px;
-            font-weight: bold;
+            border: 1px solid #FFD700; z-index: 9999; display: none; font-size: 15px; font-weight: bold;
         }
 
-        .ad-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-            z-index: 99999; padding: 20px;
-        }
-        .ad-overlay.show { display: flex; }
-        .ad-box {
-            background: #1a1a1a; border: 2px solid #FFD700; border-radius: 12px;
-            width: 90%; max-width: 320px; padding: 20px; text-align: center;
-        }
-        .ad-title { color: #FFD700; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-        .ad-text { font-size: 13px; opacity: 0.8; margin-bottom: 15px; }
-        .ad-close {
-            background: #00FF80; color: #00331A; border: none; padding: 10px 25px;
-            border-radius: 50px; font-weight: bold; cursor: pointer;
-        }
+        .lang-select { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #1a1a1a; border: 2px solid #FFD700; border-radius: 12px; padding: 20px; z-index: 99999; width: 85%; max-width: 300px; }
+        .lang-select.show { display: block; }
+        .lang-option { padding: 10px; margin: 5px 0; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,215,0,0.3); text-align: center; }
+        .lang-option:hover { background: rgba(255,215,0,0.15); }
     </style>
 </head>
 <body>
 
-    <div class="ad-overlay" id="adOverlay">
-        <div class="ad-box">
-            <div class="ad-title">📢 Advertisement</div>
-            <div class="ad-text">Watch ad to start mining! <br>(Replace with your ad provider later)</div>
-            <button class="ad-close" onclick="closeAd()">✅ Continue</button>
+<div class="lang-select" id="langMenu">
+    <h4 style="text-align:center; margin-bottom:15px; color:#FFD700;">Select Language</h4>
+    <div class="lang-option" onclick="setLang('id')">🇮🇩 Indonesia</div>
+    <div class="lang-option" onclick="setLang('en')">🇺🇸 English</div>
+    <div class="lang-option" onclick="setLang('zh')">🇨🇳 中文</div>
+    <div class="lang-option" onclick="setLang('vi')">🇻🇳 Tiếng Việt</div>
+    <div style="margin-top:10px;" class="btn gray" onclick="closeLang()">Close</div>
+</div>
+
+<div class="page active" id="pageHome">
+    <div class="top-bar">
+        <div class="user-level">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" class="user-avatar">
+            <div data-txt="level"></div> <span id="level">1</span>
+        </div>
+        <div class="stat-box"><span class="icon-stat">👥</span> <span id="statInvite">0</span></div>
+        <div class="stat-box"><span class="icon-stat">🪙</span> <span id="score">0</span></div>
+        <div class="lang-btn" onclick="openLang()">🌐 Lang</div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-col"><div class="info-num">12:00:00</div><div data-txt="mine_time"></div></div>
+        <div class="info-col"><div class="info-num" id="targetLevel">0 / 1,000</div><div data-txt="coin_level"></div></div>
+        <div class="info-col"><div class="info-num" id="coinsPerHour">10</div><div data-txt="coin_hour"></div></div>
+    </div>
+
+    <div class="side-menu side-left">
+        <div class="side-btn" onclick="switchPage('pageNft', this)"><div class="icon">💎</div><span data-txt="nft"></span></div>
+        <div class="side-btn" onclick="switchPage('pageInvite', this)"><div class="icon">👥</div><span data-txt="invite"></span></div>
+    </div>
+    <div class="side-menu side-right">
+        <div class="side-btn" onclick="switchPage('pageRank', this)"><div class="icon">🏆</div><span data-txt="rank"></span></div>
+        <div class="side-btn" onclick="switchPage('pageStats', this)"><div class="icon">📊</div><span data-txt="data"></span></div>
+    </div>
+
+    <div class="miner-container" id="minerWrap">
+        <div class="bg-ring"></div>
+        <div class="progress-ring" id="progressRing"></div>
+        <div class="inner-circle" id="innerCircle">
+            <div class="miner-icon">⛏️</div>
+            <div class="time-center" id="timeCenter">00:00:00</div>
+            <div class="status-center" id="statusCenter" data-txt="ready"></div>
+            <div class="speed-center">+<span id="coinsPerHour">10</span> <span data-txt="coin_hour"></span> <small>(<span data-txt="max"></span> 30 coin/h)</small></div>
+            <button class="start-btn stopped" id="btnMiner" onclick="showAdThenStart()" data-txt="start_mine"></button>
         </div>
     </div>
 
-    <div class="page active" id="pageHome">
-        <div class="header">
-            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
-            <div class="lang-menu" id="langMenu">
-                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
-                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
-            </div>
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
-            <div class="title">Capybara Titan</div>
-            <div class="vip-status regular" id="vipStatus">👤 Regular Miner</div>
-            <div class="subtitle">Level <span id="level">1</span> • Points: <span id="targetLevel">0/1000</span></div>
-        </div>
-
-        <div class="wallet-status">
-            <span class="dot" id="dotWallet"></span>
-            <span id="textWallet">Wallet not connected</span>
-        </div>
-
-        <div class="score" id="score">0</div>
-        <div class="score-info">Total Mining Points</div>
-
-        <div class="miner-container" id="minerWrap">
-            <div class="bg-ring"></div>
-            <div class="progress-ring" id="progressRing"></div>
-            <div class="inner-circle" id="innerCircle">
-                <div class="miner-icon">⛏️</div>
-                <div class="time-center" id="timeCenter">00:00:00</div>
-                <div class="status-center" id="statusCenter">Ready to Start</div>
-                <div class="speed-center">+<span id="pointsPerSec">10</span> pts/h <small>(Max 30 pts/h)</small></div>
-                <button class="start-btn stopped" id="btnMiner" onclick="showAdThenStart()">Start Mining</button>
-            </div>
-        </div>
-
-        <div class="box" style="margin-top:20px;">
-            <h4>📜 Mining Rules</h4>
-            <p>✅ New Member Bonus: <strong>+500 Points</strong> (only first start)<br>
-               ✅ Base: 10 points/hour<br>
-               ✅ +20% per <strong>active invited friend</strong><br>
-               ✅ Bonus only counts if friend started mining<br>
-               ✅ Max total bonus: 200% → <strong>Max 30 pts/h</strong><br>
-               ✅ NFTs add extra speed & duration
-            </p>
-        </div>
+    <div class="box" style="margin-top:20px;">
+        <h4 data-txt="rules"></h4>
+        <p data-txt="rule_list"></p>
     </div>
+</div>
 
-    <div class="page" id="pageInvite">
-        <div class="header">
-            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
-            <div class="lang-menu" id="langMenu">
-                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
-                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
-            </div>
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
-            <div class="title">👥 Invite Friends</div>
-            <div class="vip-status regular" id="vipStatus2">👤 Regular Miner</div>
-            <div class="subtitle">Earn bonus points together</div>
-        </div>
-
-        <div class="box">
-            <h4>📊 Invite Stats</h4>
-            <p>✅ Active miners invited: <span id="friendCount">0</span></p>
-            <p>🎁 Reward: You +500 pts • New user +250 pts</p>
-            <p>⚡ Speed bonus: +20% per active miner | <strong>Max total +200%</strong></p>
-            <p style="font-size:12px; opacity:0.7;">⚠️ Bonus only applies when your friend starts mining at least once</p>
-        </div>
-
-        <div class="box">
-            <h4>🔗 Your Invite Link</h4>
-            <p id="inviteLink" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0.3); border-radius:5px; margin-top:5px;"></p>
-            <button class="btn yellow" onclick="copyLink()">📋 Copy Link</button>
-            <button class="btn gray" onclick="shareLink()">📤 Share to Telegram</button>
-        </div>
+<div class="page" id="pageInvite">
+    <div class="top-bar"><div class="user-level"><span data-txt="invite_friend"></span></div></div>
+    <div class="box">
+        <h4 data-txt="invite_stat"></h4>
+        <p data-txt="active_miner"></p> <span id="friendCount">0</span><br>
+        <p data-txt="reward"></p><br>
+        <p data-txt="bonus_rule"></p>
     </div>
-
-    <div class="page" id="pageStats">
-        <div class="header">
-            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
-            <div class="lang-menu" id="langMenu">
-                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
-                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
-            </div>
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
-            <div class="title">📊 Statistics</div>
-            <div class="vip-status regular" id="vipStatusStats">👤 Regular Miner</div>
-            <div class="subtitle">Platform Overview</div>
-        </div>
-
-        <div class="box">
-            <h4>👥 User Data</h4>
-            <div class="stat-row">
-                <span>Total Users</span>
-                <span class="stat-val" id="totalUsers">Memuat...</span>
-            </div>
-            <div class="stat-row">
-                <span>Active Users Today</span>
-                <span class="stat-val" id="activeUsers">Memuat...</span>
-            </div>
-            <div class="stat-row">
-                <span>Mining Right Now</span>
-                <span class="stat-val" id="miningNow">Memuat...</span>
-            </div>
-        </div>
+    <div class="box">
+        <h4 data-txt="invite_link"></h4>
+        <p id="inviteLink" style="word-break:break-all; font-size:12px; padding:5px; background:rgba(0,0,0,0.3); border-radius:5px;"></p>
+        <button class="btn yellow" onclick="copyLink()" data-txt="copy_link"></button>
+        <button class="btn gray" onclick="shareLink()" data-txt="share"></button>
     </div>
+</div>
 
-    <div class="page" id="pageRank">
-        <div class="header">
-            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
-            <div class="lang-menu" id="langMenu">
-                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
-                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
-            </div>
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
-            <div class="title">🏆 Leaderboard</div>
-            <div class="vip-status regular" id="vipStatus3">👤 Regular Miner</div>
-            <div class="subtitle">Top Miners</div>
-        </div>
-
-        <div class="box">
-            <h4>Your Rank</h4>
-            <p id="yourRank">Not ranked yet</p>
-        </div>
-
-        <div class="leaderboard" id="rankList">
-            <div class="leader-row first">
-                <div class="rank">1</div>
-                <div class="name">Top Miner</div>
-                <div class="score-val">999,999</div>
-            </div>
-            <div class="leader-row">
-                <div class="rank">2</div>
-                <div class="name">Capy Captain</div>
-                <div class="score-val">750,000</div>
-            </div>
-            <div class="leader-row">
-                <div class="rank">3</div>
-                <div class="name">Active Miner</div>
-                <div class="score-val">500,000</div>
-            </div>
-            <div class="leader-row">
-                <div class="rank">...</div>
-                <div class="name">Start mining now!</div>
-                <div class="score-val">0</div>
-            </div>
-        </div>
+<div class="page" id="pageStats">
+    <div class="top-bar"><div class="user-level"><span data-txt="platform_data"></span></div></div>
+    <div class="box">
+        <h4 data-txt="users"></h4>
+        <div class="stat-row"><span data-txt="total_user"></span><span class="stat-val" id="totalUsers">Loading...</span></div>
+        <div class="stat-row"><span data-txt="active_today"></span><span class="stat-val" id="activeUsers">Loading...</span></div>
+        <div class="stat-row"><span data-txt="mining_now"></span><span class="stat-val" id="miningNow">Loading...</span></div>
     </div>
+</div>
 
-    <div class="page" id="pageNft">
-        <div class="header">
-            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
-            <div class="lang-menu" id="langMenu">
-                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
-                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
-            </div>
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
-            <div class="title">🎒 My Collection</div>
-            <div class="vip-status regular" id="vipStatus4">👤 Regular Miner</div>
-            <div class="subtitle">Official Capy Miner Pass NFT</div>
-        </div>
+<div class="page" id="pageRank">
+    <div class="top-bar"><div class="user-level"><span data-txt="ranking"></span></div></div>
+    <div class="box"><h4 data-txt="your_rank"></h4><p id="yourRank" data-txt="no_rank"></p></div>
+</div>
 
-        <div class="box">
-            <h4>🔗 Connect Wallet</h4>
-            <p>Connect Tonkeeper/Telegram Wallet to read your NFTs</p>
-            <button class="btn green" id="btnConnectWallet" onclick="connectWallet()">✅ Connect Now</button>
-        </div>
-
-        <div id="nftList">
-            <div class="box"><p style="text-align:center; opacity:0.7;">No NFTs detected yet</p></div>
-        </div>
+<div class="page" id="pageNft">
+    <div class="top-bar"><div class="user-level"><span data-txt="nft_collection"></span></div></div>
+    <div class="box">
+        <h4 data-txt="connect_wallet"></h4>
+        <p data-txt="wallet_desc"></p>
+        <button class="btn green" id="btnConnectWallet" onclick="connectWallet()" data-txt="connect_now"></button>
     </div>
+    <div id="nftList"><div class="box"><p style="text-align:center; opacity:0.7;" data-txt="no_nft"></p></div></div>
+</div>
 
-    <div class="page" id="pageMarket">
-        <div class="header">
-            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
-            <div class="lang-menu" id="langMenu">
-                <div class="lang-option" onclick="changeLang('en')">🇺🇸 English</div>
-                <div class="lang-option" onclick="changeLang('id')">🇮🇩 Indonesia</div>
-            </div>
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMW1VeBQwdUETkTBiTnb9xWfYVnGHik2-5YjYdBuV7q5nnzOx2nyYPHzKx9KMIUh5qDvVdSCF-GJ7p6_D1N6AF00M9s0o_00e_9x641dYuj-w94smNLX_JOl_sNgUIRfK_zAZw5hG2UObLuovh7IwwOQdPg0noC5_F80xubPkNUagy7MZVk2TExH6EjRjP/s1024/1000478697.png" alt="Capybara Titan Logo" class="logo-header">
-            <div class="title">🏪 NFT Market</div>
-            <div class="vip-status regular" id="vipStatus5">👤 Regular Miner</div>
-            <div class="subtitle">Buy official NFTs to boost mining</div>
-        </div>
-
-        <div class="box">
-            <h4>⚡ NFT Effects</h4>
-            <p>✅ Common: +10% speed<br>✅ Rare: +30% • +2 hours<br>✅ Epic: +60% • +4 hours<br>✅ Legendary: +100% • +6 hours</p>
-            <p><strong>⚠️ All bonuses capped at total +200% → Max 30 pts/h</strong></p>
-        </div>
-        <button class="btn yellow" onclick="openLink('https://getgems.io/')">Open Getgems</button>
+<div class="page" id="pageMarket">
+    <div class="top-bar"><div class="user-level"><span data-txt="nft_market"></span></div></div>
+    <div class="box">
+        <h4 data-txt="nft_effect"></h4>
+        <p data-txt="nft_bonus"></p>
+        <p><strong data-txt="max_bonus"></strong></p>
     </div>
+    <button class="btn yellow" onclick="openLink('https://getgems.io/')">Open Getgems</button>
+</div>
 
-    <div class="bottom-menu">
-        <div class="menu-item active" onclick="switchPage('pageHome', this)"><span class="menu-icon">⛏️</span>Mine</div>
-        <div class="menu-item" onclick="switchPage('pageInvite', this)"><span class="menu-icon">👥</span>Friends</div>
-        <div class="menu-item" onclick="switchPage('pageStats', this)"><span class="menu-icon">📊</span>Stats</div>
-        <div class="menu-item" onclick="switchPage('pageRank', this)"><span class="menu-icon">🏆</span>Ranks</div>
-        <div class="menu-item" onclick="switchPage('pageNft', this)"><span class="menu-icon">💎</span>NFT</div>
-        <div class="menu-item" onclick="switchPage('pageMarket', this)"><span class="menu-icon">🛒</span>Market</div>
-    </div>
+<div class="bottom-menu">
+    <div class="menu-item active" onclick="switchPage('pageHome', this)"><span class="menu-icon">⛏️</span><span data-txt="mine"></span></div>
+    <div class="menu-item" onclick="switchPage('pageInvite', this)"><span class="menu-icon">👥</span><span data-txt="friends"></span></div>
+    <div class="menu-item" onclick="switchPage('pageNft', this)"><span class="menu-icon">💎</span><span data-txt="nft"></span></div>
+    <div class="menu-item" onclick="switchPage('pageMarket', this)"><span class="menu-icon">🛒</span><span data-txt="shop"></span></div>
+    <div class="menu-item" onclick="switchPage('pageStats', this)"><span class="menu-icon">📊</span><span data-txt="data"></span></div>
+</div>
 
-    <div class="notif" id="notif"></div>
+<div class="notif" id="notif"></div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-tg.setHeaderColor('#2B2516');
-tg.setBackgroundColor('#2B2516');
+const t = {
+ en:{
+  announce:"📢 Announcement",watch_ad:"Watch ad to start mining!",continue:"✅ Continue",
+  level:"Lv",mine_time:"Mining Time",coin_level:"Coin Level",coin_hour:"Coin/Hour",
+  ready:"Ready to Start",max:"Max",start_mine:"Start Mining",rules:"📜 Mining Rules",
+  rule_list:"✅ New Member: +500 Coin<br>✅ Base: 10 Coin/hour<br>✅ +20% per active friend<br>✅ Max total: +200% → <strong>Max 30 Coin/h</strong><br>✅ NFT boosts speed & duration",
+  invite_friend:"👥 Invite Friends",invite_stat:"📊 Invite Stats",active_miner:"Active Miners:",
+  reward:"🎁 Reward: You +500 • Friend +250",bonus_rule:"⚡ +20% per friend | Max +200%",
+  invite_link:"🔗 Your Link",copy_link:"📋 Copy Link",share:"📤 Share",
+  platform_data:"📊 Platform Data",users:"👥 Users",total_user:"Total Users",
+  active_today:"Active Today",mining_now:"Mining Now",ranking:"🏆 Ranking",
+  your_rank:"Your Rank",no_rank:"Not ranked yet",nft_collection:"🎒 NFT Collection",
+  connect_wallet:"🔗 Connect Wallet",wallet_desc:"Use Tonkeeper/Telegram Wallet to check your NFT",
+  connect_now:"✅ Connect Now",no_nft:"No official NFT yet",nft_market:"🏪 NFT Market",
+  nft_effect:"⚡ NFT Effects",nft_bonus:"✅ Common: +10% Coin<br>✅ Rare: +30% + 2h<br>✅ Epic: +60% + 4h<br>✅ Legendary: +100% + 6h",
+  max_bonus:"⚠️ Total bonus capped at +200%",mine:"Mine",friends:"Friends",
+  nft:"NFT",shop:"Shop",data:"Data",invite:"Invite",rank:"Rank"
+ },
+ id:{
+  announce:"📢 Pengumuman",watch_ad:"Tonton iklan untuk mulai menambang!",continue:"✅ Lanjutkan",
+  level:"Lv",mine_time:"Waktu Tambang",coin_level:"Coin Level",coin_hour:"Coin/Jam",
+  ready:"Siap Dimulai",max:"Maks",start_mine:"Mulai Tambang",rules:"📜 Aturan Tambang",
+  rule_list:"✅ Anggota Baru: +500 Coin<br>✅ Dasar: 10 Coin/jam<br>✅ +20% per teman aktif<br>✅ Maks total: +200% → <strong>Maks 30 Coin/j</strong><br>✅ NFT tambah kecepatan & durasi",
+  invite_friend:"👥 Undang Teman",invite_stat:"📊 Statistik Undangan",active_miner:"Penambang aktif:",
+  reward:"🎁 Hadiah: Kamu +500 • Teman +250",bonus_rule:"⚡ +20% per teman | Maks +200%",
+  invite_link:"🔗 Tautan Kamu",copy_link:"📋 Salin Tautan",share:"📤 Bagikan",
+  platform_data:"📊 Data Platform",users:"👥 Pengguna",total_user:"Total Pengguna",
+  active_today:"Aktif Hari Ini",mining_now:"Sedang Menambang",ranking:"🏆 Peringkat",
+  your_rank:"Peringkat Kamu",no_rank:"Belum ada peringkat",nft_collection:"🎒 Koleksi NFT",
+  connect_wallet:"🔗 Hubungkan Dompet",wallet_desc:"Gunakan Tonkeeper/Wallet Telegram untuk cek NFT",
+  connect_now:"✅ Hubungkan Sekarang",no_nft:"Belum ada NFT resmi",nft_market:"🏪 Pasar NFT",
+  nft_effect:"⚡ Efek NFT",nft_bonus:"✅ Biasa: +10% Coin<br>✅ Langka: +30% + 2j<br>✅ Epik: +60% + 4j<br>✅ Legendaris: +100% + 6j",
+  max_bonus:"⚠️ Total bonus dibatasi +200%",mine:"Tambang",friends:"Teman",
+  nft:"NFT",shop:"Toko",data:"Data",invite:"Undang",rank:"Peringkat"
+ },
+ zh:{
+  announce:"📢 公告",watch_ad:"观看广告开始挖矿！",continue:"✅ 继续",
+  level:"等级",mine_time:"挖矿时间",coin_level:"代币等级",coin_hour:"代币/小时",
+  ready:"准备就绪",max:"最高",start_mine:"开始挖矿",rules:"📜 挖矿规则",
+  rule_list:"✅ 新用户：+500 代币<br>✅ 基础：每小时10代币<br>✅ 每活跃好友 +20%<br>✅ 最高加成：+200% → <strong>最高30代币/小时</strong><br>✅ NFT提升速度与时长",
+  invite_friend:"👥 邀请好友",invite_stat:"📊 邀请统计",active_miner:"活跃矿工：",
+  reward:"🎁 奖励：你+500 • 好友+250",bonus_rule:"⚡ 每好友+20% | 最高+200%",
+  invite_link:"🔗 你的链接",copy_link:"📋 复制链接",share:"📤 分享",
+  platform_data:"📊 平台数据",users:"👥 用户",total_user:"总用户",
+  active_today:"今日活跃",mining_now:"正在挖矿",ranking:"🏆 排行榜",
+  your_rank:"你的排名",no_rank:"暂未上榜",nft_collection:"🎒 NFT收藏",
+  connect_wallet:"🔗 连接钱包",wallet_desc:"使用Tonkeeper/Telegram钱包查看NFT",
+  connect_now:"✅ 立即连接",no_nft:"暂无官方NFT",nft_market:"🏪 NFT市场",
+  nft_effect:"⚡ NFT效果",nft_bonus:"✅ 普通：+10%代币<br>✅ 稀有：+30% + 2小时<br>✅ 史诗：+60% + 4小时<br>✅ 传说：+100% + 6小时",
+  max_bonus:"⚠️ 总加成上限 +200%",mine:"挖矿",friends:"好友",
+  nft:"NFT",shop:"商店",data:"数据",invite:"邀请",rank:"排行"
+ },
+ vi:{
+  announce:"📢 Thông báo",watch_ad:"Xem quảng cáo để bắt đầu đào!",continue:"✅ Tiếp tục",
+  level:"Cấp",mine_time:"Thời gian đào",coin_level:"Cấp Coin",coin_hour:"Coin/Giờ",
+  ready:"Sẵn sàng",max:"Tối đa",start_mine:"Bắt đầu Đào",rules:"📜 Quy tắc",
+  rule_list:"✅ Thành viên mới: +500 Coin<br>✅ Cơ bản: 10 Coin/giờ<br>✅ +20% mỗi bạn bè hoạt động<br>✅ Tối đa: +200% → <strong>Tối đa 30 Coin/h</strong><br>✅ NFT tăng tốc & thời gian",
+  invite_friend:"👥 Mời bạn",invite_stat:"📊 Thống kê",active_miner:"Người đào hoạt động:",
+  reward:"🎁 Thưởng: Bạn +500 • Bạn +250",bonus_rule:"⚡ +20% mỗi bạn | Tối đa +200%",
+  invite_link:"🔗 Liên kết của bạn",copy_link:"📋 Sao chép",share:"📤 Chia sẻ",
+  platform_data:"📊 Dữ liệu",users:"👥 Người dùng",total_user:"Tổng số",
+  active_today:"Hôm nay",mining_now:"Đang đào",ranking:"🏆 Xếp hạng",
+  your_rank:"Hạng của bạn",no_rank:"Chưa có hạng",nft_collection:"🎒 Bộ sưu tập",
+  connect_wallet:"🔗 Kết nối ví",wallet_desc:"Dùng Tonkeeper/Ví Telegram để xem NFT",
+  connect_now:"✅ Kết nối",no_nft:"Chưa có NFT chính thức",nft_market:"🏪 Thị trường NFT",
+  nft_effect:"⚡ Tác dụng NFT",nft_bonus:"✅ Thường: +10% Coin<br>✅ Hiếm: +30% + 2g<br>✅ Sử thi: +60% + 4g<br>✅ Huyền thoại: +100% + 6g",
+  max_bonus:"⚠️ Tổng tối đa +200%",mine:"Đào",friends:"Bạn bè",
+  nft:"NFT",shop:"Cửa hàng",data:"Dữ liệu",invite:"Mời",rank:"Hạng"
+ }
+};
 
-// === PENGATURAN UTAMA ===
-const BASE_POINTS_PER_HOUR = 10;
+let curLang = localStorage.getItem('appLang') || 'en';
+function updLang(){document.querySelectorAll('[data-txt]').forEach(e=>e.innerHTML=t[curLang][e.dataset.txt]||e.innerHTML);document.documentElement.lang=curLang;}
+function setLang(l){curLang=l;localStorage.setItem('appLang',l);updLang();closeLang();}
+function openLang(){document.getElementById('langMenu').classList.add('show');}
+function closeLang(){document.getElementById('langMenu').classList.remove('show');}
+
+const tgApp = window.Telegram.WebApp;
+tgApp.ready(); tgApp.expand();
+tgApp.setHeaderColor('#162A46'); tgApp.setBackgroundColor('#162A46');
+
+const BASE_COINS_PER_HOUR = 10;
 const REF_BONUS_PER_REF = 0.20;
 const MAX_TOTAL_BONUS_RATE = 2.00;
-const MAX_POINTS_PER_HOUR = BASE_POINTS_PER_HOUR * (1 + MAX_TOTAL_BONUS_RATE);
 const NEW_MEMBER_BONUS = 500;
-
-let currentLang = localStorage.getItem('capyLang') || 'en';
-const translations = {
-    en: { walletNotConn: "Wallet not connected", connected: "Connected", ready: "Ready to Start", mining: "⛏️ Mining...", stopped: "⏹️ Mining Stopped", start: "Start Mining", restart: "🔄 Restart", copied: "✅ Link copied!", adNote: "Watch ad to start mining!", adTitle: "📢 Advertisement", adBtn: "✅ Continue", regular: "👤 Regular Miner", vip: "👑 VIP Miner", welcomeBonus: "🎉 Welcome Bonus! +500 Points Added!" },
-    id: { walletNotConn: "Dompet belum terhubung", connected: "Terhubung", ready: "Siap Dimulai", mining: "⛏️ Sedang Menambang", stopped: "⏹️ Tambang Berhenti", start: "Mulai Tambang", restart: "🔄 Aktifkan Ulang", copied: "✅ Tautan disalin!", adNote: "Tonton iklan untuk mulai menambang!", adTitle: "📢 Iklan", adBtn: "✅ Lanjutkan", regular: "👤 Penambang Biasa", vip: "👑 Penambang VIP", welcomeBonus: "🎉 Bonus Selamat Datang! +500 Poin Ditambahkan!" }
-};
-
-function toggleLang() { document.getElementById('langMenu').classList.toggle('show'); }
-function changeLang(code) { currentLang=code; localStorage.setItem('capyLang',code); document.getElementById('langMenu').classList.remove('show'); applyLang(); }
-function applyLang() { const t=translations[currentLang]; document.getElementById('textWallet').innerText=t.walletNotConn; updateVipStatus(); }
+const ADSGRAM_ID = 39513; // === KODE IKLAN KAMU ===
 
 const CONFIG = {
-    COLLECTION_ADDR: "EQ_______________________________", 
-    BOT_NAME: "capytap_pibot",
-    BASE_DURATION: 12 * 60 * 60,
-    BASE_SPEED: BASE_POINTS_PER_HOUR / 3600,
-    NFT_BONUS: { "Common":{speed:0.1,duration:0}, "Rare":{speed:0.3,duration:7200}, "Epic":{speed:0.6,duration:14400}, "Legendary":{speed:1.0,duration:21600} }
+ COLLECTION_ADDR: "EQ_______________________________",
+ BOT_NAME: "capytap_pibot",
+ BASE_DURATION: 12 * 60 * 60,
+ BASE_SPEED: BASE_COINS_PER_HOUR / 3600,
+ NFT_BONUS: { "Common":{speed:0.1,duration:0}, "Rare":{speed:0.3,duration:7200}, "Epic":{speed:0.6,duration:14400}, "Legendary":{speed:1.0,duration:21600} }
 };
 
-let tonConnect = null;
-let walletAddr = null;
-let validNfts = [];
-let minerInterval = null;
-const userData = tg.initDataUnsafe || {};
+let tonConnect = null, walletAddr = null, validNfts = [], minerInterval = null;
+const userData = tgApp.initDataUnsafe || {};
 const userId = userData.user?.id || `guest_${Date.now()}`;
 let refCode = userData.startParam || null;
 
 let data = JSON.parse(localStorage.getItem('capyTitanMiner_' + userId)) || {
-    points: refCode?250:0, level:1, nextTarget:1000, invites:0, activeRefs:0, gotRefBonus:false,
-    endTime:0, mineSpeed:CONFIG.BASE_SPEED, mineDuration:CONFIG.BASE_DURATION, hasStartedMining:false,
-    gotWelcomeBonus:false
+ coins: refCode?250:0, level:1, nextTarget:1000, invites:0, activeRefs:0, gotRefBonus:false,
+ endTime:0, mineSpeed:CONFIG.BASE_SPEED, mineDuration:CONFIG.BASE_DURATION, hasStartedMining:false, gotWelcomeBonus:false
 };
 
 const elScore = document.getElementById('score');
@@ -482,234 +362,58 @@ const elInnerCircle = document.getElementById('innerCircle');
 const elTimeCenter = document.getElementById('timeCenter');
 const elStatusCenter = document.getElementById('statusCenter');
 const elBtnMiner = document.getElementById('btnMiner');
-const elPointsPerSec = document.getElementById('pointsPerSec');
-const elDotWallet = document.getElementById('dotWallet');
-const elTextWallet = document.getElementById('textWallet');
+const elCoinsPerHour = document.getElementById('coinsPerHour');
 const elNftList = document.getElementById('nftList');
 const elFriendCount = document.getElementById('friendCount');
 const elInviteLink = document.getElementById('inviteLink');
 const elNotif = document.getElementById('notif');
-const elAdOverlay = document.getElementById('adOverlay');
 const elTotalUsers = document.getElementById('totalUsers');
 const elActiveUsers = document.getElementById('activeUsers');
 const elMiningNow = document.getElementById('miningNow');
 const elBtnConnectWallet = document.getElementById('btnConnectWallet');
-const allVipStatus = [document.getElementById('vipStatus'), document.getElementById('vipStatus2'), document.getElementById('vipStatus3'), document.getElementById('vipStatus4'), document.getElementById('vipStatus5'), document.getElementById('vipStatusStats')];
 
-function updateVipStatus() {
-    const t=translations[currentLang];
-    allVipStatus.forEach(el=>{ el.className=validNfts.length>0?'vip-status vip':'vip-status regular'; el.innerText=validNfts.length>0?t.vip:t.regular; });
-}
-function showNotif(msg) { elNotif.innerText=msg; elNotif.style.display='block'; setTimeout(()=>elNotif.style.display='none',2500); }
-function switchPage(id,elm) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active')); elm.classList.add('active'); }
-function openLink(url) { tg.openLink(url); }
-function copyLink() { navigator.clipboard.writeText(elInviteLink.innerText); showNotif(translations[currentLang].copied); }
-function shareLink() { tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(elInviteLink.innerText)}&text=${encodeURIComponent('Mining Capybara Titan 🚀')}`); }
-function formatTime(sec) {
-    sec = Math.max(0, Math.floor(sec));
-    let h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
-    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
+function showNotif(msg){elNotif.innerText=msg;elNotif.style.display='block';setTimeout(()=>elNotif.style.display='none',2500);}
+function switchPage(id,elm){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));if(elm)elm.classList.add('active');}
+function openLink(url){tgApp.openLink(url);}
+function copyLink(){navigator.clipboard.writeText(elInviteLink.innerText);showNotif('✅ Link copied!');}
+function shareLink(){tgApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(elInviteLink.innerText)}&text=${encodeURIComponent('Mine Capybara Titan 🚀')}`);}
+function formatTime(sec){sec=Math.max(0,Math.floor(sec));let h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;}
 
-// === MENGAMBIL DATA STATISTIK LANGSUNG DARI BOT TELEGRAM ===
-async function loadStatsFromBot() {
-    try {
-        tg.sendData(JSON.stringify({ action: "get_stats" }));
-    } catch {
-        elTotalUsers.innerText = "1,247";
-        elActiveUsers.innerText = "389";
-        elMiningNow.innerText = "156";
-    }
-}
+async function loadStatsFromBot(){try{tgApp.sendData(JSON.stringify({action:"get_stats"}));}catch{elTotalUsers.innerText="1,247";elActiveUsers.innerText="389";elMiningNow.innerText="156";}}
+tgApp.onEvent('message',e=>{try{const d=JSON.parse(e.data);if(d.action==="stats_result"){elTotalUsers.innerText=d.total_users.toLocaleString();elActiveUsers.innerText=d.active_today.toLocaleString();elMiningNow.innerText=d.mining_now.toLocaleString();}}catch{}});
 
-tg.onEvent('message', function(event) {
-    try {
-        const stats = JSON.parse(event.data);
-        if(stats.action === "stats_result") {
-            elTotalUsers.innerText = stats.total_users.toLocaleString('en-US');
-            elActiveUsers.innerText = stats.active_today.toLocaleString('en-US');
-            elMiningNow.innerText = stats.mining_now.toLocaleString('en-US');
-        }
-    } catch {}
-});
+function calculateFinalSpeed(){let b=data.activeRefs*REF_BONUS_PER_REF;validNfts.forEach(n=>{const r=n.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';b+=CONFIG.NFT_BONUS[r].speed;});b=Math.min(b,MAX_TOTAL_BONUS_RATE);const p=BASE_COINS_PER_HOUR*(1+b);return{perHour:p,perSec:p/3600};}
+function updateUI(){const s=calculateFinalSpeed();elScore.innerText=Math.floor(data.coins).toLocaleString();elLevel.innerText=data.level;elTarget.innerText=`${Math.floor(data.coins).toLocaleString()} / ${data.nextTarget.toLocaleString()}`;elFriendCount.innerText=data.activeRefs;elInviteLink.innerText=`https://t.me/${CONFIG.BOT_NAME}?start=${userId}`;elCoinsPerHour.innerText=s.perHour.toFixed(1);data.mineSpeed=s.perSec;localStorage.setItem('capyTitanMiner_'+userId,JSON.stringify(data));}
 
-function calculateFinalSpeed() {
-    let totalBonus = data.activeRefs * REF_BONUS_PER_REF;
-    validNfts.forEach(nft=>{
-        const r = nft.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';
-        totalBonus += CONFIG.NFT_BONUS[r].speed;
-    });
-    totalBonus = Math.min(totalBonus, MAX_TOTAL_BONUS_RATE);
-    const perHour = BASE_POINTS_PER_HOUR*(1+totalBonus);
-    return {perHour, perSec: perHour/3600};
-}
-function updateUI() {
-    const spd = calculateFinalSpeed();
-    elScore.innerText = Math.floor(data.points).toLocaleString('en-US');
-    elLevel.innerText = data.level;
-    elTarget.innerText = `${Math.floor(data.points)} / ${data.nextTarget}`;
-    elFriendCount.innerText = data.activeRefs;
-    elInviteLink.innerText = `https://t.me/${CONFIG.BOT_NAME}?start=${userId}`;
-    elPointsPerSec.innerText = spd.perHour.toFixed(1);
-    data.mineSpeed = spd.perSec;
-    localStorage.setItem('capyTitanMiner_' + userId, JSON.stringify(data));
-}
-function showAdThenStart() { elAdOverlay.classList.add('show'); }
-function closeAd() { elAdOverlay.classList.remove('show'); startMining(); }
-
-function checkMinerStatus() {
-    const now = Math.floor(Date.now() / 1000);
-    let remain = data.endTime - now;
-    const totalDur = data.mineDuration;
-    const t = translations[currentLang];
-    remain = Math.max(0, remain);
-
-    if (remain > 0) {
-        const pct = remain / totalDur;
-        elProgressRing.style.background = `conic-gradient(#FFD700 ${(1-pct)*360}deg, transparent ${(1-pct)*360}deg)`;
-        elInnerCircle.className = 'inner-circle active';
-        elTimeCenter.innerText = formatTime(remain);
-        elStatusCenter.innerText = t.mining;
-        elBtnMiner.innerText = t.mining;
-        elBtnMiner.className = 'start-btn active';
-        elBtnMiner.disabled = true;
-        return true;
-    } else {
-        elProgressRing.style.background = `conic-gradient(#FFD700 0deg, transparent 0deg)`;
-        elInnerCircle.className = 'inner-circle stopped';
-        elTimeCenter.innerText = '00:00:00';
-        elStatusCenter.innerText = t.stopped;
-        elBtnMiner.innerText = t.restart;
-        elBtnMiner.className = 'start-btn stopped';
-        elBtnMiner.disabled = false;
-        return false;
-    }
+// === INTEGRASI ADSGRAM ===
+async function showAdThenStart(){
+ try{
+  if(window.Adsgram){
+   const ad = window.Adsgram.init({ blockId: ADSGRAM_ID });
+   ad.on('reward', ()=>{ startMining(); showNotif('✅ Iklan selesai, tambang dimulai!'); });
+   ad.on('error', (err)=>{ console.log('Adsgram error:', err); startMining(); showNotif('ℹ️ Iklan tidak tersedia, langsung mulai'); });
+   ad.show();
+  }else{
+   startMining();
+   showNotif('✅ Mulai menambang!');
+  }
+ }catch{
+  startMining();
+  showNotif('✅ Mulai menambang!');
+ }
 }
 
-function startMining() {
-    const now = Math.floor(Date.now() / 1000);
-    const t = translations[currentLang];
+function checkMinerStatus(){const n=Math.floor(Date.now()/1000);let r=data.endTime-n;r=Math.max(0,r);if(r>0){const p=r/data.mineDuration;elProgressRing.style.background=`conic-gradient(#FFD700 ${(1-p)*360}deg, transparent ${(1-p)*360}deg)`;elInnerCircle.className='inner-circle active';elTimeCenter.innerText=formatTime(r);elBtnMiner.disabled=true;return true;}else{elProgressRing.style.background=`conic-gradient(#FFD700 0deg, transparent 0deg)`;elInnerCircle.className='inner-circle stopped';elTimeCenter.innerText='00:00:00';elBtnMiner.disabled=false;return false;}}
+function startMining(){const n=Math.floor(Date.now()/1000);if(!data.hasStartedMining&&!data.gotWelcomeBonus){data.coins+=NEW_MEMBER_BONUS;data.gotWelcomeBonus=true;showNotif('🎉 Welcome +500 Coin!');}if(!data.hasStartedMining){data.hasStartedMining=true;if(refCode){const inv=JSON.parse(localStorage.getItem('capyTitanMiner_'+refCode))||null;if(inv){inv.activeRefs=(inv.activeRefs||0)+1;localStorage.setItem('capyTitanMiner_'+refCode,JSON.stringify(inv));}}}data.endTime=n+data.mineDuration;checkMinerStatus();updateUI();}
+function runAuto(){if(minerInterval)clearInterval(minerInterval);minerInterval=setInterval(()=>{if(checkMinerStatus()){data.coins+=data.mineSpeed;if(data.coins>=data.nextTarget){data.level++;data.nextTarget=Math.round(data.nextTarget*1.8);showNotif(`🎉 Level Up ${data.level}!`);}updateUI();}},1000);}
 
-    if(!data.hasStartedMining && !data.gotWelcomeBonus) {
-        data.points += NEW_MEMBER_BONUS;
-        data.gotWelcomeBonus = true;
-        showNotif(t.welcomeBonus);
-    }
+async function initWallet(){try{tonConnect=new window.TonConnectUI({manifestUrl:'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json',buttonRootId:null});tonConnect.onStatusChange(async s=>{if(s==='connected'){walletAddr=tonConnect.account.address;elBtnConnectWallet.innerText='✅ Connected';elBtnConnectWallet.disabled=true;await loadNfts();}else{walletAddr=null;validNfts=[];elBtnConnectWallet.innerText=t[curLang].connect_now;elBtnConnectWallet.disabled=false;updateUI();}});}catch{elBtnConnectWallet.innerText='⚠️ Error';}}
+async function connectWallet(){if(!tonConnect)await initWallet();try{await tonConnect.openModal();}catch{showNotif('⚠️ Cannot open wallet');}}
+async function loadNfts(){if(!walletAddr||CONFIG.COLLECTION_ADDR.includes('_')){showNotif('⚠️ Collection not set');return;}showNotif('🔍 Checking NFT...');try{const r=await fetch(`https://api.getgems.io/v1/nft/items?owner=${walletAddr}&collection=${CONFIG.COLLECTION_ADDR}&limit=50`);const d=await r.json();validNfts=d.items||[];renderNfts();updateUI();showNotif(validNfts.length?`✅ Found ${validNfts.length} NFT!`:'ℹ️ No NFT yet');}catch{showNotif('⚠️ Failed to load NFT');}}
+function renderNfts(){elNftList.innerHTML='';if(!validNfts.length){elNftList.innerHTML=`<div class="box"><p style="text-align:center;opacity:0.7;" data-txt="no_nft"></p></div>`;return;}validNfts.forEach(n=>{const r=n.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';const b=CONFIG.NFT_BONUS[r];elNftList.innerHTML+=`<div class="box"><h4>${n.metadata.name||'Capy Miner Pass'}</h4><p>${r} • +${(b.speed*100).toFixed(0)}% Coin • +${b.duration/3600}h</p></div>`;});}
 
-    if(!data.hasStartedMining) {
-        data.hasStartedMining = true;
-        if(refCode) {
-            const inv = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode))||null;
-            if(inv) { inv.activeRefs=(inv.activeRefs||0)+1; localStorage.setItem('capyTitanMiner_'+refCode,JSON.stringify(inv)); }
-        }
-    }
-    data.endTime = now + data.mineDuration;
-    checkMinerStatus();
-    updateUI();
-    showNotif('✅ Mining started!');
-    if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-}
-
-function runAuto() {
-    if(minerInterval) clearInterval(minerInterval);
-    minerInterval = setInterval(()=>{
-        const isRunning = checkMinerStatus();
-        if(isRunning) {
-            data.points += data.mineSpeed;
-            if(data.points >= data.nextTarget) { data.level++; data.nextTarget = Math.round(data.nextTarget*1.8); showNotif(`🎉 Level ${data.level} Up!`); }
-            updateUI();
-        }
-    }, 1000);
-}
-
-if(refCode && !data.gotRefBonus) {
-    const refD = JSON.parse(localStorage.getItem('capyTitanMiner_' + refCode))||null;
-    if(refD) { refD.points += 500; refD.invites++; localStorage.setItem('capyTitanMiner_'+refCode,JSON.stringify(refD)); }
-    data.gotRefBonus = true;
-}
-
-// === SISTEM KONEKSI DOMPET YANG SUDAH DIPERBAIKI ===
-async function initWallet() {
-    try {
-        tonConnect = new window.TonConnectUI({
-            manifestUrl: 'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json',
-            buttonRootId: null
-        });
-
-        tonConnect.onStatusChange(async (status) => {
-            if(status === 'connected') {
-                walletAddr = tonConnect.account.address;
-                elDotWallet.className = 'dot on';
-                elTextWallet.innerText = `${translations[currentLang].connected}: ${walletAddr.slice(0,6)}...`;
-                elBtnConnectWallet.innerText = '✅ Connected';
-                elBtnConnectWallet.disabled = true;
-                await loadNfts();
-            } else {
-                walletAddr = null;
-                validNfts = [];
-                elDotWallet.className = 'dot off';
-                elTextWallet.innerText = translations[currentLang].walletNotConn;
-                elBtnConnectWallet.innerText = '✅ Connect Now';
-                elBtnConnectWallet.disabled = false;
-                applyNftBonus();
-                updateVipStatus();
-            }
-        });
-    } catch (err) {
-        console.error('TonConnect Error:', err);
-        elBtnConnectWallet.innerText = '⚠️ Error';
-        elBtnConnectWallet.disabled = true;
-        showNotif('⚠️ Gagal memuat dompet');
-    }
-}
-
-async function connectWallet() {
-    if(!tonConnect) {
-        showNotif('⏳ Menyiapkan sistem...');
-        await initWallet();
-    }
-    try {
-        await tonConnect.openModal();
-    } catch (err) {
-        showNotif('⚠️ Tidak bisa membuka dompet');
-    }
-}
-
-async function loadNfts() {
-    if(!walletAddr || CONFIG.COLLECTION_ADDR.includes('_')) {
-        showNotif('⚠️ Alamat koleksi belum diatur');
-        return;
-    }
-    showNotif('🔍 Memeriksa NFT...');
-    try {
-        const res = await fetch(`https://api.getgems.io/v1/nft/items?owner=${walletAddr}&collection=${CONFIG.COLLECTION_ADDR}&limit=50`);
-        const out = await res.json();
-        validNfts = out.items||[];
-        renderNfts(); applyNftBonus(); updateVipStatus();
-        showNotif(validNfts.length>0?`✅ Ditemukan ${validNfts.length} NFT!`:'ℹ️ Belum ada NFT');
-    } catch { showNotif('⚠️ Gagal memuat NFT'); }
-}
-function renderNfts() {
-    elNftList.innerHTML='';
-    if(!validNfts.length) { elNftList.innerHTML=`<div class="box"><p style="text-align:center;opacity:0.7;">No official NFTs yet</p></div>`; return; }
-    validNfts.forEach(n=>{
-        const r = n.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';
-        const b = CONFIG.NFT_BONUS[r];
-        elNftList.innerHTML += `<div class="nft-item"><h4>${n.metadata.name||'Capy Miner Pass'}</h4><span>${r} • +${(b.speed*100).toFixed(0)}% • +${b.duration/3600}h</span></div>`;
-    });
-}
-function applyNftBonus() { updateUI(); }
-
-async function initApp() {
-    updateUI();
-    applyLang();
-    updateVipStatus();
-    checkMinerStatus();
-    runAuto();
-    loadStatsFromBot();
-    await initWallet();
-}
-initApp();
+async function init(){updLang();updateUI();checkMinerStatus();runAuto();loadStatsFromBot();await initWallet();}
+init();
 </script>
 </body>
 </html>
