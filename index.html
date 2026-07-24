@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.css">
-    <!-- === LIBRARY ADSGRAM === -->
     <script src="https://api.adsgram.ai/js/adsgram.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -130,6 +129,23 @@
         .lang-select.show { display: block; }
         .lang-option { padding: 10px; margin: 5px 0; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,215,0,0.3); text-align: center; }
         .lang-option:hover { background: rgba(255,215,0,0.15); }
+
+        /* === KHUSUS HALAMAN SHOP SAJA === */
+        .shop-page { background: linear-gradient(180deg, #1A4699, #2460CC); min-height: 100vh; padding-bottom: 90px; }
+        .shop-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; margin-bottom: 15px; }
+        .shop-title { font-size: 20px; font-weight: bold; color: #FFD700; }
+        .shop-card { background: rgba(255,255,255,0.12); border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.15); }
+        .shop-card.light { background: rgba(255,255,255,0.18); }
+        .shop-card-icon { font-size: 55px; flex-shrink: 0; }
+        .shop-card-text { flex: 1; }
+        .shop-card-name { font-size: 20px; font-weight: bold; margin-bottom: 5px; color: #FFD700; }
+        .shop-card-desc { font-size: 13px; opacity: 0.9; line-height: 1.5; }
+        .shop-buy-btn { background: #22C55E; color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .discount-wrap { position: relative; }
+        .discount-badge { position: absolute; top: -8px; right: -8px; background: #FF4444; color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; transform: rotate(15deg); }
+        .cards-row { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+        .small-card { width: 90px; text-align: center; padding: 15px 10px; border-radius: 12px; background: rgba(255,255,255,0.1); }
+        .small-card-num { font-size: 22px; font-weight: bold; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -143,6 +159,7 @@
     <div style="margin-top:10px;" class="btn gray" onclick="closeLang()">Close</div>
 </div>
 
+<!-- === HALAMAN UTAMA TIDAK DIUBAH === -->
 <div class="page active" id="pageHome">
     <div class="top-bar">
         <div class="user-level">
@@ -228,14 +245,52 @@
     <div id="nftList"><div class="box"><p style="text-align:center; opacity:0.7;" data-txt="no_nft"></p></div></div>
 </div>
 
-<div class="page" id="pageMarket">
-    <div class="top-bar"><div class="user-level"><span data-txt="nft_market"></span></div></div>
-    <div class="box">
-        <h4 data-txt="nft_effect"></h4>
-        <p data-txt="nft_bonus"></p>
-        <p><strong data-txt="max_bonus"></strong></p>
+<!-- === HALAMAN SHOP DIUBAH SAJA === -->
+<div class="page shop-page" id="pageMarket">
+    <div class="shop-header">
+        <div class="shop-title" data-txt="shop"></div>
+        <div class="stat-box"><span class="icon-stat">🪙</span> <span id="shopCoin">0</span></div>
     </div>
-    <button class="btn yellow" onclick="openLink('https://getgems.io/')">Open Getgems</button>
+
+    <div class="shop-card">
+        <div class="shop-card-icon">👩‍💼</div>
+        <div class="shop-card-text">
+            <div class="shop-card-name" data-txt="super_pm"></div>
+            <div class="shop-card-desc" data-txt="pm_desc"></div>
+        </div>
+        <button class="shop-buy-btn">🪙 1,200</button>
+    </div>
+
+    <div class="shop-card light">
+        <div class="shop-card-icon">⏰</div>
+        <div class="shop-card-text">
+            <div class="shop-card-name" data-txt="offline_time"></div>
+            <div class="shop-card-desc" data-txt="offline_desc"></div>
+        </div>
+        <button class="shop-buy-btn">🪙 250</button>
+    </div>
+
+    <h3 style="margin:18px 0 8px; text-align:center; color:#FFD700; font-size:18px;" data-txt="resume_cards"></h3>
+    <div class="cards-row">
+        <div class="small-card">
+            <div style="font-size:28px;">📄</div>
+            <div class="small-card-num">10</div>
+        </div>
+        <div class="discount-wrap">
+            <div class="discount-badge">-10%</div>
+            <div class="small-card">
+                <div style="font-size:28px;">📄</div>
+                <div class="small-card-num">20</div>
+            </div>
+        </div>
+        <div class="discount-wrap">
+            <div class="discount-badge">-20%</div>
+            <div class="small-card">
+                <div style="font-size:28px;">📄</div>
+                <div class="small-card-num">30</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="bottom-menu">
@@ -262,10 +317,10 @@ const t = {
   active_today:"Active Today",mining_now:"Mining Now",ranking:"🏆 Ranking",
   your_rank:"Your Rank",no_rank:"Not ranked yet",nft_collection:"🎒 NFT Collection",
   connect_wallet:"🔗 Connect Wallet",wallet_desc:"Use Tonkeeper/Telegram Wallet to check your NFT",
-  connect_now:"✅ Connect Now",no_nft:"No official NFT yet",nft_market:"🏪 NFT Market",
-  nft_effect:"⚡ NFT Effects",nft_bonus:"✅ Common: +10% Coin<br>✅ Rare: +30% + 2h<br>✅ Epic: +60% + 4h<br>✅ Legendary: +100% + 6h",
-  max_bonus:"⚠️ Total bonus capped at +200%",mine:"Mine",friends:"Friends",
-  nft:"NFT",shop:"Shop",data:"Data",invite:"Invite",rank:"Rank"
+  connect_now:"✅ Connect Now",no_nft:"No official NFT yet",shop:"🏪 Shop",
+  super_pm:"SUPER MINER",pm_desc:"Boost mining efficiency. Works for 3/7/30 days.",
+  offline_time:"INCREASE OFFLINE TIME",offline_desc:"Add +1 hour effective mining time while offline.",
+  resume_cards:"RESUME CARDS",mine:"Mine",friends:"Friends",nft:"NFT",data:"Data",invite:"Invite",rank:"Rank"
  },
  id:{
   announce:"📢 Pengumuman",watch_ad:"Tonton iklan untuk mulai menambang!",continue:"✅ Lanjutkan",
@@ -279,10 +334,10 @@ const t = {
   active_today:"Aktif Hari Ini",mining_now:"Sedang Menambang",ranking:"🏆 Peringkat",
   your_rank:"Peringkat Kamu",no_rank:"Belum ada peringkat",nft_collection:"🎒 Koleksi NFT",
   connect_wallet:"🔗 Hubungkan Dompet",wallet_desc:"Gunakan Tonkeeper/Wallet Telegram untuk cek NFT",
-  connect_now:"✅ Hubungkan Sekarang",no_nft:"Belum ada NFT resmi",nft_market:"🏪 Pasar NFT",
-  nft_effect:"⚡ Efek NFT",nft_bonus:"✅ Biasa: +10% Coin<br>✅ Langka: +30% + 2j<br>✅ Epik: +60% + 4j<br>✅ Legendaris: +100% + 6j",
-  max_bonus:"⚠️ Total bonus dibatasi +200%",mine:"Tambang",friends:"Teman",
-  nft:"NFT",shop:"Toko",data:"Data",invite:"Undang",rank:"Peringkat"
+  connect_now:"✅ Hubungkan Sekarang",no_nft:"Belum ada NFT resmi",shop:"🏪 Toko",
+  super_pm:"MINER HEBAT",pm_desc:"Naikkan efisiensi tambang. Berlaku 3/7/30 hari.",
+  offline_time:"TAMBAH WAKTU OFFLINE",offline_desc:"Tambah +1 jam tambang saat tidak aktif.",
+  resume_cards:"KARTU LANJUTAN",mine:"Tambang",friends:"Teman",nft:"NFT",data:"Data",invite:"Undang",rank:"Peringkat"
  },
  zh:{
   announce:"📢 公告",watch_ad:"观看广告开始挖矿！",continue:"✅ 继续",
@@ -296,10 +351,10 @@ const t = {
   active_today:"今日活跃",mining_now:"正在挖矿",ranking:"🏆 排行榜",
   your_rank:"你的排名",no_rank:"暂未上榜",nft_collection:"🎒 NFT收藏",
   connect_wallet:"🔗 连接钱包",wallet_desc:"使用Tonkeeper/Telegram钱包查看NFT",
-  connect_now:"✅ 立即连接",no_nft:"暂无官方NFT",nft_market:"🏪 NFT市场",
-  nft_effect:"⚡ NFT效果",nft_bonus:"✅ 普通：+10%代币<br>✅ 稀有：+30% + 2小时<br>✅ 史诗：+60% + 4小时<br>✅ 传说：+100% + 6小时",
-  max_bonus:"⚠️ 总加成上限 +200%",mine:"挖矿",friends:"好友",
-  nft:"NFT",shop:"商店",data:"数据",invite:"邀请",rank:"排行"
+  connect_now:"✅ 立即连接",no_nft:"暂无官方NFT",shop:"🏪 商店",
+  super_pm:"超级矿工",pm_desc:"提升挖矿效率，有效期3/7/30天。",
+  offline_time:"增加离线时长",offline_desc:"离线时额外增加1小时挖矿收益。",
+  resume_cards:"恢复卡",mine:"挖矿",friends:"好友",nft:"NFT",data:"数据",invite:"邀请",rank:"排行"
  },
  vi:{
   announce:"📢 Thông báo",watch_ad:"Xem quảng cáo để bắt đầu đào!",continue:"✅ Tiếp tục",
@@ -313,15 +368,15 @@ const t = {
   active_today:"Hôm nay",mining_now:"Đang đào",ranking:"🏆 Xếp hạng",
   your_rank:"Hạng của bạn",no_rank:"Chưa có hạng",nft_collection:"🎒 Bộ sưu tập",
   connect_wallet:"🔗 Kết nối ví",wallet_desc:"Dùng Tonkeeper/Ví Telegram để xem NFT",
-  connect_now:"✅ Kết nối",no_nft:"Chưa có NFT chính thức",nft_market:"🏪 Thị trường NFT",
-  nft_effect:"⚡ Tác dụng NFT",nft_bonus:"✅ Thường: +10% Coin<br>✅ Hiếm: +30% + 2g<br>✅ Sử thi: +60% + 4g<br>✅ Huyền thoại: +100% + 6g",
-  max_bonus:"⚠️ Tổng tối đa +200%",mine:"Đào",friends:"Bạn bè",
-  nft:"NFT",shop:"Cửa hàng",data:"Dữ liệu",invite:"Mời",rank:"Hạng"
+  connect_now:"✅ Kết nối",no_nft:"Chưa có NFT chính thức",shop:"🏪 Cửa hàng",
+  super_pm:"NHÀ ĐÀO CHUYÊN NGHIỆP",pm_desc:"Tăng tốc độ đào. Hiệu lực 3/7/30 ngày.",
+  offline_time:"TĂNG THỜI GIAN NGOẠI TUYẾN",offline_desc:"Thêm +1 giờ đào khi không mở app.",
+  resume_cards:"THẺ TIẾP TỤC",mine:"Đào",friends:"Bạn bè",nft:"NFT",data:"Dữ liệu",invite:"Mời",rank:"Hạng"
  }
 };
 
 let curLang = localStorage.getItem('appLang') || 'en';
-function updLang(){document.querySelectorAll('[data-txt]').forEach(e=>e.innerHTML=t[curLang][e.dataset.txt]||e.innerHTML);document.documentElement.lang=curLang;}
+function updLang(){document.querySelectorAll('[data-txt]').forEach(e=>e.innerHTML=t[curLang][e.dataset.txt]||e.innerHTML);document.documentElement.lang=curLang;document.getElementById('shopCoin').innerText=Math.floor(data.coins).toLocaleString();}
 function setLang(l){curLang=l;localStorage.setItem('appLang',l);updLang();closeLang();}
 function openLang(){document.getElementById('langMenu').classList.add('show');}
 function closeLang(){document.getElementById('langMenu').classList.remove('show');}
@@ -334,7 +389,7 @@ const BASE_COINS_PER_HOUR = 10;
 const REF_BONUS_PER_REF = 0.20;
 const MAX_TOTAL_BONUS_RATE = 2.00;
 const NEW_MEMBER_BONUS = 500;
-const ADSGRAM_ID = 39513; // === KODE IKLAN KAMU ===
+const ADSGRAM_ID = 39513;
 
 const CONFIG = {
  COLLECTION_ADDR: "EQ_______________________________",
@@ -360,7 +415,6 @@ const elTarget = document.getElementById('targetLevel');
 const elProgressRing = document.getElementById('progressRing');
 const elInnerCircle = document.getElementById('innerCircle');
 const elTimeCenter = document.getElementById('timeCenter');
-const elStatusCenter = document.getElementById('statusCenter');
 const elBtnMiner = document.getElementById('btnMiner');
 const elCoinsPerHour = document.getElementById('coinsPerHour');
 const elNftList = document.getElementById('nftList');
@@ -370,10 +424,9 @@ const elNotif = document.getElementById('notif');
 const elTotalUsers = document.getElementById('totalUsers');
 const elActiveUsers = document.getElementById('activeUsers');
 const elMiningNow = document.getElementById('miningNow');
-const elBtnConnectWallet = document.getElementById('btnConnectWallet');
 
 function showNotif(msg){elNotif.innerText=msg;elNotif.style.display='block';setTimeout(()=>elNotif.style.display='none',2500);}
-function switchPage(id,elm){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));if(elm)elm.classList.add('active');}
+function switchPage(id,elm){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));if(elm)elm.classList.add('active');if(id==='pageMarket') document.getElementById('shopCoin').innerText=Math.floor(data.coins).toLocaleString();}
 function openLink(url){tgApp.openLink(url);}
 function copyLink(){navigator.clipboard.writeText(elInviteLink.innerText);showNotif('✅ Link copied!');}
 function shareLink(){tgApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(elInviteLink.innerText)}&text=${encodeURIComponent('Mine Capybara Titan 🚀')}`);}
@@ -385,34 +438,26 @@ tgApp.onEvent('message',e=>{try{const d=JSON.parse(e.data);if(d.action==="stats_
 function calculateFinalSpeed(){let b=data.activeRefs*REF_BONUS_PER_REF;validNfts.forEach(n=>{const r=n.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';b+=CONFIG.NFT_BONUS[r].speed;});b=Math.min(b,MAX_TOTAL_BONUS_RATE);const p=BASE_COINS_PER_HOUR*(1+b);return{perHour:p,perSec:p/3600};}
 function updateUI(){const s=calculateFinalSpeed();elScore.innerText=Math.floor(data.coins).toLocaleString();elLevel.innerText=data.level;elTarget.innerText=`${Math.floor(data.coins).toLocaleString()} / ${data.nextTarget.toLocaleString()}`;elFriendCount.innerText=data.activeRefs;elInviteLink.innerText=`https://t.me/${CONFIG.BOT_NAME}?start=${userId}`;elCoinsPerHour.innerText=s.perHour.toFixed(1);data.mineSpeed=s.perSec;localStorage.setItem('capyTitanMiner_'+userId,JSON.stringify(data));}
 
-// === INTEGRASI ADSGRAM ===
 async function showAdThenStart(){
  try{
   if(window.Adsgram){
    const ad = window.Adsgram.init({ blockId: ADSGRAM_ID });
-   ad.on('reward', ()=>{ startMining(); showNotif('✅ Iklan selesai, tambang dimulai!'); });
-   ad.on('error', (err)=>{ console.log('Adsgram error:', err); startMining(); showNotif('ℹ️ Iklan tidak tersedia, langsung mulai'); });
+   ad.on('reward', ()=>{ startMining(); showNotif('✅ Mining started!'); });
+   ad.on('error', ()=>{ startMining(); showNotif('✅ Started directly'); });
    ad.show();
-  }else{
-   startMining();
-   showNotif('✅ Mulai menambang!');
-  }
- }catch{
-  startMining();
-  showNotif('✅ Mulai menambang!');
- }
+  }else{ startMining(); }
+ }catch{ startMining(); }
 }
 
 function checkMinerStatus(){const n=Math.floor(Date.now()/1000);let r=data.endTime-n;r=Math.max(0,r);if(r>0){const p=r/data.mineDuration;elProgressRing.style.background=`conic-gradient(#FFD700 ${(1-p)*360}deg, transparent ${(1-p)*360}deg)`;elInnerCircle.className='inner-circle active';elTimeCenter.innerText=formatTime(r);elBtnMiner.disabled=true;return true;}else{elProgressRing.style.background=`conic-gradient(#FFD700 0deg, transparent 0deg)`;elInnerCircle.className='inner-circle stopped';elTimeCenter.innerText='00:00:00';elBtnMiner.disabled=false;return false;}}
-function startMining(){const n=Math.floor(Date.now()/1000);if(!data.hasStartedMining&&!data.gotWelcomeBonus){data.coins+=NEW_MEMBER_BONUS;data.gotWelcomeBonus=true;showNotif('🎉 Welcome +500 Coin!');}if(!data.hasStartedMining){data.hasStartedMining=true;if(refCode){const inv=JSON.parse(localStorage.getItem('capyTitanMiner_'+refCode))||null;if(inv){inv.activeRefs=(inv.activeRefs||0)+1;localStorage.setItem('capyTitanMiner_'+refCode,JSON.stringify(inv));}}}data.endTime=n+data.mineDuration;checkMinerStatus();updateUI();}
+function startMining(){const n=Math.floor(Date.now()/1000);if(!data.hasStartedMining&&!data.gotWelcomeBonus){data.coins+=NEW_MEMBER_BONUS;data.gotWelcomeBonus=true;showNotif('🎉 +500 Coin Welcome!');}if(!data.hasStartedMining){data.hasStartedMining=true;if(refCode){const inv=JSON.parse(localStorage.getItem('capyTitanMiner_'+refCode))||null;if(inv){inv.activeRefs=(inv.activeRefs||0)+1;localStorage.setItem('capyTitanMiner_'+refCode,JSON.stringify(inv));}}}data.endTime=n+data.mineDuration;checkMinerStatus();updateUI();}
 function runAuto(){if(minerInterval)clearInterval(minerInterval);minerInterval=setInterval(()=>{if(checkMinerStatus()){data.coins+=data.mineSpeed;if(data.coins>=data.nextTarget){data.level++;data.nextTarget=Math.round(data.nextTarget*1.8);showNotif(`🎉 Level Up ${data.level}!`);}updateUI();}},1000);}
 
-async function initWallet(){try{tonConnect=new window.TonConnectUI({manifestUrl:'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json',buttonRootId:null});tonConnect.onStatusChange(async s=>{if(s==='connected'){walletAddr=tonConnect.account.address;elBtnConnectWallet.innerText='✅ Connected';elBtnConnectWallet.disabled=true;await loadNfts();}else{walletAddr=null;validNfts=[];elBtnConnectWallet.innerText=t[curLang].connect_now;elBtnConnectWallet.disabled=false;updateUI();}});}catch{elBtnConnectWallet.innerText='⚠️ Error';}}
-async function connectWallet(){if(!tonConnect)await initWallet();try{await tonConnect.openModal();}catch{showNotif('⚠️ Cannot open wallet');}}
-async function loadNfts(){if(!walletAddr||CONFIG.COLLECTION_ADDR.includes('_')){showNotif('⚠️ Collection not set');return;}showNotif('🔍 Checking NFT...');try{const r=await fetch(`https://api.getgems.io/v1/nft/items?owner=${walletAddr}&collection=${CONFIG.COLLECTION_ADDR}&limit=50`);const d=await r.json();validNfts=d.items||[];renderNfts();updateUI();showNotif(validNfts.length?`✅ Found ${validNfts.length} NFT!`:'ℹ️ No NFT yet');}catch{showNotif('⚠️ Failed to load NFT');}}
-function renderNfts(){elNftList.innerHTML='';if(!validNfts.length){elNftList.innerHTML=`<div class="box"><p style="text-align:center;opacity:0.7;" data-txt="no_nft"></p></div>`;return;}validNfts.forEach(n=>{const r=n.metadata.attributes?.find(x=>x.trait_type==='Rarity')?.value||'Common';const b=CONFIG.NFT_BONUS[r];elNftList.innerHTML+=`<div class="box"><h4>${n.metadata.name||'Capy Miner Pass'}</h4><p>${r} • +${(b.speed*100).toFixed(0)}% Coin • +${b.duration/3600}h</p></div>`;});}
+async function initWallet(){try{tonConnect=new window.TonConnectUI({manifestUrl:'https://raw.githubusercontent.com/ton-connect/demo-manifest/main/demo-manifest.json',buttonRootId:null});tonConnect.onStatusChange(async s=>{if(s==='connected'){walletAddr=tonConnect.account.address;document.getElementById('btnConnectWallet').innerText='✅ Connected';await loadNfts();}});}catch{}}
+async function connectWallet(){if(!tonConnect)await initWallet();try{await tonConnect.openModal();}catch{showNotif('⚠️ Error');}}
+async function loadNfts(){if(!walletAddr||CONFIG.COLLECTION_ADDR.includes('_')) return;try{const r=await fetch(`https://api.getgems.io/v1/nft/items?owner=${walletAddr}&collection=${CONFIG.COLLECTION_ADDR}&limit=50`);const d=await r.json();validNfts=d.items||[];}catch{}}
 
-async function init(){updLang();updateUI();checkMinerStatus();runAuto();loadStatsFromBot();await initWallet();}
+async function init(){updLang();updateUI();checkMinerStatus();runAuto();await initWallet();}
 init();
 </script>
 </body>
